@@ -13,6 +13,7 @@ object Mapping {
 
     val actions = listOf(
         "none" to "Nothing",
+        "flashlight" to "Flashlight",
         "play_pause" to "Play / pause",
         "next" to "Next track",
         "previous" to "Previous track",
@@ -21,7 +22,7 @@ object Mapping {
     )
 
     private val defaults = mapOf(
-        "single" to "app:com.limegreenv.geartracker",
+        "single" to "flashlight",
         "double" to "next",
         "long" to "play_pause",
         "bottom_long" to "app:com.google.android.apps.walletnfcrel",
@@ -50,6 +51,7 @@ object Mapping {
         val action = get(context, gesture)
         val audio = context.getSystemService(AudioManager::class.java)
         when (action) {
+            "flashlight" -> launchFlashlight(context, backToHome)
             "play_pause" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
             "next" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_NEXT)
             "previous" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
@@ -61,6 +63,26 @@ object Mapping {
                     ?.apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
                     ?.let { context.startActivity(it) }
             }
+        }
+    }
+
+    private fun launchFlashlight(context: Context, backToHome: Boolean) {
+        // Try Samsung Wear OS Flashlight activity first
+        val samsungIntent = Intent("com.samsung.android.watch.flashlight.MAIN")
+            .setClassName("com.samsung.android.watch.flashlight", "com.samsung.android.watch.flashlight.main.FlashLightActivity")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        try {
+            context.startActivity(samsungIntent)
+        } catch (e: Exception) {
+            // Fallback: standard system flashlight intent
+            val genericIntent = Intent("android.intent.action.MAIN")
+                .addCategory("com.google.android.wearable.action.FLASHLIGHT")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+            try {
+                context.startActivity(genericIntent)
+            } catch (ignored: Exception) {}
         }
     }
 
