@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Ultra2 Remapper</string>
+    <string name="bottom_service_description">Lets Ultra2 Remapper replace the bottom button long press. Short press still goes Back.</string>
 </resources>

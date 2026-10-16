@@ -51,16 +51,18 @@ private fun Home(onPick: (String) -> Unit) {
     val state = rememberScalingLazyListState()
     ScreenScaffold(scrollState = state) { padding ->
         ScalingLazyColumn(state = state, contentPadding = padding) {
-            item { ListHeader { Text("Action Button") } }
-            items(Mapping.gestures) { (gesture, name) ->
-                Button(
-                    onClick = { onPick(gesture) },
-                    label = { Text(name) },
-                    secondaryLabel = {
-                        Text(Mapping.label(context, Mapping.get(context, gesture)), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                )
+            for ((title, gestures) in listOf("Action Button" to Mapping.actionGestures, "Bottom Button" to Mapping.bottomGestures)) {
+                item { ListHeader { Text(title) } }
+                items(gestures) { (gesture, name) ->
+                    Button(
+                        onClick = { onPick(gesture) },
+                        label = { Text(name) },
+                        secondaryLabel = {
+                            Text(Mapping.label(context, Mapping.get(context, gesture)), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
             }
         }
     }
@@ -82,7 +84,7 @@ private fun Picker(gesture: String, onDone: () -> Unit) {
     val state = rememberScalingLazyListState()
     ScreenScaffold(scrollState = state) { padding ->
         ScalingLazyColumn(state = state, contentPadding = padding) {
-            item { ListHeader { Text(Mapping.gestures.toMap()[gesture]!!) } }
+            item { ListHeader { Text(if (gesture == "bottom_long") "Bottom long press" else Mapping.gestures.toMap()[gesture]!!) } }
             items(Mapping.actions + apps) { (action, label) ->
                 Button(
                     onClick = {

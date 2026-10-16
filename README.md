@@ -1,14 +1,21 @@
 # Ultra2 Remapper
 
-Remap the **Action button** on the Samsung Galaxy Watch Ultra 2 (Wear OS; tested on SM-L715F only) to media controls or any app, separately for single press, double press and long press.
+Remap the buttons on the Samsung Galaxy Watch Ultra 2 (Wear OS; tested on SM-L715F only) to media controls or any app:
 
-The emergency siren (hold 5–6 s) keeps working.
+- **Action button:** single press, double press and long press, each mapped separately
+- **Bottom button:** long press (a short press still goes Back)
+
+The emergency siren (hold the Action button 5–6 s) keeps working.
 
 ## How it works
 
 The Action button never delivers key events to apps or accessibility services. Instead, the system starts the service named in the global setting `setting_action_button_press` (by default Samsung Health's workout launcher). It passes `ACTION_KEY_EVENT` extras: `2` = single click, `5` + `ACTION_KEY_COUNT=2` = double press, `3` = long press.
 
 Ultra2 Remapper provides that service and performs whatever you've assigned to each gesture in its settings screen.
+
+The bottom button has no such setting: its long press is hard-wired to Samsung Wallet in the framework. It does deliver key events (`KEYCODE_STEM_PRIMARY`) to accessibility services, so Ultra2 Remapper's accessibility service intercepts that key. A short press is passed on as Back; a 500 ms hold runs your mapping instead of opening Samsung Wallet. The service subscribes to no accessibility events (key filtering only), so it doesn't wake for screen changes and costs essentially no battery.
+
+This is optional: if you only want the Action button, skip step 5.
 
 ## Setup (one-time, via adb)
 
@@ -25,8 +32,14 @@ Ultra2 Remapper provides that service and performs whatever you've assigned to e
    ```
    adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow
    ```
+5. *(Optional, for the bottom button)* Enable the accessibility service. Use **Settings → Accessibility → Installed apps → Ultra2 Remapper** on the watch, or run:
+   ```
+   adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
+   adb shell settings put secure accessibility_enabled 1
+   ```
+   The adb command replaces any other enabled accessibility services. Read the current list first with `adb shell settings get secure enabled_accessibility_services` and join entries with `:` if you need to keep them. After updating the app, check the service is still enabled.
 
-Open **Ultra2 Remapper** on the watch to choose an action for each gesture: open an app, play/pause, next or previous track, or volume up/down.
+Open **Ultra2 Remapper** on the watch to choose an action for each gesture: open an app, play/pause, next or previous track, volume up/down, or nothing.
 
 Changing the Action button in Samsung's settings overwrites step 3. To restore Samsung's default:
 ```
