@@ -1,51 +1,101 @@
-# Ultra2 Remapper
+<p align="center">
+  <img src="docs/icon.svg" width="120" height="120" alt="Ultra2 Remapper Icon" />
+</p>
 
-Remap the buttons on the Samsung Galaxy Watch Ultra 2 (Wear OS; tested on SM-L715F only) to media controls or any app:
+<h1 align="center">Ultra2 Remapper</h1>
 
-- **Action button:** single press, double press and long press, each mapped separately
-- **Bottom button:** long press (a short press still goes Back)
+<p align="center">
+  <b>Remap the Orange Action Button & Bottom Button on Samsung Galaxy Watch Ultra & Ultra 2 (Wear OS)</b><br/>
+  <sub> Instant Samsung Flashlight Toggle (Boost Brightness) ·  Media Controls ·  Google Assistant ·  Launch Any App</sub>
+</p>
 
-The emergency siren (hold the Action button 5–6 s) keeps working.
+<p align="center">
+  <a href="https://github.com/Aaronhrndz/ultra-remapper/releases/latest">
+    <img src="https://img.shields.io/github/v/release/Aaronhrndz/ultra-remapper?color=FF5500&label=latest%20release&style=flat-square" alt="Latest Release" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square" alt="License: GPL-3.0" />
+  </a>
+  <img src="https://img.shields.io/badge/platform-Wear%20OS%205%2B-3DDC84?style=flat-square" alt="Wear OS" />
+</p>
 
-## How it works
+---
 
-The Action button never delivers key events to apps or accessibility services. Instead, the system starts the service named in the global setting `setting_action_button_press` (by default Samsung Health's workout launcher). It passes `ACTION_KEY_EVENT` extras: `2` = single click, `5` + `ACTION_KEY_COUNT=2` = double press, `3` = long press.
+##  Features
 
-Ultra2 Remapper provides that service and performs whatever you've assigned to each gesture in its settings screen.
+- **Orange Action Button (Quick Button)**: Independently map **Single Press**, **Double Press**, and **Long Press**.
+- **Bottom Button**: Remap **Long Press** (default short press remains *Back*).
+- **Native Samsung Flashlight Toggle with Boost Brightness**:
+  - Built-in `Flashlight` action (default for single press) targeting Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`).
+  - Automatically steps up to **Boost (maximum) brightness** (`level 12`) upon opening.
+  - Pressing the Action Button again while the flashlight is open cleanly turns it off and closes it.
+- **Media & System Controls**:
+  - Play / Pause, Next Track, Previous Track, Volume Up / Down, Digital Assistant (Google Assistant / Gemini), or **launch any installed Wear OS app**.
+- **Accessibility Setup Onboarding**:
+  - Built-in setup check in the watch app with a one-tap shortcut to **Accessibility Settings** whenever the background service is unbound.
+- **Wrist Orientation Lock**:
+  - Respects your configured wrist/button orientation (`nosensor`) without rotating upside-down.
+- **Emergency Siren Preserved**:
+  - Holding the Action Button for 5–6 seconds still triggers Samsung's native emergency siren.
 
-The bottom button has no such setting: its long press is hard-wired to Samsung Wallet in the framework. It does deliver key events (`KEYCODE_STEM_PRIMARY`) to accessibility services, so Ultra2 Remapper's accessibility service intercepts that key. A short press is passed on as Back; a 500 ms hold runs your mapping instead of opening Samsung Wallet. The service subscribes to no accessibility events (key filtering only), so it doesn't wake for screen changes and costs essentially no battery.
+---
 
-This is optional: if you only want the Action button, skip step 5.
+##  Download & Installation
 
-## Setup (one-time, via adb)
+Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v0.6.0.apk`).
 
-1. Enable **Developer options → ADB debugging** and **Wireless debugging** on the watch, then pair and connect with `adb pair` / `adb connect`.
+### One-Time Setup via Wireless ADB
+
+1. On your watch, enable **Settings → Developer options → ADB debugging** and **Wireless debugging**, then pair and connect from your PC:
+   ```bash
+   adb pair <WATCH_IP>:<PAIRING_PORT>
+   adb connect <WATCH_IP>:<CONNECTION_PORT>
+   ```
 2. Install the APK:
+   ```bash
+   adb install -r ultra-remapper-v0.6.0.apk
    ```
-   adb install ultra-remapper.apk
-   ```
-3. Route the Action button to Ultra2 Remapper:
-   ```
+3. Route the Orange Action Button to **Ultra2 Remapper**:
+   ```bash
    adb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService
    ```
-4. Allow it to open apps from the background (needed for "open app" actions):
-   ```
+4. Allow background app/activity launches and exempt from battery optimization:
+   ```bash
    adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow
+   adb shell cmd deviceidle whitelist +com.bennybar.ultraremapper
    ```
-5. *(Optional, for the bottom button)* Enable the accessibility service. Use **Settings → Accessibility → Installed apps → Ultra2 Remapper** on the watch, or run:
-   ```
-   adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
-   adb shell settings put secure accessibility_enabled 1
-   ```
-   The adb command replaces any other enabled accessibility services. Read the current list first with `adb shell settings get secure enabled_accessibility_services` and join entries with `:` if you need to keep them. After updating the app, check the service is still enabled.
+5. Enable the **Accessibility Service** (required for Bottom Button long-press and Flashlight toggle/Boost):
+   - Directly on the watch: Open **Ultra2 Remapper** → tap **Enable Accessibility** → enable **Ultra2 Remapper** under *Installed apps*.
+   - Or via ADB:
+     ```bash
+     adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
+     adb shell settings put secure accessibility_enabled 1
+     ```
 
-Open **Ultra2 Remapper** on the watch to choose an action for each gesture: open an app, play/pause, next or previous track, volume up/down, or nothing.
+> **Note:** Changing the Action Button mapping inside Samsung's native Watch Settings will overwrite step 3. Also note that Samsung's firmware disables the physical Action Button while the watch is resting on the wireless charger.
+>
+> To restore Samsung's default Action Button behavior at any time:
+> ```bash
+> adb shell settings put global setting_action_button_press com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService
+> ```
 
-Changing the Action button in Samsung's settings overwrites step 3. To restore Samsung's default:
-```
-adb shell settings put global setting_action_button_press com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService
-```
+---
 
-## License
+## ⚙️ How It Works Under the Hood
 
-GPL-3.0. See [LICENSE](LICENSE).
+- **Action Button (`ActionButtonService`)**: The Galaxy Watch Ultra Action Button does not emit standard key events to apps or accessibility services. Instead, Samsung's `PhoneWindowManagerExt` starts the component stored in `Settings.Global.setting_action_button_press`, passing `ACTION_KEY_EVENT` extras (`2` = single press, `5` + `ACTION_KEY_COUNT=2` = double press, `3` = long press).
+- **Bottom Button & Flashlight Control (`BottomButtonService`)**:
+  - Intercepts `KEYCODE_STEM_PRIMARY` via `AccessibilityService.onKeyEvent`. Short presses trigger `GLOBAL_ACTION_BACK`; a `500 ms` hold triggers your custom mapping instead of Samsung Wallet.
+  - Detects when `com.samsung.android.watch.flashlight` enters the foreground (`TYPE_WINDOW_STATE_CHANGED`) after being triggered by the `Flashlight` action and automatically steps Samsung's internal brightness controller from default (`level 10`) to **Boost mode** (`level 12`), and allows single-press toggling off via `GLOBAL_ACTION_BACK`.
+
+---
+
+##  Credits & Acknowledgments
+
+This project is an active fork of [**bennybar/ultra-remapper**](https://github.com/bennybar/ultra-remapper), originally created by [**@bennybar**](https://github.com/bennybar). Huge thanks to Benny for reverse-engineering Samsung's `setting_action_button_press` service mechanism and building the original foundation of this app!
+
+---
+
+##  License
+
+Licensed under the **GNU General Public License v3.0 (GPL-3.0)** — maintaining the exact same free software license as the original upstream project. See [LICENSE](LICENSE) for full details.
