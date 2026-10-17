@@ -5,46 +5,55 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Right Crown Guard / Button Housing -->
-    <path
-        android:fillColor="#272A31"
-        android:pathData="M73,33 L80.5,36.5 C81.8,37.2 82.5,38.5 82.5,40.2 L82.5,67.8 C82.5,69.5 81.8,70.8 80.5,71.5 L73,75 Z" />
+    <!-- Scale watch illustration to 64% inside the 66dp Adaptive Icon safe zone so it never touches the circular mask -->
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.64"
+        android:scaleY="0.64">
 
-    <!-- Top Side Button (Angled Pusher) -->
-    <path
-        android:fillColor="#3A3F48"
-        android:pathData="M79,34.5 L81.8,34 C82.8,33.8 83.8,34.4 84.1,35.4 L86.1,41.6 C86.4,42.6 85.8,43.6 84.8,43.9 L81.5,44.6 Z" />
+        <!-- Right Crown Guard / Button Housing -->
+        <path
+            android:fillColor="#272A31"
+            android:pathData="M73,33 L80.5,36.5 C81.8,37.2 82.5,38.5 82.5,40.2 L82.5,67.8 C82.5,69.5 81.8,70.8 80.5,71.5 L73,75 Z" />
 
-    <!-- Bottom Side Button (Angled Pusher) -->
-    <path
-        android:fillColor="#3A3F48"
-        android:pathData="M81.5,63.4 L84.8,64.1 C85.8,64.4 86.4,65.4 86.1,66.4 L84.1,72.6 C83.8,73.6 82.8,74.2 81.8,74 L79,73.5 Z" />
+        <!-- Top Side Button (Angled Pusher) -->
+        <path
+            android:fillColor="#3A3F48"
+            android:pathData="M79,34.5 L81.8,34 C82.8,33.8 83.8,34.4 84.1,35.4 L86.1,41.6 C86.4,42.6 85.8,43.6 84.8,43.9 L81.5,44.6 Z" />
 
-    <!-- Middle Quick / Action Button Cutout Recess -->
-    <path
-        android:fillColor="#16181D"
-        android:pathData="M82.8,46.8 L84.2,46.8 C86.0,46.8 87.4,48.2 87.4,50.0 L87.4,58.0 C87.4,59.8 86.0,61.2 84.2,61.2 L82.8,61.2 C81.0,61.2 79.6,59.8 79.6,58.0 L79.6,50.0 C79.6,48.2 81.0,46.8 82.8,46.8 Z" />
+        <!-- Bottom Side Button (Angled Pusher) -->
+        <path
+            android:fillColor="#3A3F48"
+            android:pathData="M81.5,63.4 L84.8,64.1 C85.8,64.4 86.4,65.4 86.1,66.4 L84.1,72.6 C83.8,73.6 82.8,74.2 81.8,74 L79,73.5 Z" />
 
-    <!-- Signature Titanium Orange Quick / Action Button -->
-    <path
-        android:fillColor="#FF5500"
-        android:pathData="M83.1,47.8 L84.3,47.8 C85.6,47.8 86.6,48.8 86.6,50.1 L86.6,57.9 C86.6,59.2 85.6,60.2 84.3,60.2 L83.1,60.2 C81.8,60.2 80.8,59.2 80.8,57.9 L80.8,50.1 C80.8,48.8 81.8,47.8 83.1,47.8 Z" />
+        <!-- Middle Quick / Action Button Cutout Recess -->
+        <path
+            android:fillColor="#16181D"
+            android:pathData="M82.8,46.8 L84.2,46.8 C86.0,46.8 87.4,48.2 87.4,50.0 L87.4,58.0 C87.4,59.8 86.0,61.2 84.2,61.2 L82.8,61.2 C81.0,61.2 79.6,59.8 79.6,58.0 L79.6,50.0 C79.6,48.2 81.0,46.8 82.8,46.8 Z" />
 
-    <!-- Watch Ultra Cushion Case (Squircle) -->
-    <path
-        android:fillColor="#333740"
-        android:pathData="M41,25 L63,25 C72.9,25 80,32.1 80,42 L80,66 C80,75.9 72.9,83 63,83 L41,83 C31.1,83 24,75.9 24,66 L24,42 C24,32.1 31.1,25 41,25 Z" />
+        <!-- Signature Titanium Orange Quick / Action Button -->
+        <path
+            android:fillColor="#FF5500"
+            android:pathData="M83.1,47.8 L84.3,47.8 C85.6,47.8 86.6,48.8 86.6,50.1 L86.6,57.9 C86.6,59.2 85.6,60.2 84.3,60.2 L83.1,60.2 C81.8,60.2 80.8,59.2 80.8,57.9 L80.8,50.1 C80.8,48.8 81.8,47.8 83.1,47.8 Z" />
 
-    <!-- Circular Bezel & Dark Watch Face -->
-    <path
-        android:fillColor="#111317"
-        android:pathData="M52,54 m-23.5,0 a23.5,23.5 0 1,0 47,0 a23.5,23.5 0 1,0 -47,0" />
+        <!-- Watch Ultra Cushion Case (Squircle) -->
+        <path
+            android:fillColor="#333740"
+            android:pathData="M41,25 L63,25 C72.9,25 80,32.1 80,42 L80,66 C80,75.9 72.9,83 63,83 L41,83 C31.1,83 24,75.9 24,66 L24,42 C24,32.1 31.1,25 41,25 Z" />
 
-    <!-- Inner Orange Accent Ring -->
-    <path
-        android:fillColor="#00000000"
-        android:strokeColor="#FF5500"
-        android:strokeWidth="1.6"
-        android:pathData="M52,54 m-19.5,0 a19.5,19.5 0 1,0 39,0 a19.5,19.5 0 1,0 -39,0" />
+        <!-- Circular Bezel & Dark Watch Face -->
+        <path
+            android:fillColor="#111317"
+            android:pathData="M52,54 m-23.5,0 a23.5,23.5 0 1,0 47,0 a23.5,23.5 0 1,0 -47,0" />
+
+        <!-- Inner Orange Accent Ring -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FF5500"
+            android:strokeWidth="1.9"
+            android:pathData="M52,54 m-19.5,0 a19.5,19.5 0 1,0 39,0 a19.5,19.5 0 1,0 -39,0" />
+
+    </group>
 
 </vector>
