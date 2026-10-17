@@ -5,12 +5,12 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Scale watch illustration to 64% inside the 66dp Adaptive Icon safe zone so it never touches the circular mask -->
+    <!-- Scale watch illustration to 0.78 inside the Adaptive Icon safe zone -->
     <group
         android:pivotX="54"
         android:pivotY="54"
-        android:scaleX="0.64"
-        android:scaleY="0.64">
+        android:scaleX="0.78"
+        android:scaleY="0.78">
 
         <!-- Right Crown Guard / Button Housing -->
         <path
@@ -51,7 +51,7 @@
         <path
             android:fillColor="#00000000"
             android:strokeColor="#FF5500"
-            android:strokeWidth="1.9"
+            android:strokeWidth="1.8"
             android:pathData="M52,54 m-19.5,0 a19.5,19.5 0 1,0 39,0 a19.5,19.5 0 1,0 -39,0" />
 
     </group>
