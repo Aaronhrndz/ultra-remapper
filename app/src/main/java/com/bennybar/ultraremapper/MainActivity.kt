@@ -429,7 +429,7 @@ private fun Home(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Action Button",
+                            text = "Center Button",
                             color = Color.White,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
