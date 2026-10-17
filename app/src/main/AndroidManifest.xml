@@ -6,12 +6,18 @@
     <!-- Exempts the app from background-activity-start blocking so the Action button can open apps.
          Grant with: adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
+        <package android:name="com.samsung.android.wear.shealth" />
+        <package android:name="com.samsung.android.watch.stopwatch" />
+        <package android:name="com.samsung.android.watch.flashlight" />
+        <package android:name="com.google.android.apps.wearable.settings" />
+        <package android:name="com.samsung.android.wearable.music" />
     </queries>
 
     <application
@@ -53,6 +59,16 @@
             <meta-data
                 android:name="android.accessibilityservice"
                 android:resource="@xml/bottom_button_service" />
+        </service>
+
+        <service
+            android:name=".MediaControlService"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
         </service>
 
     </application>

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Ultra2 Remapper"
+rootProject.name = "Ultra Remapper"
 include(":app")
  

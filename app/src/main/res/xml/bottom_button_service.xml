@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- Zero accessibility events subscribed by default so the service never wakes on screen changes.
+     Window state events are enabled dynamically only while Samsung Flashlight is being opened. -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeWindowStateChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:accessibilityFlags="flagRequestFilterKeyEvents"
     android:canPerformGestures="true"
