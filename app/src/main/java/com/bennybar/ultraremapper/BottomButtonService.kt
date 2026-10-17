@@ -96,13 +96,7 @@ class BottomButtonService : AccessibilityService() {
                 isFlashlightWindowActive = true
                 if (pendingBoostFromAction) {
                     pendingBoostFromAction = false
-                    tapHandler.removeCallbacksAndMessages(null)
-                    tapHandler.postDelayed({
-                        if (isSamsungFlashlightOnScreen()) tapCenter()
-                    }, 1050L)
-                    tapHandler.postDelayed({
-                        if (isSamsungFlashlightOnScreen()) tapCenter()
-                    }, 1170L)
+                    scheduleBoostTaps(1150L, 1290L)
                 }
             } else if (pkg != "android" && pkg != "com.bennybar.ultraremapper") {
                 isFlashlightWindowActive = false
@@ -120,22 +114,26 @@ class BottomButtonService : AccessibilityService() {
         val cx = dm.widthPixels / 2f
         val cy = dm.heightPixels / 2f
         val path = Path().apply { moveTo(cx, cy) }
-        val stroke = GestureDescription.StrokeDescription(path, 0L, 35L)
+        val stroke = GestureDescription.StrokeDescription(path, 0L, 40L)
         val gesture = GestureDescription.Builder().addStroke(stroke).build()
         dispatchGesture(gesture, null, null)
+    }
+
+    private fun scheduleBoostTaps(firstDelayMs: Long, secondDelayMs: Long) {
+        tapHandler.removeCallbacksAndMessages(null)
+        tapHandler.postDelayed({
+            if (isSamsungFlashlightOnScreen()) tapCenter()
+        }, firstDelayMs)
+        tapHandler.postDelayed({
+            if (isSamsungFlashlightOnScreen()) tapCenter()
+        }, secondDelayMs)
     }
 
     fun tapBoostOnOpen() {
         setWindowTrackingEnabled(true)
         pendingBoostFromAction = true
-        tapHandler.removeCallbacksAndMessages(null)
-        tapHandler.postDelayed({
-            pendingBoostFromAction = false
-            if (isSamsungFlashlightOnScreen()) tapCenter()
-        }, 1250L)
-        tapHandler.postDelayed({
-            if (isSamsungFlashlightOnScreen()) tapCenter()
-        }, 1370L)
+        // Fallback timer if TYPE_WINDOW_STATE_CHANGED arrived before serviceInfo updated
+        scheduleBoostTaps(1400L, 1540L)
     }
 
     fun cancelFlashlightTaps() {

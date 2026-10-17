@@ -5,4 +5,5 @@
     android:accessibilityFlags="flagRequestFilterKeyEvents"
     android:canPerformGestures="true"
     android:canRequestFilterKeyEvents="true"
+    android:canRetrieveWindowContent="true"
     android:description="@string/bottom_service_description" />
