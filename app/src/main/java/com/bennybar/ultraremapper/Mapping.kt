@@ -46,12 +46,22 @@ object Mapping {
         }
     }
 
+    @Volatile
+    private var lastOpenTimestamp = 0L
+
+    private fun isFlashlightCurrentlyOpen(): Boolean {
+        if (BottomButtonService.isFlashlightWindowActive) return true
+        // Also treat as open if we launched it within the last 1.2s and window event hasn't arrived yet
+        if (System.currentTimeMillis() - lastOpenTimestamp < 1200L) return true
+        return false
+    }
+
     /** [backToHome]: Back from a launched app returns to the watch face instead of the previous task. */
     fun perform(context: Context, gesture: String, backToHome: Boolean = false) {
         val action = get(context, gesture)
         val audio = context.getSystemService(AudioManager::class.java)
         when (action) {
-            "flashlight" -> launchFlashlight(context, backToHome)
+            "flashlight" -> toggleFlashlight(context, backToHome)
             "play_pause" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
             "next" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_NEXT)
             "previous" -> sendMediaKey(audio, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
@@ -66,22 +76,47 @@ object Mapping {
         }
     }
 
-    private fun launchFlashlight(context: Context, backToHome: Boolean) {
-        // Try Samsung Wear OS Flashlight activity first
-        val samsungIntent = Intent("com.samsung.android.watch.flashlight.MAIN")
+    /**
+     * Toggles Samsung's native Flashlight Activity:
+     * - If active, closes it cleanly (via Accessibility GLOBAL_ACTION_BACK or Bixby turn-off intent).
+     * - If inactive, launches FlashLightActivity and automatically switches to Max brightness.
+     */
+    private fun toggleFlashlight(context: Context, backToHome: Boolean) {
+        val appContext = context.applicationContext
+        if (isFlashlightCurrentlyOpen()) {
+            BottomButtonService.isFlashlightWindowActive = false
+            lastOpenTimestamp = 0L
+            val svc = BottomButtonService.instance
+            svc?.cancelFlashlightTaps()
+            if (svc != null) {
+                svc.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+            } else {
+                val offIntent = Intent("com.samsung.android.watch.flashlight.INTENT_BIXBY_FLASHLIGHT_TURN_OFF")
+                    .setClassName("com.samsung.android.watch.flashlight", "com.samsung.android.watch.flashlight.main.FlashLightActivity")
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                try {
+                    appContext.startActivity(offIntent)
+                } catch (ignored: Exception) {}
+            }
+            return
+        }
+
+        val samsungIntent = Intent("turn_on_flashlight")
             .setClassName("com.samsung.android.watch.flashlight", "com.samsung.android.watch.flashlight.main.FlashLightActivity")
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
         try {
-            context.startActivity(samsungIntent)
+            appContext.startActivity(samsungIntent)
+            BottomButtonService.isFlashlightWindowActive = true
+            lastOpenTimestamp = System.currentTimeMillis()
+            BottomButtonService.instance?.tapBoostOnOpen()
         } catch (e: Exception) {
-            // Fallback: standard system flashlight intent
             val genericIntent = Intent("android.intent.action.MAIN")
                 .addCategory("com.google.android.wearable.action.FLASHLIGHT")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
             try {
-                context.startActivity(genericIntent)
+                appContext.startActivity(genericIntent)
             } catch (ignored: Exception) {}
         }
     }
