@@ -1,30 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
+
+    <!-- Right Crown Guard / Button Housing -->
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:fillColor="#272A31"
+        android:pathData="M73,33 L80.5,36.5 C81.8,37.2 82.5,38.5 82.5,40.2 L82.5,67.8 C82.5,69.5 81.8,70.8 80.5,71.5 L73,75 Z" />
+
+    <!-- Top Side Button (Angled Pusher) -->
+    <path
+        android:fillColor="#3A3F48"
+        android:pathData="M79,34.5 L81.8,34 C82.8,33.8 83.8,34.4 84.1,35.4 L86.1,41.6 C86.4,42.6 85.8,43.6 84.8,43.9 L81.5,44.6 Z" />
+
+    <!-- Bottom Side Button (Angled Pusher) -->
+    <path
+        android:fillColor="#3A3F48"
+        android:pathData="M81.5,63.4 L84.8,64.1 C85.8,64.4 86.4,65.4 86.1,66.4 L84.1,72.6 C83.8,73.6 82.8,74.2 81.8,74 L79,73.5 Z" />
+
+    <!-- Middle Quick / Action Button Cutout Recess -->
+    <path
+        android:fillColor="#16181D"
+        android:pathData="M82.8,46.8 L84.2,46.8 C86.0,46.8 87.4,48.2 87.4,50.0 L87.4,58.0 C87.4,59.8 86.0,61.2 84.2,61.2 L82.8,61.2 C81.0,61.2 79.6,59.8 79.6,58.0 L79.6,50.0 C79.6,48.2 81.0,46.8 82.8,46.8 Z" />
+
+    <!-- Signature Titanium Orange Quick / Action Button -->
+    <path
+        android:fillColor="#FF5500"
+        android:pathData="M83.1,47.8 L84.3,47.8 C85.6,47.8 86.6,48.8 86.6,50.1 L86.6,57.9 C86.6,59.2 85.6,60.2 84.3,60.2 L83.1,60.2 C81.8,60.2 80.8,59.2 80.8,57.9 L80.8,50.1 C80.8,48.8 81.8,47.8 83.1,47.8 Z" />
+
+    <!-- Watch Ultra Cushion Case (Squircle) -->
+    <path
+        android:fillColor="#333740"
+        android:pathData="M41,25 L63,25 C72.9,25 80,32.1 80,42 L80,66 C80,75.9 72.9,83 63,83 L41,83 C31.1,83 24,75.9 24,66 L24,42 C24,32.1 31.1,25 41,25 Z" />
+
+    <!-- Circular Bezel & Dark Watch Face -->
+    <path
+        android:fillColor="#111317"
+        android:pathData="M52,54 m-23.5,0 a23.5,23.5 0 1,0 47,0 a23.5,23.5 0 1,0 -47,0" />
+
+    <!-- Inner Orange Accent Ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FF5500"
+        android:strokeWidth="1.6"
+        android:pathData="M52,54 m-19.5,0 a19.5,19.5 0 1,0 39,0 a19.5,19.5 0 1,0 -39,0" />
+
 </vector>
