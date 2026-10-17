@@ -21,9 +21,10 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**", "com.bennybar.**")
             }
         }
     }

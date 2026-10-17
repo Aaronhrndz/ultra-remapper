@@ -12,11 +12,19 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -25,12 +33,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -248,27 +258,41 @@ private fun Home(
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
-    ScreenScaffold(scrollState = columnState) { contentPadding ->
+    val orangeColors = ButtonDefaults.buttonColors(
+        containerColor = UltraOrange,
+        contentColor = Color.White,
+        secondaryContentColor = Color.White.copy(alpha = 0.9f)
+    )
+    val highlightColors = ButtonDefaults.buttonColors(containerColor = SlateHighlight)
+    val cardConfiguredColors = ButtonDefaults.buttonColors(
+        containerColor = SlateCard,
+        contentColor = Color.White,
+        secondaryContentColor = UltraOrange
+    )
+    val cardUnconfiguredColors = ButtonDefaults.buttonColors(
+        containerColor = SlateCard,
+        contentColor = Color.White,
+        secondaryContentColor = Color(0xFF8A93A2)
+    )
+
+    val actionRows = remember {
+        Mapping.actionGestures.map { (gesture, name) ->
+            val act = Mapping.get(context, gesture)
+            Triple(gesture, name, act to Mapping.label(context, act))
+        }
+    }
+    val bottomRows = remember {
+        Mapping.bottomGestures.map { (gesture, name) ->
+            val act = Mapping.get(context, gesture)
+            Triple(gesture, name, act to Mapping.label(context, act))
+        }
+    }
+
+    ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = contentPadding
+            contentPadding = PaddingValues(top = 26.dp, bottom = 72.dp, start = 10.dp, end = 10.dp)
         ) {
-            item(key = "header_title") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Text(
-                        text = "Ultra Remapper",
-                        color = UltraOrange,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-
             if (updateInfo != null) {
                 item(key = "update_banner") {
                     Button(
@@ -284,11 +308,7 @@ private fun Home(
                         secondaryLabel = {
                             Text("Check GitHub release", maxLines = 1, overflow = TextOverflow.Ellipsis)
                         },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = UltraOrange,
-                            contentColor = Color.White,
-                            secondaryContentColor = Color.White.copy(alpha = 0.9f)
-                        ),
+                        colors = orangeColors,
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -314,11 +334,7 @@ private fun Home(
                             onClick = onOpenA11ySettings,
                             label = { Text("Enable Accessibility", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text("Bottom button & Flashlight Boost", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = UltraOrange,
-                                contentColor = Color.White,
-                                secondaryContentColor = Color.White.copy(alpha = 0.85f)
-                            ),
+                            colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -332,7 +348,7 @@ private fun Home(
                             onClick = onOpenAppInfo,
                             label = { Text("Quick Button Route Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text("Run ADB setup step 3", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = ButtonDefaults.buttonColors(containerColor = SlateHighlight),
+                            colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -346,7 +362,7 @@ private fun Home(
                             onClick = onOpenAppInfo,
                             label = { Text("Overlay Permission Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text("Run ADB setup step 4", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = ButtonDefaults.buttonColors(containerColor = SlateHighlight),
+                            colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -360,7 +376,7 @@ private fun Home(
                             onClick = onOpenNotifListeners,
                             label = { Text("Media Bridge Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text("Enable for KDE Connect", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = ButtonDefaults.buttonColors(containerColor = SlateHighlight),
+                            colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -377,13 +393,29 @@ private fun Home(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text("Quick Button", color = Color(0xFFB0B8C4))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_watch_quick_button),
+                            contentDescription = null,
+                            modifier = Modifier.size(30.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "ORANGE BUTTON",
+                            color = UltraOrange,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
 
-            items(Mapping.actionGestures, key = { it.first }) { (gesture, name) ->
-                val currentAction = Mapping.get(context, gesture)
-                val currentLabel = Mapping.label(context, currentAction)
+            items(actionRows, key = { it.first }) { (gesture, name, actPair) ->
+                val (currentAction, currentLabel) = actPair
                 val isConfigured = currentAction != "none"
                 Button(
                     onClick = { onPick(gesture) },
@@ -393,16 +425,11 @@ private fun Home(
                     secondaryLabel = {
                         Text(
                             currentLabel,
-                            color = if (isConfigured) UltraOrange else Color(0xFF8A93A2),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isConfigured) UltraOrange else Color(0xFF8A93A2)
-                    ),
+                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -414,16 +441,33 @@ private fun Home(
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 8.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text("Bottom Button", color = Color(0xFFB0B8C4))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_watch_bottom_button),
+                            contentDescription = null,
+                            modifier = Modifier.size(30.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "BOTTOM BUTTON",
+                            color = Color(0xFFD5DCE6),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                    }
                 }
             }
 
-            items(Mapping.bottomGestures, key = { it.first }) { (gesture, name) ->
-                val currentAction = Mapping.get(context, gesture)
-                val currentLabel = Mapping.label(context, currentAction)
+            items(bottomRows, key = { it.first }) { (gesture, name, actPair) ->
+                val (currentAction, currentLabel) = actPair
                 val isConfigured = currentAction != "none"
                 Button(
                     onClick = { onPick(gesture) },
@@ -433,16 +477,11 @@ private fun Home(
                     secondaryLabel = {
                         Text(
                             currentLabel,
-                            color = if (isConfigured) UltraOrange else Color(0xFF8A93A2),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isConfigured) UltraOrange else Color(0xFF8A93A2)
-                    ),
+                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -460,25 +499,56 @@ private fun CollapsiblePicker(
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
-    val current = Mapping.get(context, gesture)
-    val currentLabel = Mapping.label(context, current)
-    val title = Mapping.gestures.toMap()[gesture] ?: gesture
+    val current = remember(gesture) { Mapping.get(context, gesture) }
+    val currentLabel = remember(current) { Mapping.label(context, current) }
+    val title = remember(gesture) { Mapping.gestures.toMap()[gesture] ?: gesture }
 
-    val isSamsung = Mapping.samsungActions.any { it.first == current }
-    val isMedia = Mapping.mediaActions.any { it.first == current }
-    val isApp = current.startsWith("app:")
+    val isSamsung = remember(current) { Mapping.samsungActions.any { it.first == current } }
+    val isMedia = remember(current) { Mapping.mediaActions.any { it.first == current } }
+    val isApp = remember(current) { current.startsWith("app:") }
 
-    var expandSamsung by rememberSaveable { mutableStateOf(isSamsung) }
-    var expandMedia by rememberSaveable { mutableStateOf(isMedia) }
-    var expandApps by rememberSaveable { mutableStateOf(isApp) }
+    val initialExpanded = remember(current) {
+        when {
+            isSamsung -> "samsung"
+            isMedia -> "media"
+            isApp -> "apps"
+            else -> ""
+        }
+    }
+    var expandedSection by rememberSaveable { mutableStateOf(initialExpanded) }
 
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
-    ScreenScaffold(scrollState = columnState) { contentPadding ->
+    // Category Folder Header styling (distinct bordered card with orange/slate frame)
+    val folderShape = remember { RoundedCornerShape(14.dp) }
+    val folderBorderOpen = remember { BorderStroke(1.5.dp, UltraOrange) }
+    val folderBorderClosed = remember { BorderStroke(1.dp, Color(0xFF3E4756)) }
+    val folderOpenColors = ButtonDefaults.buttonColors(
+        containerColor = Color(0xFF141820),
+        contentColor = UltraOrange,
+        secondaryContentColor = Color.White
+    )
+    val folderClosedColors = ButtonDefaults.buttonColors(
+        containerColor = Color(0xFF141820),
+        contentColor = Color(0xFFD5DCE6),
+        secondaryContentColor = Color(0xFF8A93A2)
+    )
+
+    // Child Option styling (inset pill items)
+    val optionSelectedColors = ButtonDefaults.buttonColors(
+        containerColor = UltraOrange,
+        contentColor = Color.White
+    )
+    val optionUnselectedColors = ButtonDefaults.buttonColors(
+        containerColor = Color(0xFF232830),
+        contentColor = Color(0xFFE6ECF5)
+    )
+
+    ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = contentPadding
+            contentPadding = PaddingValues(top = 26.dp, bottom = 72.dp, start = 10.dp, end = 10.dp)
         ) {
             item(key = "picker_title") {
                 ListHeader(
@@ -492,31 +562,32 @@ private fun CollapsiblePicker(
             }
 
             // 1. Samsung Functions collapsible section
+            val samsungOpen = expandedSection == "samsung"
             item(key = "sec_samsung") {
-                val arrow = if (expandSamsung) "▼" else "▶"
+                val arrow = if (samsungOpen) "▼" else "▶"
                 Button(
-                    onClick = { expandSamsung = !expandSamsung },
+                    onClick = {
+                        expandedSection = if (samsungOpen) "" else "samsung"
+                    },
+                    shape = folderShape,
+                    border = if (samsungOpen || isSamsung) folderBorderOpen else folderBorderClosed,
                     label = {
                         Text(
-                            "$arrow  Samsung Functions",
-                            fontWeight = FontWeight.Bold,
+                            "$arrow  SAMSUNG FUNCTIONS",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.ExtraBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
                         Text(
-                            if (isSamsung) "Selected: $currentLabel" else "${Mapping.samsungActions.size} system actions",
-                            color = if (isSamsung) UltraOrange else Color(0xFF9EA7B8),
+                            if (isSamsung) "Active: $currentLabel" else "${Mapping.samsungActions.size} options",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateFolder,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isSamsung) UltraOrange else Color(0xFF9EA7B8)
-                    ),
+                    colors = if (samsungOpen || isSamsung) folderOpenColors else folderClosedColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -524,59 +595,58 @@ private fun CollapsiblePicker(
                 )
             }
 
-            if (expandSamsung) {
+            if (samsungOpen) {
                 items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, label) ->
                     val selected = action == current
+                    val prefix = if (selected) "●  " else "    "
                     Button(
                         onClick = { onSelect(action) },
                         label = {
                             Text(
-                                label,
+                                "$prefix$label",
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         },
-                        colors = if (selected) {
-                            ButtonDefaults.buttonColors(containerColor = UltraOrange, contentColor = Color.White)
-                        } else {
-                            ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color.White)
-                        },
+                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 14.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }
             }
 
             // 2. Media & Volume collapsible section
+            val mediaOpen = expandedSection == "media"
             item(key = "sec_media") {
-                val arrow = if (expandMedia) "▼" else "▶"
+                val arrow = if (mediaOpen) "▼" else "▶"
                 Button(
-                    onClick = { expandMedia = !expandMedia },
+                    onClick = {
+                        expandedSection = if (mediaOpen) "" else "media"
+                    },
+                    shape = folderShape,
+                    border = if (mediaOpen || isMedia) folderBorderOpen else folderBorderClosed,
                     label = {
                         Text(
-                            "$arrow  Media & Volume",
-                            fontWeight = FontWeight.Bold,
+                            "$arrow  MEDIA & VOLUME",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.ExtraBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
                         Text(
-                            if (isMedia) "Selected: $currentLabel" else "KDE Connect, Play/Pause, Vol…",
-                            color = if (isMedia) UltraOrange else Color(0xFF9EA7B8),
+                            if (isMedia) "Active: $currentLabel" else "KDE Connect, Play/Pause, Vol…",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateFolder,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isMedia) UltraOrange else Color(0xFF9EA7B8)
-                    ),
+                    colors = if (mediaOpen || isMedia) folderOpenColors else folderClosedColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -584,59 +654,58 @@ private fun CollapsiblePicker(
                 )
             }
 
-            if (expandMedia) {
+            if (mediaOpen) {
                 items(Mapping.mediaActions, key = { "med_${it.first}" }) { (action, label) ->
                     val selected = action == current
+                    val prefix = if (selected) "●  " else "    "
                     Button(
                         onClick = { onSelect(action) },
                         label = {
                             Text(
-                                label,
+                                "$prefix$label",
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         },
-                        colors = if (selected) {
-                            ButtonDefaults.buttonColors(containerColor = UltraOrange, contentColor = Color.White)
-                        } else {
-                            ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color.White)
-                        },
+                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 14.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }
             }
 
             // 3. Installed Apps collapsible section
+            val appsOpen = expandedSection == "apps"
             item(key = "sec_apps") {
-                val arrow = if (expandApps) "▼" else "▶"
+                val arrow = if (appsOpen) "▼" else "▶"
                 Button(
-                    onClick = { expandApps = !expandApps },
+                    onClick = {
+                        expandedSection = if (appsOpen) "" else "apps"
+                    },
+                    shape = folderShape,
+                    border = if (appsOpen || isApp) folderBorderOpen else folderBorderClosed,
                     label = {
                         Text(
-                            "$arrow  Installed Apps",
-                            fontWeight = FontWeight.Bold,
+                            "$arrow  INSTALLED APPS",
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.ExtraBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
                         Text(
-                            if (isApp) "Selected: $currentLabel" else "${apps.size} watch apps",
-                            color = if (isApp) UltraOrange else Color(0xFF9EA7B8),
+                            if (isApp) "Active: $currentLabel" else "${apps.size} watch apps",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateFolder,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isApp) UltraOrange else Color(0xFF9EA7B8)
-                    ),
+                    colors = if (appsOpen || isApp) folderOpenColors else folderClosedColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -644,7 +713,7 @@ private fun CollapsiblePicker(
                 )
             }
 
-            if (expandApps) {
+            if (appsOpen) {
                 items(apps, key = { it.action }) { app ->
                     val selected = app.action == current
                     Button(
@@ -655,7 +724,7 @@ private fun CollapsiblePicker(
                                     bitmap = app.icon,
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(24.dp)
+                                        .size(22.dp)
                                         .clip(CircleShape)
                                 )
                             }
@@ -663,20 +732,17 @@ private fun CollapsiblePicker(
                         label = {
                             Text(
                                 app.label,
+                                style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
                             )
                         },
-                        colors = if (selected) {
-                            ButtonDefaults.buttonColors(containerColor = UltraOrange, contentColor = Color.White)
-                        } else {
-                            ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color.White)
-                        },
+                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp)
+                            .padding(horizontal = 14.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }
@@ -687,19 +753,17 @@ private fun CollapsiblePicker(
                 val selected = current == "none"
                 Button(
                     onClick = { onSelect("none") },
+                    shape = folderShape,
+                    border = if (selected) folderBorderOpen else folderBorderClosed,
                     label = {
                         Text(
-                            "Nothing (Disabled)",
+                            if (selected) "●  Nothing (Disabled)" else "Nothing (Disabled)",
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = if (selected) {
-                        ButtonDefaults.buttonColors(containerColor = UltraOrange, contentColor = Color.White)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color(0xFF9EA7B8))
-                    },
+                    colors = if (selected) optionSelectedColors else folderClosedColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
