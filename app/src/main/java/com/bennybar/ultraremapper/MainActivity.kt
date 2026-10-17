@@ -1,15 +1,29 @@
 package com.bennybar.ultraremapper
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
@@ -24,6 +38,19 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 
+private val UltraOrange = Color(0xFFFF5500)
+
+private fun isAccessibilityServiceEnabled(context: Context): Boolean {
+    val expected = ComponentName(context, BottomButtonService::class.java)
+    val enabledServices = Settings.Secure.getString(
+        context.contentResolver,
+        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    ) ?: return false
+    return enabledServices.split(':')
+        .mapNotNull { ComponentName.unflattenFromString(it) }
+        .any { it == expected }
+}
+
 /** Settings: pick what each Action button gesture does. */
 class MainActivity : ComponentActivity() {
 
@@ -32,11 +59,43 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 AppScaffold {
-                    val nav = rememberSwipeDismissableNavController()
-                    SwipeDismissableNavHost(navController = nav, startDestination = "home") {
-                        composable("home") { Home(onPick = { nav.navigate("pick/$it") }) }
-                        composable("pick/{gesture}") {
-                            Picker(it.arguments?.getString("gesture")!!, onDone = { nav.popBackStack() })
+                    val context = LocalContext.current
+                    val lifecycleOwner = LocalLifecycleOwner.current
+                    var a11yEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled(context)) }
+                    var dismissedOnboarding by remember { mutableStateOf(false) }
+
+                    DisposableEffect(lifecycleOwner) {
+                        val observer = LifecycleEventObserver { _, event ->
+                            if (event == Lifecycle.Event.ON_RESUME) {
+                                a11yEnabled = isAccessibilityServiceEnabled(context)
+                            }
+                        }
+                        lifecycleOwner.lifecycle.addObserver(observer)
+                        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+                    }
+
+                    if (!a11yEnabled && !dismissedOnboarding) {
+                        AccessibilityOnboarding(
+                            onOpenSettings = {
+                                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                            },
+                            onSkip = { dismissedOnboarding = true }
+                        )
+                    } else {
+                        val nav = rememberSwipeDismissableNavController()
+                        SwipeDismissableNavHost(navController = nav, startDestination = "home") {
+                            composable("home") {
+                                Home(
+                                    a11yEnabled = a11yEnabled,
+                                    onOpenA11ySettings = {
+                                        context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+                                    },
+                                    onPick = { nav.navigate("pick/$it") }
+                                )
+                            }
+                            composable("pick/{gesture}") {
+                                Picker(it.arguments?.getString("gesture")!!, onDone = { nav.popBackStack() })
+                            }
                         }
                     }
                 }
@@ -46,11 +105,69 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun Home(onPick: (String) -> Unit) {
+private fun AccessibilityOnboarding(onOpenSettings: () -> Unit, onSkip: () -> Unit) {
+    val state = rememberScalingLazyListState()
+    ScreenScaffold(scrollState = state) { padding ->
+        ScalingLazyColumn(state = state, contentPadding = padding) {
+            item {
+                ListHeader {
+                    Text("Setup Required", textAlign = TextAlign.Center)
+                }
+            }
+            item {
+                Text(
+                    text = "Enable Ultra2 Remapper in Accessibility Settings so button presses work reliably.",
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+            item {
+                Button(
+                    onClick = onOpenSettings,
+                    label = { Text("Enable Accessibility", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = UltraOrange,
+                        contentColor = Color.White
+                    ),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            item {
+                Button(
+                    onClick = onSkip,
+                    label = { Text("Continue to Settings", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    colors = ButtonDefaults.filledTonalButtonColors(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun Home(a11yEnabled: Boolean, onOpenA11ySettings: () -> Unit, onPick: (String) -> Unit) {
     val context = LocalContext.current
     val state = rememberScalingLazyListState()
     ScreenScaffold(scrollState = state) { padding ->
         ScalingLazyColumn(state = state, contentPadding = padding) {
+            if (!a11yEnabled) {
+                item {
+                    Button(
+                        onClick = onOpenA11ySettings,
+                        label = { Text("Enable Accessibility") },
+                        secondaryLabel = { Text("Tap to activate service", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = UltraOrange,
+                            contentColor = Color.White,
+                            secondaryContentColor = Color.White.copy(alpha = 0.85f)
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
             for ((title, gestures) in listOf("Action Button" to Mapping.actionGestures, "Bottom Button" to Mapping.bottomGestures)) {
                 item { ListHeader { Text(title) } }
                 items(gestures) { (gesture, name) ->
