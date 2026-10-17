@@ -12,7 +12,6 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,14 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +53,8 @@ import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.RadioButton
+import androidx.wear.compose.material3.RadioButtonDefaults
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
@@ -69,7 +68,6 @@ import kotlinx.coroutines.withContext
 
 private val UltraOrange = Color(0xFFFF5500)
 private val SlateCard = Color(0xFF1F232A)
-private val SlateFolder = Color(0xFF282E38)
 private val SlateHighlight = Color(0xFF2B313B)
 private val WarnAmber = Color(0xFFFF9800)
 
@@ -229,12 +227,24 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("pick/{gesture}") { entry ->
                             val gesture = entry.arguments?.getString("gesture")!!
-                            CollapsiblePicker(
+                            ActionPicker(
+                                gesture = gesture,
+                                appsCount = installedApps.size,
+                                onOpenAppList = { nav.navigate("pick_app/$gesture") },
+                                onSelect = { action ->
+                                    Mapping.set(context, gesture, action)
+                                    nav.popBackStack()
+                                }
+                            )
+                        }
+                        composable("pick_app/{gesture}") { entry ->
+                            val gesture = entry.arguments?.getString("gesture")!!
+                            AppListPicker(
                                 gesture = gesture,
                                 apps = installedApps,
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
-                                    nav.popBackStack()
+                                    nav.popBackStack("home", inclusive = false)
                                 }
                             )
                         }
@@ -291,7 +301,7 @@ private fun Home(
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = PaddingValues(top = 26.dp, bottom = 72.dp, start = 10.dp, end = 10.dp)
+            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
         ) {
             if (updateInfo != null) {
                 item(key = "update_banner") {
@@ -401,14 +411,14 @@ private fun Home(
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_quick_button),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(32.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "ORANGE BUTTON",
-                            color = UltraOrange,
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.ExtraBold
+                            text = "Action Button",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -437,11 +447,14 @@ private fun Home(
                 )
             }
 
+            item(key = "section_spacer") {
+                Spacer(modifier = Modifier.height(18.dp))
+            }
+
             item(key = "hdr_bottom") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
@@ -453,14 +466,14 @@ private fun Home(
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_bottom_button),
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp)
+                            modifier = Modifier.size(32.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "BOTTOM BUTTON",
-                            color = Color(0xFFD5DCE6),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.ExtraBold
+                            text = "Bottom Button",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
@@ -493,62 +506,36 @@ private fun Home(
 }
 
 @Composable
-private fun CollapsiblePicker(
+private fun ActionPicker(
     gesture: String,
-    apps: List<AppEntry>,
+    appsCount: Int,
+    onOpenAppList: () -> Unit,
     onSelect: (String) -> Unit,
 ) {
     val context = LocalContext.current
     val current = remember(gesture) { Mapping.get(context, gesture) }
     val currentLabel = remember(current) { Mapping.label(context, current) }
     val title = remember(gesture) { Mapping.gestures.toMap()[gesture] ?: gesture }
-
-    val isSamsung = remember(current) { Mapping.samsungActions.any { it.first == current } }
-    val isMedia = remember(current) { Mapping.mediaActions.any { it.first == current } }
     val isApp = remember(current) { current.startsWith("app:") }
-
-    val initialExpanded = remember(current) {
-        when {
-            isSamsung -> "samsung"
-            isMedia -> "media"
-            isApp -> "apps"
-            else -> ""
-        }
-    }
-    var expandedSection by rememberSaveable { mutableStateOf(initialExpanded) }
 
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
-    // Category Folder Header styling (distinct bordered card with orange/slate frame)
-    val folderShape = remember { RoundedCornerShape(14.dp) }
-    val folderBorderOpen = remember { BorderStroke(1.5.dp, UltraOrange) }
-    val folderBorderClosed = remember { BorderStroke(1.dp, Color(0xFF3E4756)) }
-    val folderOpenColors = ButtonDefaults.buttonColors(
-        containerColor = Color(0xFF141820),
-        contentColor = UltraOrange,
-        secondaryContentColor = Color.White
-    )
-    val folderClosedColors = ButtonDefaults.buttonColors(
-        containerColor = Color(0xFF141820),
-        contentColor = Color(0xFFD5DCE6),
-        secondaryContentColor = Color(0xFF8A93A2)
-    )
-
-    // Child Option styling (inset pill items)
-    val optionSelectedColors = ButtonDefaults.buttonColors(
-        containerColor = UltraOrange,
-        contentColor = Color.White
-    )
-    val optionUnselectedColors = ButtonDefaults.buttonColors(
-        containerColor = Color(0xFF232830),
-        contentColor = Color(0xFFE6ECF5)
+    val radioColors = RadioButtonDefaults.radioButtonColors(
+        selectedContainerColor = SlateCard,
+        selectedContentColor = Color.White,
+        selectedSecondaryContentColor = UltraOrange,
+        selectedControlColor = UltraOrange,
+        unselectedContainerColor = SlateCard,
+        unselectedContentColor = Color.White,
+        unselectedSecondaryContentColor = Color(0xFF9EA7B8),
+        unselectedControlColor = Color(0xFF8A93A2)
     )
 
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = PaddingValues(top = 26.dp, bottom = 72.dp, start = 10.dp, end = 10.dp)
+            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
         ) {
             item(key = "picker_title") {
                 ListHeader(
@@ -561,33 +548,27 @@ private fun CollapsiblePicker(
                 }
             }
 
-            // 1. Samsung Functions collapsible section
-            val samsungOpen = expandedSection == "samsung"
-            item(key = "sec_samsung") {
-                val arrow = if (samsungOpen) "▼" else "▶"
-                Button(
-                    onClick = {
-                        expandedSection = if (samsungOpen) "" else "samsung"
-                    },
-                    shape = folderShape,
-                    border = if (samsungOpen || isSamsung) folderBorderOpen else folderBorderClosed,
+            // Open App row at the top (navigates to app list with real icons)
+            item(key = "open_app_entry") {
+                RadioButton(
+                    selected = isApp,
+                    onSelect = onOpenAppList,
                     label = {
                         Text(
-                            "$arrow  SAMSUNG FUNCTIONS",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.ExtraBold,
+                            "Open App…",
+                            fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
                     secondaryLabel = {
                         Text(
-                            if (isSamsung) "Active: $currentLabel" else "${Mapping.samsungActions.size} options",
+                            if (isApp) currentLabel else "Choose from $appsCount apps ›",
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = if (samsungOpen || isSamsung) folderOpenColors else folderClosedColors,
+                    colors = radioColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -595,175 +576,157 @@ private fun CollapsiblePicker(
                 )
             }
 
-            if (samsungOpen) {
-                items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, label) ->
-                    val selected = action == current
-                    val prefix = if (selected) "●  " else "    "
-                    Button(
-                        onClick = { onSelect(action) },
-                        label = {
-                            Text(
-                                "$prefix$label",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp)
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-            }
-
-            // 2. Media & Volume collapsible section
-            val mediaOpen = expandedSection == "media"
-            item(key = "sec_media") {
-                val arrow = if (mediaOpen) "▼" else "▶"
-                Button(
-                    onClick = {
-                        expandedSection = if (mediaOpen) "" else "media"
-                    },
-                    shape = folderShape,
-                    border = if (mediaOpen || isMedia) folderBorderOpen else folderBorderClosed,
-                    label = {
-                        Text(
-                            "$arrow  MEDIA & VOLUME",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    secondaryLabel = {
-                        Text(
-                            if (isMedia) "Active: $currentLabel" else "KDE Connect, Play/Pause, Vol…",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (mediaOpen || isMedia) folderOpenColors else folderClosedColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            if (mediaOpen) {
-                items(Mapping.mediaActions, key = { "med_${it.first}" }) { (action, label) ->
-                    val selected = action == current
-                    val prefix = if (selected) "●  " else "    "
-                    Button(
-                        onClick = { onSelect(action) },
-                        label = {
-                            Text(
-                                "$prefix$label",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp)
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-            }
-
-            // 3. Installed Apps collapsible section
-            val appsOpen = expandedSection == "apps"
-            item(key = "sec_apps") {
-                val arrow = if (appsOpen) "▼" else "▶"
-                Button(
-                    onClick = {
-                        expandedSection = if (appsOpen) "" else "apps"
-                    },
-                    shape = folderShape,
-                    border = if (appsOpen || isApp) folderBorderOpen else folderBorderClosed,
-                    label = {
-                        Text(
-                            "$arrow  INSTALLED APPS",
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    secondaryLabel = {
-                        Text(
-                            if (isApp) "Active: $currentLabel" else "${apps.size} watch apps",
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (appsOpen || isApp) folderOpenColors else folderClosedColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            if (appsOpen) {
-                items(apps, key = { it.action }) { app ->
-                    val selected = app.action == current
-                    Button(
-                        onClick = { onSelect(app.action) },
-                        icon = if (app.icon != null) {
-                            {
-                                Image(
-                                    bitmap = app.icon,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .size(22.dp)
-                                        .clip(CircleShape)
-                                )
-                            }
-                        } else null,
-                        label = {
-                            Text(
-                                app.label,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        colors = if (selected) optionSelectedColors else optionUnselectedColors,
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp)
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-            }
-
-            // 4. Disabled / Nothing option
-            item(key = "sec_none") {
+            item(key = "none_entry") {
                 val selected = current == "none"
-                Button(
-                    onClick = { onSelect("none") },
-                    shape = folderShape,
-                    border = if (selected) folderBorderOpen else folderBorderClosed,
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect("none") },
                     label = {
                         Text(
-                            if (selected) "●  Nothing (Disabled)" else "Nothing (Disabled)",
+                            "Nothing",
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
                     },
-                    colors = if (selected) optionSelectedColors else folderClosedColors,
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "hdr_samsung") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text("Samsung Functions", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, label) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            label,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "hdr_media") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text("Media & Volume", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            items(Mapping.mediaActions, key = { "med_${it.first}" }) { (action, label) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            label,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppListPicker(
+    gesture: String,
+    apps: List<AppEntry>,
+    onSelect: (String) -> Unit,
+) {
+    val context = LocalContext.current
+    val current = remember(gesture) { Mapping.get(context, gesture) }
+    val columnState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+
+    val radioColors = RadioButtonDefaults.radioButtonColors(
+        selectedContainerColor = SlateCard,
+        selectedContentColor = Color.White,
+        selectedControlColor = UltraOrange,
+        unselectedContainerColor = SlateCard,
+        unselectedContentColor = Color.White,
+        unselectedControlColor = Color(0xFF8A93A2)
+    )
+
+    ScreenScaffold(scrollState = columnState) { _ ->
+        TransformingLazyColumn(
+            state = columnState,
+            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
+        ) {
+            item(key = "app_list_hdr") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text("Select App", color = UltraOrange, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                }
+            }
+
+            items(apps, key = { it.action }) { app ->
+                val selected = app.action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(app.action) },
+                    icon = if (app.icon != null) {
+                        {
+                            Image(
+                                bitmap = app.icon,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                            )
+                        }
+                    } else null,
+                    label = {
+                        Text(
+                            app.label,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = radioColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
