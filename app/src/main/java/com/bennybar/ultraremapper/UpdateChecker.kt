@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
+import androidx.wear.remote.interactions.RemoteActivityHelper
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -81,14 +83,16 @@ object UpdateChecker {
         return false
     }
 
-    fun openReleasePage(context: Context, update: ReleaseUpdate) {
-        val url = update.apkDownloadUrl ?: update.htmlUrl
+    fun openReleaseOnPhone(context: Context, update: ReleaseUpdate) {
         try {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val remoteHelper = RemoteActivityHelper(context, executor)
+            val intent = Intent(Intent.ACTION_VIEW)
                 .addCategory(Intent.CATEGORY_BROWSABLE)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
-        } catch (ignored: Exception) {
+                .setData(Uri.parse(update.htmlUrl))
+            remoteHelper.startRemoteActivity(intent)
+            Toast.makeText(context, "Opened on phone", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, "Could not open on phone", Toast.LENGTH_SHORT).show()
         }
     }
 }

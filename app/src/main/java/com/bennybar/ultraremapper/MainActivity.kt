@@ -199,6 +199,10 @@ class MainActivity : ComponentActivity() {
                             Home(
                                 setup = setup,
                                 updateInfo = updateInfo,
+                                onOpenUpdateDetails = {
+                                    updateInfo?.let { UpdateChecker.openReleaseOnPhone(context, it) }
+                                    nav.navigate("update_details")
+                                },
                                 onOpenA11ySettings = {
                                     try {
                                         context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
@@ -224,6 +228,15 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onPick = { nav.navigate("pick/$it") }
                             )
+                        }
+                        composable("update_details") {
+                            val info = updateInfo
+                            if (info != null) {
+                                UpdateDetailsScreen(
+                                    update = info,
+                                    onOpenOnPhone = { UpdateChecker.openReleaseOnPhone(context, info) }
+                                )
+                            }
                         }
                         composable("pick/{gesture}") { entry ->
                             val gesture = entry.arguments?.getString("gesture")!!
@@ -259,6 +272,7 @@ class MainActivity : ComponentActivity() {
 private fun Home(
     setup: SetupState,
     updateInfo: ReleaseUpdate?,
+    onOpenUpdateDetails: () -> Unit,
     onOpenA11ySettings: () -> Unit,
     onOpenAppInfo: () -> Unit,
     onOpenNotifListeners: () -> Unit,
@@ -306,7 +320,7 @@ private fun Home(
             if (updateInfo != null) {
                 item(key = "update_banner") {
                     Button(
-                        onClick = { UpdateChecker.openReleasePage(context, updateInfo) },
+                        onClick = onOpenUpdateDetails,
                         label = {
                             Text(
                                 "Update v${updateInfo.versionName} available",
@@ -316,7 +330,7 @@ private fun Home(
                             )
                         },
                         secondaryLabel = {
-                            Text("Check GitHub release", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text("Tap for changelog & phone link", maxLines = 1, overflow = TextOverflow.Ellipsis)
                         },
                         colors = orangeColors,
                         transformation = SurfaceTransformation(transformationSpec),
@@ -736,3 +750,110 @@ private fun AppListPicker(
         }
     }
 }
+
+@Composable
+private fun UpdateDetailsScreen(
+    update: ReleaseUpdate,
+    onOpenOnPhone: () -> Unit,
+) {
+    val columnState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+    val cleanNotes = remember(update.releaseNotes) {
+        update.releaseNotes
+            .lines()
+            .map { it.trim().removePrefix("###").removePrefix("##").removePrefix("#").trim() }
+            .filter { it.isNotEmpty() }
+            .map { it.replace("**", "") }
+    }
+
+    ScreenScaffold(scrollState = columnState) { _ ->
+        TransformingLazyColumn(
+            state = columnState,
+            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
+        ) {
+            item(key = "upd_title") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        "Update v${update.versionName}",
+                        color = UltraOrange,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            item(key = "upd_open_phone") {
+                Button(
+                    onClick = onOpenOnPhone,
+                    label = {
+                        Text("Open on Phone", fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    secondaryLabel = {
+                        Text("Opens GitHub release page", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = UltraOrange,
+                        contentColor = Color.White,
+                        secondaryContentColor = Color.White.copy(alpha = 0.9f)
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "upd_adb_hint") {
+                Button(
+                    onClick = {},
+                    label = {
+                        Text("Install via ADB", fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    secondaryLabel = {
+                        Text("adb install -r ultra-remapper-v${update.versionName}.apk", maxLines = 2, overflow = TextOverflow.Ellipsis)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White,
+                        secondaryContentColor = Color(0xFF9EA7B8)
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            if (cleanNotes.isNotEmpty()) {
+                item(key = "upd_notes_hdr") {
+                    ListHeader(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp)
+                            .transformedHeight(this, transformationSpec),
+                        transformation = SurfaceTransformation(transformationSpec)
+                    ) {
+                        Text("What's New", color = Color.White, fontWeight = FontWeight.Bold)
+                    }
+                }
+                items(cleanNotes, key = { it }) { line ->
+                    Text(
+                        text = line,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFFD5DCE6),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 2.dp)
+                            .transformedHeight(this, transformationSpec)
+                    )
+                }
+            }
+        }
+    }
+}
+
