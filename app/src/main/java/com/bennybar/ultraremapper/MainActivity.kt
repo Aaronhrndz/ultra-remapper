@@ -329,6 +329,26 @@ private fun Home(
         }
     }
 
+    val allConfiguredActions = remember(actionRows, bottomRows) {
+        (actionRows.map { it.third.first } + bottomRows.map { it.third.first }).toSet()
+    }
+
+    val needsA11y = remember(allConfiguredActions, bottomRows) {
+        bottomRows.any { it.third.first != "none" } || allConfiguredActions.contains("flashlight")
+    }
+    val needsSecureSettings = remember(allConfiguredActions) {
+        allConfiguredActions.any { it in setOf("glove_mode", "lte_toggle", "adb_mode") }
+    }
+    val needsMediaBridge = remember(allConfiguredActions) {
+        allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
+    }
+
+    val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
+            (!setup.actionRouted) ||
+            (!setup.overlayAllowed) ||
+            (!setup.mediaListenerEnabled && needsMediaBridge) ||
+            (!setup.secureSettingsGranted && needsSecureSettings)
+
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
@@ -358,7 +378,7 @@ private fun Home(
                 }
             }
 
-            if (!setup.allReady) {
+            if (hasPendingRequiredAction) {
                 item(key = "diag_header") {
                     ListHeader(
                         modifier = Modifier
@@ -367,20 +387,6 @@ private fun Home(
                         transformation = SurfaceTransformation(transformationSpec)
                     ) {
                         Text(context.getString(R.string.diag_header_status), color = UltraOrange, fontWeight = FontWeight.Bold)
-                    }
-                }
-                if (!setup.a11yEnabled) {
-                    item(key = "diag_a11y") {
-                        Button(
-                            onClick = onOpenA11ySettings,
-                            label = { Text(context.getString(R.string.diag_a11y_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text(context.getString(R.string.diag_a11y_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
-                            transformation = SurfaceTransformation(transformationSpec),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .transformedHeight(this, transformationSpec)
-                        )
                     }
                 }
                 if (!setup.actionRouted) {
@@ -411,7 +417,21 @@ private fun Home(
                         )
                     }
                 }
-                if (!setup.mediaListenerEnabled) {
+                if (!setup.a11yEnabled && needsA11y) {
+                    item(key = "diag_a11y") {
+                        Button(
+                            onClick = onOpenA11ySettings,
+                            label = { Text(context.getString(R.string.diag_a11y_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_a11y_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            colors = orangeColors,
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                        )
+                    }
+                }
+                if (!setup.mediaListenerEnabled && needsMediaBridge) {
                     item(key = "diag_media") {
                         Button(
                             onClick = onOpenNotifListeners,
@@ -425,7 +445,7 @@ private fun Home(
                         )
                     }
                 }
-                if (!setup.secureSettingsGranted) {
+                if (!setup.secureSettingsGranted && needsSecureSettings) {
                     item(key = "diag_secure") {
                         Button(
                             onClick = {},

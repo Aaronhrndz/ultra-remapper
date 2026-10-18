@@ -54,14 +54,14 @@
     - Dedicated app submenu with real circular app icons for every installed launcher app.
 - **Multilingual Support**:
   - Full UI and action translations in **English**, **Español**, **Deutsch**, and **Français**.
-- **Live Diagnostics**:
-  - Action Required banner (*"Acciones necesarias"*) verifies Accessibility service, Quick Button route, Overlay permission, and Secure Settings in real time.
+- **Smart Contextual Diagnostics**:
+  - Action Required banners (*"Acciones necesarias"*) appear only if the user's selected actions actually demand elevated permissions (e.g. Accessibility only for bottom button/flashlight boost, Secure Settings only for glove/LTE/sideload mode). Basic app launches and Samsung stock actions require zero extra permissions.
 
 ---
 
 ## Download & Installation
 
-Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v0.9.0.apk`).
+Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v1.0.0.apk`).
 
 ### One-Time Setup via Wireless ADB
 
