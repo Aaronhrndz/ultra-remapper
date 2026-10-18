@@ -24,6 +24,7 @@ object Mapping {
     val samsungActions = listOf(
         "flashlight" to R.string.action_flashlight,
         "shealth_workout" to R.string.action_shealth_workout,
+        "shealth_route" to R.string.action_shealth_route,
         "shealth_exercises" to R.string.action_shealth_exercises,
         "shealth_pick_workout" to R.string.action_shealth_pick_workout,
         "stopwatch" to R.string.action_stopwatch,
@@ -127,6 +128,7 @@ object Mapping {
             "find_phone" -> triggerFindPhone(context, backToHome)
             "ha_assist" -> triggerHaAssist(context, backToHome)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
+            "shealth_route" -> launchRouteMode(context, backToHome)
             "shealth_exercises" -> launchComponent(
                 context,
                 "com.samsung.android.wear.shealth",
@@ -209,6 +211,31 @@ object Mapping {
                 appCtx.startActivity(intentGoogleFind)
             } catch (_: Exception) {
             }
+        }
+    }
+
+    private fun launchRouteMode(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+        // 1. Direct Activity intent for Samsung Health Route Mode (Tile / Detail)
+        val routeIntent = Intent()
+            .setComponent(ComponentName("com.samsung.android.wear.shealth", "com.samsung.android.wear.shealth.app.exercise.view.setting.route.tile.ExerciseTileRouteNoDataDetailActivity"))
+            .setAction("com.samsung.android.wear.shealth.intent.action.ACTION_VIEW_TILE_EXERCISE_ROUTE_NO_DATA_DETAILS")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+
+        try {
+            appCtx.startActivity(routeIntent)
+            return
+        } catch (_: Exception) {
+        }
+
+        // 2. Fallback: Target settings with route action
+        try {
+            val targetIntent = Intent("com.samsung.android.wear.shealth.intent.action.ACTION_VIEW_EXERCISE_SETTING_ROUTE_LIST")
+                .setPackage("com.samsung.android.wear.shealth")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            appCtx.startActivity(targetIntent)
+        } catch (_: Exception) {
         }
     }
 

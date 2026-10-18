@@ -311,29 +311,33 @@ object UtilityActions {
 
         Thread {
             val audio = appCtx.getSystemService(AudioManager::class.java)
-            val prevVol = audio?.getStreamVolume(AudioManager.STREAM_RING) ?: 10
-            val maxVol = audio?.getStreamMaxVolume(AudioManager.STREAM_RING) ?: 15
+            val prevAlarm = audio?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 10
+            val prevRing = audio?.getStreamVolume(AudioManager.STREAM_RING) ?: 10
+            val maxAlarm = audio?.getStreamMaxVolume(AudioManager.STREAM_ALARM) ?: 15
+            val maxRing = audio?.getStreamMaxVolume(AudioManager.STREAM_RING) ?: 15
+            val maxMusic = audio?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 15
+
             try {
-                // Set maximum volume on RING/ALARM stream which drivers the main watch speaker at 100%
-                audio?.setStreamVolume(AudioManager.STREAM_RING, maxVol, 0)
-                audio?.setStreamVolume(AudioManager.STREAM_MUSIC, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
+                // Set volume on all speaker output channels to hardware ceiling
+                audio?.setStreamVolume(AudioManager.STREAM_ALARM, maxAlarm, 0)
+                audio?.setStreamVolume(AudioManager.STREAM_RING, maxRing, 0)
+                audio?.setStreamVolume(AudioManager.STREAM_MUSIC, maxMusic, 0)
 
                 val sampleRate = 44100
-                val durationSec = 8
+                val durationSec = 7
                 val numSamples = sampleRate * durationSec
                 val samples = ShortArray(numSamples)
-                val freq = 165.0 // Optimal mechanical resonance frequency for wearable speaker diaphragm water displacement
+                val freq = 165.0
 
                 for (i in 0 until numSamples) {
                     val t = i.toDouble() / sampleRate
-                    // Pulse envelope: 0.6s loud push, 0.15s pause so water drops roll off grille
-                    val cycle = t % 0.75
-                    val env = if (cycle < 0.60) 1.0 else 0.05
-                    // Pure fundamental 165 Hz sine wave + mild 2nd harmonic (330 Hz) for maximum acoustic displacement without harsh distortion
+                    // Pulsing cadence: 0.5s tone, 0.1s silence
+                    val cycle = t % 0.60
+                    val env = if (cycle < 0.50) 1.0 else 0.0
                     val fundamental = sin(2.0 * PI * freq * t)
-                    val secondHarmonic = 0.25 * sin(2.0 * PI * (freq * 2.0) * t)
-                    val wave = (fundamental + secondHarmonic) / 1.25 * env
-                    samples[i] = (wave * Short.MAX_VALUE).toInt().toShort()
+                    val secondHarmonic = 0.30 * sin(2.0 * PI * (freq * 2.0) * t)
+                    val sample = ((fundamental + secondHarmonic) / 1.30 * env).coerceIn(-1.0, 1.0)
+                    samples[i] = (sample * 32767.0).toInt().toShort()
                 }
 
                 val track = AudioTrack.Builder()
@@ -341,6 +345,7 @@ object UtilityActions {
                         AudioAttributes.Builder()
                             .setUsage(AudioAttributes.USAGE_ALARM)
                             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                            .setFlags(AudioAttributes.FLAG_AUDIBILITY_ENFORCED)
                             .build()
                     )
                     .setAudioFormat(
@@ -354,12 +359,12 @@ object UtilityActions {
                     .setTransferMode(AudioTrack.MODE_STATIC)
                     .build()
 
+                track.setVolume(1.0f)
                 track.write(samples, 0, samples.size)
                 track.play()
 
                 val vib = appCtx.getSystemService(Vibrator::class.java)
-                // Synchronized vibration pulses with the sound bursts
-                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 600, 150, 600, 150, 600, 150, 600, 150, 600, 150, 600, 150, 600), -1))
+                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 500, 100, 500, 100, 500, 100, 500, 100, 500, 100, 500), -1))
 
                 Thread.sleep(durationSec * 1000L)
                 track.stop()
@@ -367,7 +372,8 @@ object UtilityActions {
             } catch (_: Exception) {
             } finally {
                 try {
-                    audio?.setStreamVolume(AudioManager.STREAM_RING, prevVol, 0)
+                    audio?.setStreamVolume(AudioManager.STREAM_ALARM, prevAlarm, 0)
+                    audio?.setStreamVolume(AudioManager.STREAM_RING, prevRing, 0)
                 } catch (_: Exception) {
                 }
                 waterEjectRunning = false

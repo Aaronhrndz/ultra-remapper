@@ -15,8 +15,23 @@
     <string name="choose_from_apps">Choose from %d apps ›</string>
     <string name="app_not_installed">App not installed</string>
 
+    <string name="diag_header_status">Action Required</string>
+    <string name="diag_a11y_title">Enable Accessibility</string>
+    <string name="diag_a11y_sub">Bottom button &amp; Flashlight Boost</string>
+    <string name="diag_route_title">Quick Button Route Off</string>
+    <string name="diag_route_sub">Run ADB setup step 3</string>
+    <string name="diag_overlay_title">Overlay Permission Off</string>
+    <string name="diag_overlay_sub">Run ADB setup step 4</string>
+    <string name="diag_media_title">Media Bridge Off</string>
+    <string name="diag_media_sub">Enable for Media Controls</string>
     <string name="diag_secure_settings">Secure Settings Missing</string>
-    <string name="diag_secure_settings_sub">Run ADB command step 7</string>
+    <string name="diag_secure_settings_sub">Grant permission via ADB</string>
+    <string name="update_available">Update Available</string>
+    <string name="update_details_title">Update v%s</string>
+    <string name="update_install_watch">Update on Watch</string>
+    <string name="update_install_watch_sub">Direct download &amp; install</string>
+    <string name="update_open_phone">Open on Phone</string>
+    <string name="update_open_phone_sub">Opens GitHub release page</string>
     <!-- Gestures -->
     <string name="gesture_single">Single press</string>
     <string name="gesture_double">Double press</string>
@@ -25,6 +40,7 @@
     <!-- Samsung Actions -->
     <string name="action_flashlight">Flashlight (Boost)</string>
     <string name="action_shealth_workout">Samsung Health (Workout)</string>
+    <string name="action_shealth_route">Route Workout Mode</string>
     <string name="action_shealth_exercises">Exercise List</string>
     <string name="action_shealth_pick_workout">Pick Quick Workout</string>
     <string name="action_stopwatch">Stopwatch</string>

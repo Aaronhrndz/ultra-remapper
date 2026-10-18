@@ -15,8 +15,23 @@
     <string name="choose_from_apps">Elegir entre %d apps ›</string>
     <string name="app_not_installed">App no instalada</string>
 
+    <string name="diag_header_status">Acciones necesarias</string>
+    <string name="diag_a11y_title">Activar Accesibilidad</string>
+    <string name="diag_a11y_sub">Botón inferior y boost linterna</string>
+    <string name="diag_route_title">Enrutado de botón inactivo</string>
+    <string name="diag_route_sub">Configura el botón rápido en Ajustes</string>
+    <string name="diag_overlay_title">Falta permiso de superposición</string>
+    <string name="diag_overlay_sub">Concede permiso en Ajustes de apps</string>
+    <string name="diag_media_title">Control multimedia inactivo</string>
+    <string name="diag_media_sub">Activar acceso a notificaciones</string>
     <string name="diag_secure_settings">Falta Secure Settings</string>
-    <string name="diag_secure_settings_sub">Ejecuta el paso 7 de ADB</string>
+    <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
+    <string name="update_available">Actualización disponible</string>
+    <string name="update_details_title">Actualización v%s</string>
+    <string name="update_install_watch">Actualizar en el Reloj</string>
+    <string name="update_install_watch_sub">Descargar e instalar directamente</string>
+    <string name="update_open_phone">Abrir descarga en el teléfono</string>
+    <string name="update_open_phone_sub">Abre la release de GitHub en el móvil</string>
     <!-- Gestures -->
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>
@@ -25,6 +40,7 @@
     <!-- Samsung Actions -->
     <string name="action_flashlight">Linterna (Boost)</string>
     <string name="action_shealth_workout">Samsung Health (Entreno)</string>
+    <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
     <string name="action_shealth_exercises">Lista de Ejercicios</string>
     <string name="action_shealth_pick_workout">Elegir Ejercicio Rápido</string>
     <string name="action_stopwatch">Cronómetro</string>

@@ -366,15 +366,15 @@ private fun Home(
                             .transformedHeight(this, transformationSpec),
                         transformation = SurfaceTransformation(transformationSpec)
                     ) {
-                        Text("Setup Status", color = WarnAmber)
+                        Text(context.getString(R.string.diag_header_status), color = UltraOrange, fontWeight = FontWeight.Bold)
                     }
                 }
                 if (!setup.a11yEnabled) {
                     item(key = "diag_a11y") {
                         Button(
                             onClick = onOpenA11ySettings,
-                            label = { Text("Enable Accessibility", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text("Bottom button & Flashlight Boost", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            label = { Text(context.getString(R.string.diag_a11y_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_a11y_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -387,8 +387,8 @@ private fun Home(
                     item(key = "diag_route") {
                         Button(
                             onClick = onOpenAppInfo,
-                            label = { Text("Quick Button Route Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text("Run ADB setup step 3", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            label = { Text(context.getString(R.string.diag_route_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_route_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -401,8 +401,8 @@ private fun Home(
                     item(key = "diag_overlay") {
                         Button(
                             onClick = onOpenAppInfo,
-                            label = { Text("Overlay Permission Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text("Run ADB setup step 4", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            label = { Text(context.getString(R.string.diag_overlay_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_overlay_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -415,8 +415,8 @@ private fun Home(
                     item(key = "diag_media") {
                         Button(
                             onClick = onOpenNotifListeners,
-                            label = { Text("Media Bridge Off", maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text("Enable for KDE Connect", maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            label = { Text(context.getString(R.string.diag_media_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_media_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = highlightColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -431,13 +431,16 @@ private fun Home(
                             onClick = {},
                             label = { Text(context.getString(R.string.diag_secure_settings), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = highlightColors,
+                            colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .transformedHeight(this, transformationSpec)
                         )
                     }
+                }
+                item(key = "diag_bottom_spacer") {
+                    Spacer(modifier = Modifier.height(20.dp))
                 }
             }
 
@@ -456,7 +459,7 @@ private fun Home(
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_quick_button),
                             contentDescription = null,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(48.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -511,7 +514,7 @@ private fun Home(
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_bottom_button),
                             contentDescription = null,
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(48.dp)
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
@@ -924,6 +927,10 @@ private fun UpdateDetailsScreen(
             .map { it.replace("**", "") }
     }
 
+    val context = LocalContext.current
+    var downloadProgress by remember { mutableStateOf("") }
+    val isDownloading = downloadProgress.isNotEmpty()
+
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
@@ -937,7 +944,7 @@ private fun UpdateDetailsScreen(
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
                     Text(
-                        "Update v${update.versionName}",
+                        context.getString(R.string.update_details_title, update.versionName),
                         color = UltraOrange,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
@@ -945,19 +952,51 @@ private fun UpdateDetailsScreen(
                 }
             }
 
-            item(key = "upd_open_phone") {
+            item(key = "upd_install_watch") {
                 Button(
-                    onClick = onOpenOnPhone,
+                    onClick = {
+                        if (!isDownloading) {
+                            UpdateChecker.downloadAndInstallOnWatch(context, update) { status ->
+                                downloadProgress = status
+                            }
+                        }
+                    },
                     label = {
-                        Text("Open on Phone", fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(
+                            if (isDownloading) downloadProgress else context.getString(R.string.update_install_watch),
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     },
                     secondaryLabel = {
-                        Text("Opens GitHub release page", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(context.getString(R.string.update_install_watch_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = UltraOrange,
                         contentColor = Color.White,
                         secondaryContentColor = Color.White.copy(alpha = 0.9f)
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "upd_open_phone") {
+                Button(
+                    onClick = onOpenOnPhone,
+                    label = {
+                        Text(context.getString(R.string.update_open_phone), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    secondaryLabel = {
+                        Text(context.getString(R.string.update_open_phone_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White,
+                        secondaryContentColor = Color(0xFF9EA7B8)
                     ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier

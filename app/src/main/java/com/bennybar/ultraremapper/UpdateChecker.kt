@@ -8,6 +8,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.wear.remote.interactions.RemoteActivityHelper
 import org.json.JSONObject
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.concurrent.Executors
@@ -93,6 +94,80 @@ object UpdateChecker {
             Toast.makeText(context, "Opened on phone", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Could not open on phone", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    fun downloadAndInstallOnWatch(context: Context, update: ReleaseUpdate, onProgress: (String) -> Unit = {}) {
+        val appCtx = context.applicationContext
+        val apkUrl = update.apkDownloadUrl
+        if (apkUrl.isNullOrEmpty()) {
+            openReleaseOnPhone(context, update)
+            return
+        }
+
+        executor.execute {
+            try {
+                mainHandler.post { onProgress("Downloading APK…") }
+                val url = URL(apkUrl)
+                val conn = (url.openConnection() as HttpURLConnection).apply {
+                    instanceFollowRedirects = true
+                    connectTimeout = 15000
+                    readTimeout = 30000
+                }
+                if (conn.responseCode in 300..399) {
+                    val redirectUrl = conn.getHeaderField("Location")
+                    if (!redirectUrl.isNullOrEmpty()) {
+                        val redirConn = URL(redirectUrl).openConnection() as HttpURLConnection
+                        redirConn.connectTimeout = 15000
+                        redirConn.readTimeout = 30000
+                        installFromConnection(appCtx, redirConn, update.versionName, onProgress)
+                        return@execute
+                    }
+                }
+                installFromConnection(appCtx, conn, update.versionName, onProgress)
+            } catch (e: Exception) {
+                mainHandler.post {
+                    Toast.makeText(appCtx, "Download error: ${e.message}", Toast.LENGTH_LONG).show()
+                    onProgress("")
+                }
+            }
+        }
+    }
+
+    private fun installFromConnection(
+        context: Context,
+        conn: HttpURLConnection,
+        version: String,
+        onProgress: (String) -> Unit
+    ) {
+        val cacheDir = File(context.cacheDir, "updates").apply { mkdirs() }
+        val apkFile = File(cacheDir, "ultra-remapper-v$version.apk")
+        if (apkFile.exists()) apkFile.delete()
+
+        conn.inputStream.use { input ->
+            apkFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        mainHandler.post {
+            onProgress("Launching installer…")
+            try {
+                val apkUri: Uri = androidx.core.content.FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    apkFile
+                )
+                val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(apkUri, "application/vnd.android.package-archive")
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                context.startActivity(installIntent)
+            } catch (e: Exception) {
+                Toast.makeText(context, "Install failed: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+            onProgress("")
         }
     }
 }

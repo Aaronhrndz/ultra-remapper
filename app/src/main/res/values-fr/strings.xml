@@ -5,13 +5,32 @@
     <string name="hdr_center_button">Bouton Central</string>
     <string name="hdr_bottom_button">Bouton Inférieur</string>
     <string name="hdr_samsung">Fonctions Samsung</string>
-    <string name="hdr_utility">Utilitaires Pro</string>
+    <string name="hdr_utility">Utilitaires</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Médias et Volume</string>
     <string name="open_app">Ouvrir une app…</string>
     <string name="nothing">Aucune action</string>
     <string name="select_app">Sélectionner une app</string>
     <string name="choose_from_apps">Choisir parmi %d apps ›</string>
+    <string name="app_not_installed">App non installée</string>
+
+    <string name="diag_header_status">Actions requises</string>
+    <string name="diag_a11y_title">Activer l’Accessibilité</string>
+    <string name="diag_a11y_sub">Bouton inférieur &amp; boost lampe</string>
+    <string name="diag_route_title">Routage du bouton inactif</string>
+    <string name="diag_route_sub">Configurer dans les Paramètres</string>
+    <string name="diag_overlay_title">Permission de superposition requise</string>
+    <string name="diag_overlay_sub">Autoriser dans Infos sur l’app</string>
+    <string name="diag_media_title">Contrôle multimédia inactif</string>
+    <string name="diag_media_sub">Activer l’accès aux notifications</string>
+    <string name="diag_secure_settings">Paramètres sécurisés manquants</string>
+    <string name="diag_secure_settings_sub">Accorder la permission via ADB</string>
+    <string name="update_available">Mise à jour disponible</string>
+    <string name="update_details_title">Mise à jour v%s</string>
+    <string name="update_install_watch">Mettre à jour sur la montre</string>
+    <string name="update_install_watch_sub">Téléchargement et installation directe</string>
+    <string name="update_open_phone">Ouvrir sur le téléphone</string>
+    <string name="update_open_phone_sub">Ouvre la page de version GitHub</string>
 
     <string name="gesture_single">Simple appui</string>
     <string name="gesture_double">Double appui</string>
@@ -19,6 +38,7 @@
 
     <string name="action_flashlight">Lampe torche (Boost)</string>
     <string name="action_shealth_workout">Samsung Health (Entraînement)</string>
+    <string name="action_shealth_route">Mode Itinéraire (Samsung Health)</string>
     <string name="action_shealth_exercises">Liste d’exercices</string>
     <string name="action_shealth_pick_workout">Choisir un entraînement</string>
     <string name="action_stopwatch">Chronomètre</string>
