@@ -19,6 +19,14 @@
   <img src="https://img.shields.io/badge/platform-Wear%20OS%205%2B-3DDC84?style=flat-square" alt="Wear OS" />
 </p>
 
+<p align="center">
+  <img src="docs/captura2.png" width="180" alt="Quick Button Mapping" />
+  <img src="docs/captura4.png" width="180" alt="Action Selector" />
+  <img src="docs/captura3.png" width="180" alt="Bottom Button Mapping" />
+  <img src="docs/captura.png" width="180" alt="OTA Update Detection" />
+  <img src="docs/captura1.png" width="180" alt="In-Watch Installer" />
+</p>
+
 ---
 
 ## Features
