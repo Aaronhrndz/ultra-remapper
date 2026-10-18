@@ -25,20 +25,21 @@
 
 - **Orange Quick Button & Bottom Button**:
   - Independently map **Single Press**, **Double Press**, and **Long Press** on the Orange Quick Button, plus **Long Press** on the Bottom Button (preserving short press for *Back*).
+- **Direct In-Watch Updates (Autonomous OTA)**:
+  - Automatic GitHub release detection with a one-tap direct download and in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
 - **Categorized Action Picker**:
   - **Smart Utilities**:
     - **Save Parking Spot & Navigate to Car**: Saves exact GPS coordinates with 1 press and opens Google Maps in walking navigation mode (`google.navigation:q=LAT,LON&mode=w`).
     - **Sideload / Keep-Awake Mode**: Keeps the screen awake and prevents WiFi/ADB timeout when installing apps over wireless ADB, preventing re-prompting for lock screen PINs.
     - **Touch Sensitivity (Glove Mode)**: Toggles Samsung high-sensitivity screen mode for gloves or wet hands.
-    - **Galaxy Buds Controller**: Quick shortcut to Samsung Buds settings, ambient sound, and noise controls.
     - **Red Flashlight (Max)**: Full-screen red light at 100% brightness (tactical night vision preserving).
     - **Do Not Disturb**: Quick toggle for DND with tactile vibration feedback.
-    - **Water Eject Speaker**: Plays a 165 Hz acoustic wave at maximum volume with vibration pulses to expel water from the speaker grille.
+    - **Water Eject Speaker**: High-resonance 165 Hz pulsing acoustic wave at maximum hardware volume with vibration pulses to expel water droplets from the speaker grille.
     - **LTE & Mobile Data**: Toggle cellular connectivity on LTE watch variants.
-  - **Home Assistant**:
-    - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app.
-    - **Open Home Assistant**: Launches Home Assistant Companion on your watch.
+  - **Home Assistant Companion**:
+    - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app without needing server logins on the watch.
   - **Samsung Functions**:
+    - **Route Workout Mode**: Direct shortcut to launch Samsung Health Route & GPX workout view (`shealth_route`).
     - **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12`), and toggles off cleanly on repeat press. Uses dynamic `serviceInfo` event subscription so idle battery impact is **zero**.
     - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
     - **Samsung Health Workout**: Triggers Samsung's native Quick Button workout start/pause (`ActionButtonService`).
@@ -53,15 +54,14 @@
     - Dedicated app submenu with real circular app icons for every installed launcher app.
 - **Multilingual Support**:
   - Full UI and action translations in **English**, **Español**, **Deutsch**, and **Français**.
-- **Live Setup Diagnostics & Automatic GitHub Update Check**:
-  - Verifies Action Button route, Overlay permission, Accessibility service, and Media Bridge listener in real time on launch.
-  - Automatically checks GitHub Releases on launch and displays an in-app banner when a new version is available.
+- **Live Diagnostics**:
+  - Action Required banner (*"Acciones necesarias"*) verifies Accessibility service, Quick Button route, Overlay permission, and Secure Settings in real time.
 
 ---
 
 ## Download & Installation
 
-Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v0.8.0.apk`).
+Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v0.9.0.apk`).
 
 ### One-Time Setup via Wireless ADB
 
@@ -72,7 +72,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    ```
 2. Install the APK:
    ```bash
-   adb install -r ultra-remapper-v0.8.0.apk
+   adb install -r ultra-remapper-v0.9.0.apk
    ```
 3. Route the Orange Quick Button to **Ultra Remapper**:
    ```bash
