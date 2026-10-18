@@ -311,30 +311,29 @@ object UtilityActions {
 
         Thread {
             val audio = appCtx.getSystemService(AudioManager::class.java)
-            val prevVol = audio?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 10
-            val maxVol = audio?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 15
+            val prevVol = audio?.getStreamVolume(AudioManager.STREAM_RING) ?: 10
+            val maxVol = audio?.getStreamMaxVolume(AudioManager.STREAM_RING) ?: 15
             try {
-                audio?.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol, 0)
+                // Set maximum volume on RING/ALARM stream which drivers the main watch speaker at 100%
+                audio?.setStreamVolume(AudioManager.STREAM_RING, maxVol, 0)
+                audio?.setStreamVolume(AudioManager.STREAM_MUSIC, audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0)
+
                 val sampleRate = 44100
-                val durationSec = 6
+                val durationSec = 8
                 val numSamples = sampleRate * durationSec
                 val samples = ShortArray(numSamples)
+                val freq = 165.0 // Optimal mechanical resonance frequency for wearable speaker diaphragm water displacement
 
-                // High-intensity acoustic water displacement pattern:
-                // Alternates aggressive 160 Hz bass push with high-frequency 1000-1400 Hz shrill siren bursts + pulses
                 for (i in 0 until numSamples) {
                     val t = i.toDouble() / sampleRate
-                    val cycle = (t % 0.8) // 0.8s cycle
-                    val sampleVal: Double = if (cycle < 0.45) {
-                        // Strong 165 Hz square-like clipped sine wave for physical diaphragm push
-                        val raw = sin(2.0 * PI * 165.0 * t) * 1.5
-                        raw.coerceIn(-1.0, 1.0)
-                    } else {
-                        // Stridant frequency chirp from 800 Hz up to 1600 Hz (fast shrill vibration)
-                        val chirpFreq = 800.0 + ((cycle - 0.45) / 0.35) * 800.0
-                        sin(2.0 * PI * chirpFreq * t)
-                    }
-                    samples[i] = (sampleVal * Short.MAX_VALUE).toInt().toShort()
+                    // Pulse envelope: 0.6s loud push, 0.15s pause so water drops roll off grille
+                    val cycle = t % 0.75
+                    val env = if (cycle < 0.60) 1.0 else 0.05
+                    // Pure fundamental 165 Hz sine wave + mild 2nd harmonic (330 Hz) for maximum acoustic displacement without harsh distortion
+                    val fundamental = sin(2.0 * PI * freq * t)
+                    val secondHarmonic = 0.25 * sin(2.0 * PI * (freq * 2.0) * t)
+                    val wave = (fundamental + secondHarmonic) / 1.25 * env
+                    samples[i] = (wave * Short.MAX_VALUE).toInt().toShort()
                 }
 
                 val track = AudioTrack.Builder()
@@ -359,7 +358,8 @@ object UtilityActions {
                 track.play()
 
                 val vib = appCtx.getSystemService(Vibrator::class.java)
-                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 450, 80, 450, 80, 450, 80, 450, 80, 450), -1))
+                // Synchronized vibration pulses with the sound bursts
+                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 600, 150, 600, 150, 600, 150, 600, 150, 600, 150, 600, 150, 600), -1))
 
                 Thread.sleep(durationSec * 1000L)
                 track.stop()
@@ -367,7 +367,7 @@ object UtilityActions {
             } catch (_: Exception) {
             } finally {
                 try {
-                    audio?.setStreamVolume(AudioManager.STREAM_MUSIC, prevVol, 0)
+                    audio?.setStreamVolume(AudioManager.STREAM_RING, prevVol, 0)
                 } catch (_: Exception) {
                 }
                 waterEjectRunning = false

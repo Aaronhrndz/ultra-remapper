@@ -45,7 +45,6 @@ object Mapping {
 
     val homeAssistantActions = listOf(
         "ha_assist" to R.string.action_ha_assist,
-        "ha_open" to R.string.action_ha_open,
     )
 
     val mediaActions = listOf(
@@ -127,7 +126,6 @@ object Mapping {
             "lte_toggle" -> UtilityActions.toggleLteData(context)
             "find_phone" -> triggerFindPhone(context, backToHome)
             "ha_assist" -> triggerHaAssist(context, backToHome)
-            "ha_open" -> triggerHaOpen(context, backToHome)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
             "shealth_exercises" -> launchComponent(
                 context,
@@ -234,21 +232,6 @@ object Mapping {
             appCtx.startActivity(aliasIntent)
             return
         } catch (_: Exception) {
-            Toast.makeText(appCtx, appCtx.getString(R.string.toast_ha_not_installed), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun triggerHaOpen(context: Context, backToHome: Boolean) {
-        val appCtx = context.applicationContext
-        val intent = appCtx.packageManager.getLaunchIntentForPackage("io.homeassistant.companion.android")
-        if (intent != null) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (backToHome) intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
-            try {
-                appCtx.startActivity(intent)
-            } catch (_: Exception) {
-            }
-        } else {
             Toast.makeText(appCtx, appCtx.getString(R.string.toast_ha_not_installed), Toast.LENGTH_SHORT).show()
         }
     }
