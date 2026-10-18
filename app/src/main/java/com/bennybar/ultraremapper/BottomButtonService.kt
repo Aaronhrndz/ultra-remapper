@@ -136,8 +136,33 @@ class BottomButtonService : AccessibilityService() {
         return rootPkg == "com.samsung.android.watch.flashlight" || isFlashlightWindowActive
     }
 
+    fun isSamsungHealthWorkoutActive(): Boolean {
+        return try {
+            val root = rootInActiveWindow ?: return false
+            val pkg = root.packageName?.toString()
+            if (pkg != "com.samsung.android.wear.shealth") return false
+            // Check if active screen contains workout indicators (Lap, Duration, Pause, Calories)
+            val hasWorkoutNodes = root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/exercise_during_layout").isNotEmpty()
+                || root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/lap_count").isNotEmpty()
+                || root.findAccessibilityNodeInfosByText("Vuelta").isNotEmpty()
+                || root.findAccessibilityNodeInfosByText("Lap").isNotEmpty()
+                || root.findAccessibilityNodeInfosByText("Runde").isNotEmpty()
+                || root.findAccessibilityNodeInfosByText("Tour").isNotEmpty()
+                || root.className?.toString()?.contains("Exercise", ignoreCase = true) == true
+            hasWorkoutNodes
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     override fun onKeyEvent(event: KeyEvent): Boolean {
+        if (!Mapping.isEnabled(this)) return false
         if (event.keyCode != KeyEvent.KEYCODE_STEM_PRIMARY) return false
+
+        // During an active Samsung Health workout, yield bottom single press completely to Samsung
+        if (isSamsungHealthWorkoutActive()) {
+            return false
+        }
 
         val hasDoubleTap = Mapping.get(this, "bottom_double_tap") != "none"
         val hasTripleTap = Mapping.get(this, "bottom_triple_tap") != "none"

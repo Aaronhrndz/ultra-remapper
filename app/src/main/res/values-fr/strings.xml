@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
+    <!-- Master Switch -->
+    <string name="master_switch_title">Remapper Actif</string>
+    <string name="master_switch_enabled">Mappage des boutons activé</string>
+    <string name="master_switch_disabled">Désactivé (Boutons par défaut)</string>
 
     <string name="hdr_center_button">Bouton Central</string>
     <string name="hdr_bottom_button">Bouton Inférieur</string>

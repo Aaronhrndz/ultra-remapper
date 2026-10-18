@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
+    <!-- Master Switch -->
+    <string name="master_switch_title">Remapper Aktiv</string>
+    <string name="master_switch_enabled">Tastenbelegung aktiviert</string>
+    <string name="master_switch_disabled">Deaktiviert (Werkseinstellung)</string>
 
     <string name="hdr_center_button">Mittlere Taste</string>
     <string name="hdr_bottom_button">Untere Taste</string>

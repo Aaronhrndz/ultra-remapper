@@ -71,7 +71,15 @@ object Mapping {
         "bottom_long" to "app:com.google.android.apps.walletnfcrel",
     )
 
+    private const val KEY_APP_ENABLED = "remapper_master_enabled"
+
     private fun prefs(context: Context) = context.getSharedPreferences("mapping", Context.MODE_PRIVATE)
+
+    fun isEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_APP_ENABLED, true)
+
+    fun setEnabled(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_APP_ENABLED, enabled).apply()
 
     fun get(context: Context, gesture: String): String =
         prefs(context).getString(gesture, defaults[gesture]) ?: "none"
@@ -317,6 +325,9 @@ object Mapping {
     }
 
     private fun triggerSamsungHealthQuickButton(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+
+        // 1. First try native ActionButtonService dispatch (stock system behavior)
         val svcIntent = Intent().apply {
             component = ComponentName(
                 "com.samsung.android.wear.shealth",
@@ -326,10 +337,24 @@ object Mapping {
             putExtra("ACTION_KEY_COUNT", 1)
         }
         try {
-            val started = context.startService(svcIntent)
+            val started = appCtx.startService(svcIntent)
             if (started != null) return
-        } catch (ignored: Exception) {
+        } catch (_: Exception) {
         }
+
+        // 2. Launch Samsung Health ExerciseListActivity with START_RECENT_WORKOUT action (opens favorites list)
+        try {
+            val listIntent = Intent("com.samsung.android.wear.shealth.intent.action.START_RECENT_WORKOUT").apply {
+                setPackage("com.samsung.android.wear.shealth")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            }
+            appCtx.startActivity(listIntent)
+            return
+        } catch (_: Exception) {
+        }
+
+        // 3. Fallback: ExerciseActivity
         launchComponent(
             context,
             "com.samsung.android.wear.shealth",

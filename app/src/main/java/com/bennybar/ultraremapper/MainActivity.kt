@@ -392,10 +392,43 @@ private fun Home(
             (!setup.secureSettingsGranted && needsSecureSettings)
 
     ScreenScaffold(scrollState = columnState) { _ ->
+        var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
+
         TransformingLazyColumn(
             state = columnState,
             contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
         ) {
+            item(key = "master_switch") {
+                Button(
+                    onClick = {
+                        val next = !isMasterEnabled
+                        isMasterEnabled = next
+                        Mapping.setEnabled(context, next)
+                    },
+                    label = {
+                        Text(
+                            context.getString(R.string.master_switch_title),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    secondaryLabel = {
+                        Text(
+                            if (isMasterEnabled) context.getString(R.string.master_switch_enabled)
+                            else context.getString(R.string.master_switch_disabled),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = if (isMasterEnabled) orangeColors else ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color.Gray),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
             if (updateInfo != null) {
                 item(key = "update_banner") {
                     Button(
