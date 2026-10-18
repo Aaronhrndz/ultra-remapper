@@ -6,14 +6,17 @@
     <string name="hdr_center_button">Botón Central</string>
     <string name="hdr_bottom_button">Botón Inferior</string>
     <string name="hdr_samsung">Funciones Samsung</string>
-    <string name="hdr_utility">Utilidades Pro</string>
+    <string name="hdr_utility">Utilidades</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Multimedia y Volumen</string>
     <string name="open_app">Abrir App…</string>
     <string name="nothing">Nada</string>
     <string name="select_app">Seleccionar App</string>
     <string name="choose_from_apps">Elegir entre %d apps ›</string>
+    <string name="app_not_installed">App no instalada</string>
 
+    <string name="diag_secure_settings">Falta Secure Settings</string>
+    <string name="diag_secure_settings_sub">Ejecuta el paso 7 de ADB</string>
     <!-- Gestures -->
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>
@@ -27,7 +30,7 @@
     <string name="action_stopwatch">Cronómetro</string>
     <string name="action_water_lock">Bloqueo de Agua</string>
     <string name="action_assistant">Asistente Digital</string>
-    <string name="action_find_phone">Buscar mi Teléfono</string>
+    <string name="action_find_phone">Hacer Sonar Teléfono</string>
 
     <!-- Utility Actions -->
     <string name="action_red_flashlight">Linterna Roja (Máx)</string>
@@ -38,7 +41,6 @@
     <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
     <string name="action_lte_toggle">LTE y Datos Móviles</string>
     <string name="action_glove_mode">Sensibilidad Táctil (Modo Guantes)</string>
-    <string name="action_buds_controller">Controlador Galaxy Buds</string>
 
     <!-- Home Assistant Actions -->
     <string name="action_ha_assist">Home Assistant Assist (Voz)</string>

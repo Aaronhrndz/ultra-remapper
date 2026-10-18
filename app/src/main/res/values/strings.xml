@@ -6,14 +6,17 @@
     <string name="hdr_center_button">Center Button</string>
     <string name="hdr_bottom_button">Bottom Button</string>
     <string name="hdr_samsung">Samsung Functions</string>
-    <string name="hdr_utility">Smart Utilities</string>
+    <string name="hdr_utility">Utilities</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Media &amp; Volume</string>
     <string name="open_app">Open App…</string>
     <string name="nothing">Nothing</string>
     <string name="select_app">Select App</string>
     <string name="choose_from_apps">Choose from %d apps ›</string>
+    <string name="app_not_installed">App not installed</string>
 
+    <string name="diag_secure_settings">Secure Settings Missing</string>
+    <string name="diag_secure_settings_sub">Run ADB command step 7</string>
     <!-- Gestures -->
     <string name="gesture_single">Single press</string>
     <string name="gesture_double">Double press</string>
@@ -27,18 +30,17 @@
     <string name="action_stopwatch">Stopwatch</string>
     <string name="action_water_lock">Water Lock</string>
     <string name="action_assistant">Digital Assistant</string>
-    <string name="action_find_phone">Find My Phone</string>
+    <string name="action_find_phone">Find My Phone (Ring)</string>
 
     <!-- Utility Actions -->
     <string name="action_red_flashlight">Red Flashlight (Max)</string>
     <string name="action_dnd_toggle">Do Not Disturb</string>
     <string name="action_save_parking">Save Parking Spot</string>
-    <string name="action_nav_parking">Navigate to Car</string>
+    <string name="action_nav_parking">Navigate to Car (Maps)</string>
     <string name="action_adb_mode">Sideload / Keep-Awake Mode</string>
     <string name="action_water_eject">Water Eject Speaker</string>
     <string name="action_lte_toggle">LTE &amp; Mobile Data</string>
     <string name="action_glove_mode">Touch Sensitivity (Glove Mode)</string>
-    <string name="action_buds_controller">Galaxy Buds Controller</string>
 
     <!-- Home Assistant Actions -->
     <string name="action_ha_assist">Home Assistant Assist</string>

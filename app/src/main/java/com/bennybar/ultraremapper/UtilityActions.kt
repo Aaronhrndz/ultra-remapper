@@ -316,20 +316,31 @@ object UtilityActions {
             try {
                 audio?.setStreamVolume(AudioManager.STREAM_MUSIC, maxVol, 0)
                 val sampleRate = 44100
-                val durationSec = 4
+                val durationSec = 6
                 val numSamples = sampleRate * durationSec
                 val samples = ShortArray(numSamples)
-                val freq = 165.0
+
+                // High-intensity acoustic water displacement pattern:
+                // Alternates aggressive 160 Hz bass push with high-frequency 1000-1400 Hz shrill siren bursts + pulses
                 for (i in 0 until numSamples) {
-                    // Pulse envelope every 0.5s for stronger water displacement
-                    val env = if ((i / (sampleRate / 2)) % 2 == 0) 1.0 else 0.35
-                    samples[i] = (sin(2.0 * PI * i * freq / sampleRate) * Short.MAX_VALUE * env).toInt().toShort()
+                    val t = i.toDouble() / sampleRate
+                    val cycle = (t % 0.8) // 0.8s cycle
+                    val sampleVal: Double = if (cycle < 0.45) {
+                        // Strong 165 Hz square-like clipped sine wave for physical diaphragm push
+                        val raw = sin(2.0 * PI * 165.0 * t) * 1.5
+                        raw.coerceIn(-1.0, 1.0)
+                    } else {
+                        // Stridant frequency chirp from 800 Hz up to 1600 Hz (fast shrill vibration)
+                        val chirpFreq = 800.0 + ((cycle - 0.45) / 0.35) * 800.0
+                        sin(2.0 * PI * chirpFreq * t)
+                    }
+                    samples[i] = (sampleVal * Short.MAX_VALUE).toInt().toShort()
                 }
 
                 val track = AudioTrack.Builder()
                     .setAudioAttributes(
                         AudioAttributes.Builder()
-                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setUsage(AudioAttributes.USAGE_ALARM)
                             .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                             .build()
                     )
@@ -348,7 +359,7 @@ object UtilityActions {
                 track.play()
 
                 val vib = appCtx.getSystemService(Vibrator::class.java)
-                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 600, 150, 600, 150, 600, 150, 600), -1))
+                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 450, 80, 450, 80, 450, 80, 450, 80, 450), -1))
 
                 Thread.sleep(durationSec * 1000L)
                 track.stop()

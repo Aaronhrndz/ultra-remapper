@@ -13,6 +13,7 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -118,14 +119,27 @@ private fun drawableToImageBitmap(drawable: Drawable, sizePx: Int = 56): ImageBi
     return bmp.asImageBitmap()
 }
 
+private fun hasSecureSettingsPermission(context: Context): Boolean =
+    context.checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED
+
+private fun isPackageInstalled(context: Context, pkg: String): Boolean =
+    try {
+        context.packageManager.getPackageInfo(pkg, 0)
+        true
+    } catch (_: Exception) {
+        false
+    }
+
 private data class SetupState(
     val actionRouted: Boolean,
     val overlayAllowed: Boolean,
     val a11yEnabled: Boolean,
     val mediaListenerEnabled: Boolean,
+    val secureSettingsGranted: Boolean,
+    val haInstalled: Boolean,
 ) {
     val allReady: Boolean
-        get() = actionRouted && overlayAllowed && a11yEnabled && mediaListenerEnabled
+        get() = actionRouted && overlayAllowed && a11yEnabled && mediaListenerEnabled && secureSettingsGranted
 }
 
 private fun readSetupState(context: Context): SetupState = SetupState(
@@ -133,6 +147,8 @@ private fun readSetupState(context: Context): SetupState = SetupState(
     overlayAllowed = Settings.canDrawOverlays(context),
     a11yEnabled = isAccessibilityServiceEnabled(context),
     mediaListenerEnabled = isNotificationListenerEnabled(context),
+    secureSettingsGranted = hasSecureSettingsPermission(context),
+    haInstalled = isPackageInstalled(context, "io.homeassistant.companion.android"),
 )
 
 private data class AppEntry(
@@ -243,6 +259,7 @@ class MainActivity : ComponentActivity() {
                             ActionPicker(
                                 gesture = gesture,
                                 appsCount = installedApps.size,
+                                haInstalled = setup.haInstalled,
                                 onOpenAppList = { nav.navigate("pick_app/$gesture") },
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
@@ -408,6 +425,20 @@ private fun Home(
                         )
                     }
                 }
+                if (!setup.secureSettingsGranted) {
+                    item(key = "diag_secure") {
+                        Button(
+                            onClick = {},
+                            label = { Text(context.getString(R.string.diag_secure_settings), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            colors = highlightColors,
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                        )
+                    }
+                }
             }
 
             item(key = "hdr_action") {
@@ -523,6 +554,7 @@ private fun Home(
 private fun ActionPicker(
     gesture: String,
     appsCount: Int,
+    haInstalled: Boolean,
     onOpenAppList: () -> Unit,
     onSelect: (String) -> Unit,
 ) {
@@ -547,10 +579,21 @@ private fun ActionPicker(
         unselectedControlColor = Color(0xFF8A93A2)
     )
 
+    val disabledRadioColors = RadioButtonDefaults.radioButtonColors(
+        selectedContainerColor = SlateCard.copy(alpha = 0.5f),
+        selectedContentColor = Color(0xFF6A717E),
+        selectedSecondaryContentColor = Color(0xFF5A606C),
+        selectedControlColor = Color(0xFF5A606C),
+        unselectedContainerColor = SlateCard.copy(alpha = 0.5f),
+        unselectedContentColor = Color(0xFF6A717E),
+        unselectedSecondaryContentColor = Color(0xFF5A606C),
+        unselectedControlColor = Color(0xFF4A505C)
+    )
+
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
+            contentPadding = PaddingValues(top = 22.dp, bottom = 80.dp, start = 8.dp, end = 8.dp)
         ) {
             item(key = "picker_title") {
                 ListHeader(
@@ -559,7 +602,13 @@ private fun ActionPicker(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text(title, color = UltraOrange, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text(
+                        title,
+                        color = UltraOrange,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
 
@@ -571,16 +620,18 @@ private fun ActionPicker(
                     label = {
                         Text(
                             context.getString(R.string.open_app),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     secondaryLabel = {
                         Text(
                             if (isApp) currentLabel else context.getString(R.string.choose_from_apps, appsCount),
+                            style = MaterialTheme.typography.bodySmall,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,
@@ -599,9 +650,10 @@ private fun ActionPicker(
                     label = {
                         Text(
                             context.getString(R.string.nothing),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,
@@ -612,16 +664,21 @@ private fun ActionPicker(
                 )
             }
 
-            // Utility Actions Section
+            // Utility Actions Section (separated with 20.dp top padding)
             item(key = "hdr_utility") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
+                        .padding(top = 20.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text(context.getString(R.string.hdr_utility), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        context.getString(R.string.hdr_utility),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -633,9 +690,10 @@ private fun ActionPicker(
                     label = {
                         Text(
                             context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,
@@ -646,16 +704,21 @@ private fun ActionPicker(
                 )
             }
 
-            // Home Assistant Section
+            // Home Assistant Section (separated with 20.dp top padding, grayed out if not installed)
             item(key = "hdr_home_assistant") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
+                        .padding(top = 20.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text(context.getString(R.string.hdr_home_assistant), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        context.getString(R.string.hdr_home_assistant),
+                        color = if (haInstalled) Color.White else Color(0xFF7A8392),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -663,16 +726,28 @@ private fun ActionPicker(
                 val selected = action == current
                 RadioButton(
                     selected = selected,
-                    onSelect = { onSelect(action) },
+                    enabled = haInstalled,
+                    onSelect = { if (haInstalled) onSelect(action) },
                     label = {
                         Text(
                             context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
-                    colors = radioColors,
+                    secondaryLabel = if (!haInstalled) {
+                        {
+                            Text(
+                                context.getString(R.string.app_not_installed),
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
+                            )
+                        }
+                    } else null,
+                    colors = if (haInstalled) radioColors else disabledRadioColors,
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -680,16 +755,21 @@ private fun ActionPicker(
                 )
             }
 
-            // Samsung Functions Section
+            // Samsung Functions Section (separated with 20.dp top padding)
             item(key = "hdr_samsung") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
+                        .padding(top = 20.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text(context.getString(R.string.hdr_samsung), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        context.getString(R.string.hdr_samsung),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -701,9 +781,10 @@ private fun ActionPicker(
                     label = {
                         Text(
                             context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,
@@ -714,16 +795,21 @@ private fun ActionPicker(
                 )
             }
 
-            // Media & Volume Section
+            // Media & Volume Section (separated with 20.dp top padding)
             item(key = "hdr_media") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
+                        .padding(top = 20.dp)
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text(context.getString(R.string.hdr_media), color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(
+                        context.getString(R.string.hdr_media),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
 
@@ -735,9 +821,10 @@ private fun ActionPicker(
                     label = {
                         Text(
                             context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,

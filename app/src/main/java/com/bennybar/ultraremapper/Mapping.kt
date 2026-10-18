@@ -36,7 +36,6 @@ object Mapping {
         "red_flashlight" to R.string.action_red_flashlight,
         "dnd_toggle" to R.string.action_dnd_toggle,
         "glove_mode" to R.string.action_glove_mode,
-        "buds_controller" to R.string.action_buds_controller,
         "save_parking" to R.string.action_save_parking,
         "nav_parking" to R.string.action_nav_parking,
         "adb_mode" to R.string.action_adb_mode,
@@ -121,7 +120,6 @@ object Mapping {
             "red_flashlight" -> toggleRedFlashlight(context)
             "dnd_toggle" -> toggleDoNotDisturb(context)
             "glove_mode" -> UtilityActions.toggleTouchSensitivity(context)
-            "buds_controller" -> triggerBudsController(context, backToHome)
             "save_parking" -> UtilityActions.saveParking(context)
             "nav_parking" -> UtilityActions.navigateToParking(context, backToHome)
             "adb_mode" -> UtilityActions.toggleAdbEasyMode(context)
@@ -166,42 +164,33 @@ object Mapping {
         }
     }
 
-    private fun triggerBudsController(context: Context, backToHome: Boolean) {
-        val appCtx = context.applicationContext
-        val budsIntent = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.watch.budscontroller")
-            ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            ?.apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
-        if (budsIntent != null) {
-            try {
-                appCtx.startActivity(budsIntent)
-                return
-            } catch (_: Exception) {
-            }
-        }
-        val direct = Intent(Intent.ACTION_MAIN)
-            .setClassName("com.samsung.android.watch.budscontroller", "com.samsung.android.watch.budscontroller.ui.main.BudsActivity")
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
-        try {
-            appCtx.startActivity(direct)
-        } catch (_: Exception) {
-        }
-    }
-
     private fun triggerFindPhone(context: Context, backToHome: Boolean) {
         val appCtx = context.applicationContext
-        // 1. Samsung Find on watch
-        val intentSamsungFind = Intent("com.samsung.android.app.find.ACTION_REMOTE_COMPANION_FINDING")
+        // 1. Samsung Find Quick Remote Companion finding (direct alert/ring)
+        val intentQuickFind = Intent("com.samsung.android.app.find.ACTION_REMOTE_COMPANION_FINDING")
             .setClassName("com.samsung.android.app.find", "com.samsung.android.app.find.uiview.main.disconnected.RemoteCompanionFindingActivity")
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .putExtra("extra_direct_alert", true)
+            .putExtra("is_quick_mode", true)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
         try {
-            appCtx.startActivity(intentSamsungFind)
+            appCtx.startActivity(intentQuickFind)
             return
         } catch (_: Exception) {
         }
 
-        // 2. Samsung Find Main Launcher
+        // 2. Samsung Find My Watch / Alert trigger
+        val alertIntent = Intent("com.samsung.android.watch.findmywatch.START_ALERT")
+            .setPackage("com.samsung.android.watch.findmywatch")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        try {
+            appCtx.startActivity(alertIntent)
+            return
+        } catch (_: Exception) {
+        }
+
+        // 3. Samsung Find Main Launcher fallback
         val intentFindLaunch = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.app.find")
         if (intentFindLaunch != null) {
             intentFindLaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -213,7 +202,7 @@ object Mapping {
             }
         }
 
-        // 3. Google Find My Phone Wear OS fallback
+        // 4. Google Find My Phone Wear OS
         val intentGoogleFind = appCtx.packageManager.getLaunchIntentForPackage("com.google.android.clockwork.findmyphone")
         if (intentGoogleFind != null) {
             intentGoogleFind.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
