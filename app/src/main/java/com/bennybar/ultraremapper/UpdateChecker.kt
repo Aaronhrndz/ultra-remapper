@@ -91,7 +91,7 @@ object UpdateChecker {
                 .addCategory(Intent.CATEGORY_BROWSABLE)
                 .setData(Uri.parse(update.htmlUrl))
             remoteHelper.startRemoteActivity(intent)
-            Toast.makeText(context, "Opened on phone", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.update_opened_phone), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(context, "Could not open on phone", Toast.LENGTH_SHORT).show()
         }
@@ -107,7 +107,7 @@ object UpdateChecker {
 
         executor.execute {
             try {
-                mainHandler.post { onProgress("Downloading APK…") }
+                mainHandler.post { onProgress(appCtx.getString(R.string.update_downloading)) }
                 val url = URL(apkUrl)
                 val conn = (url.openConnection() as HttpURLConnection).apply {
                     instanceFollowRedirects = true
@@ -151,7 +151,7 @@ object UpdateChecker {
         }
 
         mainHandler.post {
-            onProgress("Launching installer…")
+            onProgress(context.getString(R.string.update_launching))
             try {
                 val apkUri: Uri = androidx.core.content.FileProvider.getUriForFile(
                     context,

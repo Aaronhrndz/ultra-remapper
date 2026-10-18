@@ -25,12 +25,19 @@
     <string name="diag_media_sub">Activer l’accès aux notifications</string>
     <string name="diag_secure_settings">Paramètres sécurisés manquants</string>
     <string name="diag_secure_settings_sub">Accorder la permission via ADB</string>
+    <string name="update_banner_title">Mise à jour v%s disponible</string>
+    <string name="update_banner_sub">Toucher pour voir les nouveautés</string>
     <string name="update_available">Mise à jour disponible</string>
     <string name="update_details_title">Mise à jour v%s</string>
     <string name="update_install_watch">Mettre à jour sur la montre</string>
     <string name="update_install_watch_sub">Téléchargement et installation directe</string>
     <string name="update_open_phone">Ouvrir sur le téléphone</string>
     <string name="update_open_phone_sub">Ouvre la page de version GitHub</string>
+    <string name="update_adb_hint_title">Installer via ADB</string>
+    <string name="update_whats_new">Nouveautés</string>
+    <string name="update_downloading">Téléchargement de l’APK…</string>
+    <string name="update_launching">Ouverture de l’installateur…</string>
+    <string name="update_opened_phone">Ouvert sur le téléphone</string>
 
     <string name="gesture_single">Simple appui</string>
     <string name="gesture_double">Double appui</string>

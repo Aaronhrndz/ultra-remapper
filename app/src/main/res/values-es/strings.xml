@@ -26,12 +26,19 @@
     <string name="diag_media_sub">Activar acceso a notificaciones</string>
     <string name="diag_secure_settings">Falta Secure Settings</string>
     <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
+    <string name="update_banner_title">Actualización v%s disponible</string>
+    <string name="update_banner_sub">Toca para ver cambios e instalar</string>
     <string name="update_available">Actualización disponible</string>
     <string name="update_details_title">Actualización v%s</string>
     <string name="update_install_watch">Actualizar en el Reloj</string>
     <string name="update_install_watch_sub">Descargar e instalar directamente</string>
     <string name="update_open_phone">Abrir descarga en el teléfono</string>
     <string name="update_open_phone_sub">Abre la release de GitHub en el móvil</string>
+    <string name="update_adb_hint_title">Instalar por ADB</string>
+    <string name="update_whats_new">Novedades</string>
+    <string name="update_downloading">Descargando APK…</string>
+    <string name="update_launching">Abriendo instalador…</string>
+    <string name="update_opened_phone">Abierto en el teléfono</string>
     <!-- Gestures -->
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>

@@ -26,12 +26,19 @@
     <string name="diag_media_sub">Enable for Media Controls</string>
     <string name="diag_secure_settings">Secure Settings Missing</string>
     <string name="diag_secure_settings_sub">Grant permission via ADB</string>
+    <string name="update_banner_title">Update v%s available</string>
+    <string name="update_banner_sub">Tap for changelog &amp; direct install</string>
     <string name="update_available">Update Available</string>
     <string name="update_details_title">Update v%s</string>
     <string name="update_install_watch">Update on Watch</string>
     <string name="update_install_watch_sub">Direct download &amp; install</string>
     <string name="update_open_phone">Open on Phone</string>
     <string name="update_open_phone_sub">Opens GitHub release page</string>
+    <string name="update_adb_hint_title">Install via ADB</string>
+    <string name="update_whats_new">What’s New</string>
+    <string name="update_downloading">Downloading APK…</string>
+    <string name="update_launching">Launching installer…</string>
+    <string name="update_opened_phone">Opened on phone</string>
     <!-- Gestures -->
     <string name="gesture_single">Single press</string>
     <string name="gesture_double">Double press</string>

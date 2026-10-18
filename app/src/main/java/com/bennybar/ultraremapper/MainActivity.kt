@@ -360,14 +360,14 @@ private fun Home(
                         onClick = onOpenUpdateDetails,
                         label = {
                             Text(
-                                "Update v${updateInfo.versionName} available",
+                                context.getString(R.string.update_banner_title, updateInfo.versionName),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 fontWeight = FontWeight.Bold
                             )
                         },
                         secondaryLabel = {
-                            Text("Tap for changelog & phone link", maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(context.getString(R.string.update_banner_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
                         },
                         colors = orangeColors,
                         transformation = SurfaceTransformation(transformationSpec),
@@ -1029,7 +1029,7 @@ private fun UpdateDetailsScreen(
                 Button(
                     onClick = {},
                     label = {
-                        Text("Install via ADB", fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Text(context.getString(R.string.update_adb_hint_title), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     },
                     secondaryLabel = {
                         Text("adb install -r ultra-remapper-v${update.versionName}.apk", maxLines = 2, overflow = TextOverflow.Ellipsis)
@@ -1055,7 +1055,7 @@ private fun UpdateDetailsScreen(
                             .transformedHeight(this, transformationSpec),
                         transformation = SurfaceTransformation(transformationSpec)
                     ) {
-                        Text("What's New", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text(context.getString(R.string.update_whats_new), color = Color.White, fontWeight = FontWeight.Bold)
                     }
                 }
                 items(cleanNotes, key = { it }) { line ->

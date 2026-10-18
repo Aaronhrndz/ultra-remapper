@@ -25,12 +25,19 @@
     <string name="diag_media_sub">Benachrichtigungszugriff aktivieren</string>
     <string name="diag_secure_settings">Secure Settings fehlen</string>
     <string name="diag_secure_settings_sub">Berechtigung über ADB erteilen</string>
+    <string name="update_banner_title">Update v%s verfügbar</string>
+    <string name="update_banner_sub">Tippen für Changelog &amp; Installation</string>
     <string name="update_available">Update verfügbar</string>
     <string name="update_details_title">Update v%s</string>
     <string name="update_install_watch">Auf der Uhr aktualisieren</string>
     <string name="update_install_watch_sub">Direkter Download &amp; Installation</string>
     <string name="update_open_phone">Download auf dem Smartphone öffnen</string>
     <string name="update_open_phone_sub">Öffnet die GitHub-Releases auf dem Smartphone</string>
+    <string name="update_adb_hint_title">Über ADB installieren</string>
+    <string name="update_whats_new">Neuheiten</string>
+    <string name="update_downloading">APK wird heruntergeladen…</string>
+    <string name="update_launching">Installer wird geöffnet…</string>
+    <string name="update_opened_phone">Auf dem Smartphone geöffnet</string>
 
     <string name="gesture_single">Einmal drücken</string>
     <string name="gesture_double">Doppelt drücken</string>
