@@ -406,22 +406,50 @@ private fun Home(
                         Mapping.setEnabled(context, next)
                     },
                     label = {
-                        Text(
-                            context.getString(R.string.master_switch_title),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "Remap",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .width(36.dp)
+                                    .height(20.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isMasterEnabled) UltraOrange else Color(0xFF434954))
+                                    .padding(2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .align(if (isMasterEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                )
+                            }
+                        }
                     },
                     secondaryLabel = {
                         Text(
                             if (isMasterEnabled) context.getString(R.string.master_switch_enabled)
                             else context.getString(R.string.master_switch_disabled),
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            color = if (isMasterEnabled) UltraOrange else Color.Gray
                         )
                     },
-                    colors = if (isMasterEnabled) orangeColors else ButtonDefaults.buttonColors(containerColor = SlateCard, contentColor = Color.Gray),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White,
+                        secondaryContentColor = if (isMasterEnabled) UltraOrange else Color.Gray
+                    ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -470,7 +498,7 @@ private fun Home(
                             onClick = onOpenAppInfo,
                             label = { Text(context.getString(R.string.diag_route_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_route_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = highlightColors,
+                            colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -484,7 +512,7 @@ private fun Home(
                             onClick = onOpenAppInfo,
                             label = { Text(context.getString(R.string.diag_overlay_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_overlay_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = highlightColors,
+                            colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -512,7 +540,7 @@ private fun Home(
                             onClick = onOpenNotifListeners,
                             label = { Text(context.getString(R.string.diag_media_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_media_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = highlightColors,
+                            colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
