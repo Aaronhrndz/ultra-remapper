@@ -89,21 +89,12 @@ private fun isAccessibilityServiceEnabled(context: Context): Boolean {
 }
 
 private fun hasHardwareActionButton(context: Context): Boolean {
-    // 1. Check if Samsung's action button setting exists in global settings
-    val currentSetting = try {
-        Settings.Global.getString(context.contentResolver, "setting_action_button_press")
-    } catch (_: Throwable) {
-        null
-    }
-    if (currentSetting != null && currentSetting != "None/None" && currentSetting.isNotBlank()) return true
-
-    // 2. Fallback check for Galaxy Watch Ultra / Ultra 2 / Watch 8 Classic hardware signatures
-    // Watch 8 Classic (hypothetical SM-R10x / SM-L80x / Watch8 Classic) and Ultra (SM-L700, SM-L705, Ultra)
     val model = android.os.Build.MODEL.uppercase()
     val product = android.os.Build.PRODUCT.uppercase()
     val device = android.os.Build.DEVICE.uppercase()
-    val isExplicitUltra = listOf("ULTRA", "SM-L700", "SM-L705").any {
-        model.contains(it) || product.contains(it) || device.contains(it)
+    val ultraKeywords = listOf("ULTRA", "SM-L700", "SM-L705", "SM-L710", "SM-L715", "PROJECTV2UL")
+    val isExplicitUltra = ultraKeywords.any { kw ->
+        model.contains(kw) || product.contains(kw) || device.contains(kw)
     }
     val isWatch8Classic = (model.contains("CLASSIC") || product.contains("CLASSIC") || device.contains("CLASSIC")) &&
             (model.contains("8") || product.contains("8") || device.contains("8"))
@@ -119,7 +110,16 @@ private fun isActionButtonRouted(context: Context): Boolean {
     } catch (_: Throwable) {
         null
     }
-    return current == expected
+    if (current == expected) return true
+
+    // If app already has WRITE_SECURE_SETTINGS, auto-route silently!
+    if (hasSecureSettingsPermission(context)) {
+        try {
+            Settings.Global.putString(context.contentResolver, "setting_action_button_press", expected)
+            return true
+        } catch (_: Throwable) {}
+    }
+    return false
 }
 
 private fun isNotificationListenerEnabled(context: Context): Boolean {
