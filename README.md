@@ -74,16 +74,41 @@
 
 Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v1.0.0.apk`).
 
-### One-Time Setup via Wireless ADB
+### Permissions & Actions Matrix
+
+| Category | Action / Feature | Required Permission | Elevation Method | ADB Command / Setup |
+|---|---|---|---|---|
+| **Hardware** | Quick / Action Button (Orange) | Global Action Hook | One-time ADB Settings | `adb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService` |
+| **Hardware** | Bottom Button (Double, Triple & Long Press) | `ACCESSIBILITY` | Accessibility Settings or ADB | `adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService`<br/>`adb shell settings put secure accessibility_enabled 1` |
+| **System** | Background App / Activity Launch | `SYSTEM_ALERT_WINDOW` | ADB AppOps | `adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow` |
+| **System** | Standalone Background Service | Battery Whitelist | ADB Whitelist | `adb shell cmd deviceidle whitelist +com.bennybar.ultraremapper` |
+| **Utilities** | Wireless Debugging (ADB auto-toggle) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Enables Wi-Fi debugging switch automatically via accessibility node interaction |
+| **Utilities** | Keep Screen Awake (Sideload / ADB) | `WAKE_LOCK` | Auto-granted | No ADB command needed |
+| **Utilities** | Save Parking Spot & Navigate | `ACCESS_FINE_LOCATION` | Runtime prompt or ADB | `adb shell pm grant com.bennybar.ultraremapper android.permission.ACCESS_FINE_LOCATION` |
+| **Utilities** | Touch Sensitivity (Glove Mode) | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
+| **Utilities** | LTE & Mobile Data Toggle | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
+| **Utilities** | Do Not Disturb | `ACCESS_NOTIFICATION_POLICY` | Notification Policy Access | `adb shell cmd notification allow_listener ...` or In-App prompt |
+| **Utilities** | Red Flashlight (Max) | None | None | Launches full-screen composable light (no extra permissions needed) |
+| **Utilities** | Water Eject Speaker | `MODIFY_AUDIO_SETTINGS` | Auto-granted | Plays synthesized acoustic sweep at max stream volume |
+| **Samsung** | Flashlight (Boost brightness) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Monitors foreground window to step up brightness to level 12 |
+| **Samsung** | Stock Workout / Favorites | None | None | Triggers native `setting_action_button_press` hook directly |
+| **Samsung** | All Exercises, Route Workout | None | None | Direct package intent launch |
+| **Samsung** | Find My Phone, Stopwatch, Water Lock | None | None | Direct system intent launch |
+| **Media** | Bridged Phone Media Controls (KDE Connect, Spotify, YouTube) | `NotificationListenerService` | Notification Listener Access | `adb shell cmd notification allow_listener com.bennybar.ultraremapper/com.bennybar.ultraremapper.MediaControlService` |
+| **OTA Updates** | In-Watch Direct Installer | `REQUEST_INSTALL_PACKAGES` | Prompts on first OTA install | Uses Android `PackageInstaller` + `FileProvider` |
+
+---
+
+### Step-by-Step Setup via Wireless ADB
 
 1. Enable **Settings → Developer options → ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
    ```bash
    adb pair <WATCH_IP>:<PAIRING_PORT>
    adb connect <WATCH_IP>:<CONNECTION_PORT>
    ```
-2. Install the APK:
+2. Install the latest APK:
    ```bash
-   adb install -r ultra-remapper-v0.9.0.apk
+   adb install -r ultra-remapper-v1.3.2.apk
    ```
 3. Route the Orange Quick Button to **Ultra Remapper**:
    ```bash
@@ -94,7 +119,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow
    adb shell cmd deviceidle whitelist +com.bennybar.ultraremapper
    ```
-5. Enable the **Accessibility Service** (for Bottom Button long-press and Flashlight Boost/toggle):
+5. Enable the **Accessibility Service** (for Bottom Button multi-press and Flashlight Boost):
    ```bash
    adb shell appops set com.bennybar.ultraremapper ACCESSIBILITY Allow
    adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
