@@ -46,9 +46,9 @@
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Linterna (Boost)</string>
-    <string name="action_shealth_workout">Samsung Health (Entreno)</string>
+    <string name="action_shealth_workout">Entreno / Favoritos (Nativo)</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
-    <string name="action_shealth_exercises">Lista de Ejercicios</string>
+    <string name="action_shealth_exercises">Todos los Ejercicios (Lista)</string>
     <string name="action_shealth_pick_workout">Elegir Ejercicio Rápido</string>
     <string name="action_stopwatch">Cronómetro</string>
     <string name="action_water_lock">Bloqueo de Agua</string>

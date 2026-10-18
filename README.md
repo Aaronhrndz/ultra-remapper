@@ -5,8 +5,8 @@
 <h1 align="center">Ultra Remapper</h1>
 
 <p align="center">
-  <b>Remap the Orange Quick Button & Bottom Button on Samsung Galaxy Watch Ultra & Ultra 2 (Wear OS)</b><br/>
-  <sub>Samsung Flashlight Boost · Samsung Health Workouts · Water Lock · Bridged Media & KDE Connect · Launch Any App</sub>
+  <b>Hardware Button Remapper for Samsung Galaxy Watch Ultra, Ultra 2, Watch 8 Classic & Wear OS Watches</b><br/>
+  <sub>Dynamic Hardware Detection · Quick Button & Bottom Button Mapping · Samsung Flashlight Boost · Samsung Health Workouts & Favorites · Standalone OTA</sub>
 </p>
 
 <p align="center">
@@ -30,9 +30,11 @@
 ---
 
 ## Features
-
-- **Orange Quick Button & Bottom Button**:
-  - Independently map **Single Press**, **Double Press**, and **Long Press** on the Orange Quick Button, plus **Long Press** on the Bottom Button (preserving short press for *Back*).
+ 
+- **Hardware-Aware Button Remapping**:
+  - **Quick / Action Button (Center Button)**: On models equipped with a third physical key (**Galaxy Watch Ultra, Ultra 2, Watch 8 Classic**), independently remap **Single Press**, **Double Press**, and **Long Press**.
+  - **Dynamic Device Detection**: On standard 2-button watches without a physical center button (e.g. Galaxy Watch 4, 5, 6, 7), the center button configuration dynamically hides to keep the UI clean, while the **Bottom (Back) Button Long Press** remains fully customizable.
+  - **Bottom Button (Back Key)**: Remap **Long Press** on the bottom key across all supported Galaxy Watches while preserving the stock short-press for system-wide *Back* navigation.
 - **Direct In-Watch Updates (Autonomous OTA)**:
   - Automatic GitHub release detection with a one-tap direct download and in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
 - **Categorized Action Picker**:
@@ -42,19 +44,19 @@
     - **Touch Sensitivity (Glove Mode)**: Toggles Samsung high-sensitivity screen mode for gloves or wet hands.
     - **Red Flashlight (Max)**: Full-screen red light at 100% brightness (tactical night vision preserving).
     - **Do Not Disturb**: Quick toggle for DND with tactile vibration feedback.
-    - **Water Eject Speaker**: High-resonance 165 Hz pulsing acoustic wave at maximum hardware volume with vibration pulses to expel water droplets from the speaker grille.
+    - **Water Eject Speaker**: High-resonance acoustic wave (145 Hz -> 240 Hz sweep with envelope smoothing) at maximum hardware volume with synchronized vibration bursts to expel water droplets from the speaker grille.
     - **LTE & Mobile Data**: Toggle cellular connectivity on LTE watch variants.
-  - **Home Assistant Companion**:
-    - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app without needing server logins on the watch.
   - **Samsung Functions**:
+    - **Workout / Favorites (Stock)**: Triggers Samsung Health's native Quick Button hook (`ActionButtonService`), jumping straight into your pinned **Favorite Exercises** or starting your default exercise shortcut.
+    - **All Exercises (Full List)**: Direct shortcut to launch Samsung Health's root workout list (`ExerciseActivity`).
     - **Route Workout Mode**: Direct shortcut to launch Samsung Health Route & GPX workout view (`shealth_route`).
     - **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12`), and toggles off cleanly on repeat press. Uses dynamic `serviceInfo` event subscription so idle battery impact is **zero**.
     - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
-    - **Samsung Health Workout**: Triggers Samsung's native Quick Button workout start/pause (`ActionButtonService`).
-    - **Samsung Health Exercise List** & **Pick Quick Workout**: Jump straight into Samsung Health exercises or configure the native workout shortcut.
     - **Stopwatch**: Launches Samsung Stopwatch (`com.samsung.android.watch.stopwatch`).
     - **Water Lock**: Activates Samsung's native Water Lock mode (`StWaterLockSettingActivity`).
     - **Digital Assistant**: Triggers Google Assistant / Gemini (`ACTION_VOICE_COMMAND`).
+  - **Home Assistant Companion**:
+    - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app without needing server logins on the watch.
   - **Media & Volume (with Bridged Phone & KDE Connect Support)**:
     - **Play / Pause**, **Next Track**, **Previous Track**, **Volume Up**, **Volume Down**, and **Open Media Controller**.
     - Works with both local watch audio and **bridged phone media sessions** (including **KDE Connect** controlling a tablet or PC, Spotify, YouTube, etc.) via `MediaSessionManager` + `NotificationListenerService`.

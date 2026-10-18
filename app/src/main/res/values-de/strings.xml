@@ -44,9 +44,9 @@
     <string name="gesture_long">Lange drücken</string>
 
     <string name="action_flashlight">Taschenlampe (Boost)</string>
-    <string name="action_shealth_workout">Samsung Health (Training)</string>
+    <string name="action_shealth_workout">Training / Favoriten (Nativ)</string>
     <string name="action_shealth_route">Routen-Modus (Samsung Health)</string>
-    <string name="action_shealth_exercises">Trainingsliste</string>
+    <string name="action_shealth_exercises">Alle Übungen (Gesamtliste)</string>
     <string name="action_shealth_pick_workout">Schnell-Workout wählen</string>
     <string name="action_stopwatch">Stoppuhr</string>
     <string name="action_water_lock">Wassersperre</string>

@@ -83,7 +83,25 @@ private fun isAccessibilityServiceEnabled(context: Context): Boolean {
         .any { it == expected }
 }
 
+private fun hasHardwareActionButton(context: Context): Boolean {
+    // 1. Check if Samsung's action button setting exists in global settings
+    val currentSetting = try {
+        Settings.Global.getString(context.contentResolver, "setting_action_button_press")
+    } catch (_: Throwable) {
+        null
+    }
+    if (currentSetting != null) return true
+
+    // 2. Fallback check for Galaxy Watch Ultra / Ultra 2 / Watch 8 Classic hardware signatures
+    val model = android.os.Build.MODEL.uppercase()
+    val product = android.os.Build.PRODUCT.uppercase()
+    val device = android.os.Build.DEVICE.uppercase()
+    val ultraKeywords = listOf("ULTRA", "CLASSIC", "SM-L700", "SM-L705", "SM-R9", "SM-L3")
+    return ultraKeywords.any { kw -> model.contains(kw) || product.contains(kw) || device.contains(kw) }
+}
+
 private fun isActionButtonRouted(context: Context): Boolean {
+    if (!hasHardwareActionButton(context)) return true
     val expected = "${context.packageName}/${ActionButtonService::class.java.name}"
     val current = try {
         Settings.Global.getString(context.contentResolver, "setting_action_button_press")
@@ -131,6 +149,7 @@ private fun isPackageInstalled(context: Context, pkg: String): Boolean =
     }
 
 private data class SetupState(
+    val hasActionButton: Boolean,
     val actionRouted: Boolean,
     val overlayAllowed: Boolean,
     val a11yEnabled: Boolean,
@@ -139,10 +158,11 @@ private data class SetupState(
     val haInstalled: Boolean,
 ) {
     val allReady: Boolean
-        get() = actionRouted && overlayAllowed && a11yEnabled && mediaListenerEnabled && secureSettingsGranted
+        get() = (!hasActionButton || actionRouted) && overlayAllowed && a11yEnabled && mediaListenerEnabled && secureSettingsGranted
 }
 
 private fun readSetupState(context: Context): SetupState = SetupState(
+    hasActionButton = hasHardwareActionButton(context),
     actionRouted = isActionButtonRouted(context),
     overlayAllowed = Settings.canDrawOverlays(context),
     a11yEnabled = isAccessibilityServiceEnabled(context),
@@ -463,59 +483,61 @@ private fun Home(
                 }
             }
 
-            item(key = "hdr_action") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
+            if (setup.hasActionButton) {
+                item(key = "hdr_action") {
+                    ListHeader(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .transformedHeight(this, transformationSpec),
+                        transformation = SurfaceTransformation(transformationSpec)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_watch_quick_button),
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = context.getString(R.string.hdr_center_button),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_watch_quick_button),
+                                contentDescription = null,
+                                modifier = Modifier.size(48.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = context.getString(R.string.hdr_center_button),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
                 }
-            }
 
-            items(actionRows, key = { it.first }) { (gesture, name, actPair) ->
-                val (currentAction, currentLabel) = actPair
-                val isConfigured = currentAction != "none"
-                Button(
-                    onClick = { onPick(gesture) },
-                    label = {
-                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text(
-                            currentLabel,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
+                items(actionRows, key = { it.first }) { (gesture, name, actPair) ->
+                    val (currentAction, currentLabel) = actPair
+                    val isConfigured = currentAction != "none"
+                    Button(
+                        onClick = { onPick(gesture) },
+                        label = {
+                            Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        },
+                        secondaryLabel = {
+                            Text(
+                                currentLabel,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .transformedHeight(this, transformationSpec)
+                    )
+                }
 
-            item(key = "section_spacer") {
-                Spacer(modifier = Modifier.height(18.dp))
+                item(key = "section_spacer") {
+                    Spacer(modifier = Modifier.height(18.dp))
+                }
             }
 
             item(key = "hdr_bottom") {

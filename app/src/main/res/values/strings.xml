@@ -46,9 +46,9 @@
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Flashlight (Boost)</string>
-    <string name="action_shealth_workout">Samsung Health (Workout)</string>
+    <string name="action_shealth_workout">Workout / Favorites (Stock)</string>
     <string name="action_shealth_route">Route Workout Mode</string>
-    <string name="action_shealth_exercises">Exercise List</string>
+    <string name="action_shealth_exercises">All Exercises (Full List)</string>
     <string name="action_shealth_pick_workout">Pick Quick Workout</string>
     <string name="action_stopwatch">Stopwatch</string>
     <string name="action_water_lock">Water Lock</string>
