@@ -11,38 +11,54 @@ import android.provider.Settings
 import android.view.KeyEvent
 import android.widget.Toast
 
-/** Gesture → action assignments, categorized into Samsung Factory Actions, Media & Volume, and Installed Apps. */
+/** Gesture → action assignments, categorized into Samsung Factory Actions, Utilities, Home Assistant, Media & Volume, and Installed Apps. */
 object Mapping {
     val actionGestures = listOf(
-        "single" to "Single press",
-        "double" to "Double press",
-        "long" to "Long press"
+        "single" to R.string.gesture_single,
+        "double" to R.string.gesture_double,
+        "long" to R.string.gesture_long,
     )
-    val bottomGestures = listOf("bottom_long" to "Long press")
+    val bottomGestures = listOf("bottom_long" to R.string.gesture_long)
     val gestures = actionGestures + bottomGestures
 
     val samsungActions = listOf(
-        "flashlight" to "Flashlight (Boost)",
-        "red_flashlight" to "Red Flashlight (Max)",
-        "dnd_toggle" to "Do Not Disturb",
-        "shealth_workout" to "Samsung Health (Workout)",
-        "shealth_exercises" to "Exercise List",
-        "shealth_pick_workout" to "Pick Quick Workout",
-        "stopwatch" to "Stopwatch",
-        "water_lock" to "Water Lock",
-        "assistant" to "Digital Assistant",
+        "flashlight" to R.string.action_flashlight,
+        "shealth_workout" to R.string.action_shealth_workout,
+        "shealth_exercises" to R.string.action_shealth_exercises,
+        "shealth_pick_workout" to R.string.action_shealth_pick_workout,
+        "stopwatch" to R.string.action_stopwatch,
+        "water_lock" to R.string.action_water_lock,
+        "assistant" to R.string.action_assistant,
+        "find_phone" to R.string.action_find_phone,
+    )
+
+    val utilityActions = listOf(
+        "red_flashlight" to R.string.action_red_flashlight,
+        "dnd_toggle" to R.string.action_dnd_toggle,
+        "glove_mode" to R.string.action_glove_mode,
+        "buds_controller" to R.string.action_buds_controller,
+        "save_parking" to R.string.action_save_parking,
+        "nav_parking" to R.string.action_nav_parking,
+        "adb_mode" to R.string.action_adb_mode,
+        "water_eject" to R.string.action_water_eject,
+        "lte_toggle" to R.string.action_lte_toggle,
+    )
+
+    val homeAssistantActions = listOf(
+        "ha_assist" to R.string.action_ha_assist,
+        "ha_open" to R.string.action_ha_open,
     )
 
     val mediaActions = listOf(
-        "play_pause" to "Play / Pause",
-        "next" to "Next Track",
-        "previous" to "Previous Track",
-        "vol_up" to "Volume Up",
-        "vol_down" to "Volume Down",
-        "open_media_player" to "Open Media Controller",
+        "play_pause" to R.string.action_play_pause,
+        "next" to R.string.action_next,
+        "previous" to R.string.action_previous,
+        "vol_up" to R.string.action_vol_up,
+        "vol_down" to R.string.action_vol_down,
+        "open_media_player" to R.string.action_open_media_player,
     )
 
-    val actions = listOf("none" to "Nothing") + samsungActions + mediaActions
+    val actionDefinitions = (samsungActions + utilityActions + homeAssistantActions + mediaActions)
 
     private val defaults = mapOf(
         "single" to "flashlight",
@@ -60,7 +76,11 @@ object Mapping {
         prefs(context).edit().putString(gesture, action).apply()
 
     fun label(context: Context, action: String): String {
-        if (!action.startsWith("app:")) return actions.toMap()[action] ?: action
+        if (action == "none") return context.getString(R.string.nothing)
+        if (!action.startsWith("app:")) {
+            val resId = actionDefinitions.firstOrNull { it.first == action }?.second
+            return if (resId != null) context.getString(resId) else action
+        }
         val pkg = action.removePrefix("app:")
         return try {
             context.packageManager.getApplicationLabel(context.packageManager.getApplicationInfo(pkg, 0)).toString()
@@ -69,10 +89,12 @@ object Mapping {
         }
     }
 
-    fun categoryLabel(action: String): String = when {
-        action == "none" -> "Disabled"
+    fun categoryLabel(context: Context, action: String): String = when {
+        action == "none" -> ""
         action.startsWith("app:") -> "App"
         samsungActions.any { it.first == action } -> "Samsung"
+        utilityActions.any { it.first == action } -> "Utility"
+        homeAssistantActions.any { it.first == action } -> "HA"
         mediaActions.any { it.first == action } -> "Media"
         else -> ""
     }
@@ -98,6 +120,16 @@ object Mapping {
             "flashlight" -> toggleFlashlight(context, backToHome)
             "red_flashlight" -> toggleRedFlashlight(context)
             "dnd_toggle" -> toggleDoNotDisturb(context)
+            "glove_mode" -> UtilityActions.toggleTouchSensitivity(context)
+            "buds_controller" -> triggerBudsController(context, backToHome)
+            "save_parking" -> UtilityActions.saveParking(context)
+            "nav_parking" -> UtilityActions.navigateToParking(context, backToHome)
+            "adb_mode" -> UtilityActions.toggleAdbEasyMode(context)
+            "water_eject" -> UtilityActions.ejectWater(context)
+            "lte_toggle" -> UtilityActions.toggleLteData(context)
+            "find_phone" -> triggerFindPhone(context, backToHome)
+            "ha_assist" -> triggerHaAssist(context, backToHome)
+            "ha_open" -> triggerHaOpen(context, backToHome)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
             "shealth_exercises" -> launchComponent(
                 context,
@@ -134,6 +166,104 @@ object Mapping {
         }
     }
 
+    private fun triggerBudsController(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+        val budsIntent = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.watch.budscontroller")
+            ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            ?.apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        if (budsIntent != null) {
+            try {
+                appCtx.startActivity(budsIntent)
+                return
+            } catch (_: Exception) {
+            }
+        }
+        val direct = Intent(Intent.ACTION_MAIN)
+            .setClassName("com.samsung.android.watch.budscontroller", "com.samsung.android.watch.budscontroller.ui.main.BudsActivity")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        try {
+            appCtx.startActivity(direct)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun triggerFindPhone(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+        // 1. Samsung Find on watch
+        val intentSamsungFind = Intent("com.samsung.android.app.find.ACTION_REMOTE_COMPANION_FINDING")
+            .setClassName("com.samsung.android.app.find", "com.samsung.android.app.find.uiview.main.disconnected.RemoteCompanionFindingActivity")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        try {
+            appCtx.startActivity(intentSamsungFind)
+            return
+        } catch (_: Exception) {
+        }
+
+        // 2. Samsung Find Main Launcher
+        val intentFindLaunch = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.app.find")
+        if (intentFindLaunch != null) {
+            intentFindLaunch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (backToHome) intentFindLaunch.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            try {
+                appCtx.startActivity(intentFindLaunch)
+                return
+            } catch (_: Exception) {
+            }
+        }
+
+        // 3. Google Find My Phone Wear OS fallback
+        val intentGoogleFind = appCtx.packageManager.getLaunchIntentForPackage("com.google.android.clockwork.findmyphone")
+        if (intentGoogleFind != null) {
+            intentGoogleFind.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (backToHome) intentGoogleFind.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            try {
+                appCtx.startActivity(intentGoogleFind)
+            } catch (_: Exception) {
+            }
+        }
+    }
+
+    private fun triggerHaAssist(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+        val assistIntent = Intent(Intent.ACTION_ASSIST)
+            .setClassName("io.homeassistant.companion.android", "io.homeassistant.companion.android.conversation.ConversationActivity")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
+        try {
+            appCtx.startActivity(assistIntent)
+            return
+        } catch (_: Exception) {
+        }
+
+        // Fallback: AssistantActivity alias
+        val aliasIntent = Intent("android.intent.action.ASSIST")
+            .setClassName("io.homeassistant.companion.android", "io.homeassistant.companion.android.conversation.AssistantActivity")
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            appCtx.startActivity(aliasIntent)
+            return
+        } catch (_: Exception) {
+            Toast.makeText(appCtx, appCtx.getString(R.string.toast_ha_not_installed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun triggerHaOpen(context: Context, backToHome: Boolean) {
+        val appCtx = context.applicationContext
+        val intent = appCtx.packageManager.getLaunchIntentForPackage("io.homeassistant.companion.android")
+        if (intent != null) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (backToHome) intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            try {
+                appCtx.startActivity(intent)
+            } catch (_: Exception) {
+            }
+        } else {
+            Toast.makeText(appCtx, appCtx.getString(R.string.toast_ha_not_installed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun toggleRedFlashlight(context: Context) {
         val current = RedFlashlightActivity.currentInstance
         if (current != null) {
@@ -150,7 +280,6 @@ object Mapping {
 
     private fun toggleDoNotDisturb(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java) ?: return
-        // Notice: NotificationListenerService already grants Notification Policy Access when enabled!
         if (!nm.isNotificationPolicyAccessGranted) {
             try {
                 context.startActivity(
@@ -173,19 +302,15 @@ object Mapping {
             val vib = context.getSystemService(Vibrator::class.java)
             if (enableDnd) {
                 vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 60, 50, 60), -1))
-                Toast.makeText(context.applicationContext, "Do Not Disturb: ON", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context.applicationContext, context.getString(R.string.toast_dnd_on), Toast.LENGTH_SHORT).show()
             } else {
                 vib?.vibrate(VibrationEffect.createOneShot(90, VibrationEffect.DEFAULT_AMPLITUDE))
-                Toast.makeText(context.applicationContext, "Do Not Disturb: OFF", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context.applicationContext, context.getString(R.string.toast_dnd_off), Toast.LENGTH_SHORT).show()
             }
         } catch (_: Exception) {
         }
     }
 
-    /**
-     * Invokes Samsung Health's native ActionButtonService with ACTION_KEY_EVENT=2 (or falls back to ExerciseActivity).
-     * This executes the exact factory behavior (starts/pauses/laps the configured workout or opens Exercise List).
-     */
     private fun triggerSamsungHealthQuickButton(context: Context, backToHome: Boolean) {
         val svcIntent = Intent().apply {
             component = ComponentName(

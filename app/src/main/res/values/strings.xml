@@ -1,4 +1,73 @@
 <resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
+
+    <!-- Sections & Headers -->
+    <string name="hdr_center_button">Center Button</string>
+    <string name="hdr_bottom_button">Bottom Button</string>
+    <string name="hdr_samsung">Samsung Functions</string>
+    <string name="hdr_utility">Smart Utilities</string>
+    <string name="hdr_home_assistant">Home Assistant</string>
+    <string name="hdr_media">Media &amp; Volume</string>
+    <string name="open_app">Open App…</string>
+    <string name="nothing">Nothing</string>
+    <string name="select_app">Select App</string>
+    <string name="choose_from_apps">Choose from %d apps ›</string>
+
+    <!-- Gestures -->
+    <string name="gesture_single">Single press</string>
+    <string name="gesture_double">Double press</string>
+    <string name="gesture_long">Long press</string>
+
+    <!-- Samsung Actions -->
+    <string name="action_flashlight">Flashlight (Boost)</string>
+    <string name="action_shealth_workout">Samsung Health (Workout)</string>
+    <string name="action_shealth_exercises">Exercise List</string>
+    <string name="action_shealth_pick_workout">Pick Quick Workout</string>
+    <string name="action_stopwatch">Stopwatch</string>
+    <string name="action_water_lock">Water Lock</string>
+    <string name="action_assistant">Digital Assistant</string>
+    <string name="action_find_phone">Find My Phone</string>
+
+    <!-- Utility Actions -->
+    <string name="action_red_flashlight">Red Flashlight (Max)</string>
+    <string name="action_dnd_toggle">Do Not Disturb</string>
+    <string name="action_save_parking">Save Parking Spot</string>
+    <string name="action_nav_parking">Navigate to Car</string>
+    <string name="action_adb_mode">Sideload / Keep-Awake Mode</string>
+    <string name="action_water_eject">Water Eject Speaker</string>
+    <string name="action_lte_toggle">LTE &amp; Mobile Data</string>
+    <string name="action_glove_mode">Touch Sensitivity (Glove Mode)</string>
+    <string name="action_buds_controller">Galaxy Buds Controller</string>
+
+    <!-- Home Assistant Actions -->
+    <string name="action_ha_assist">Home Assistant Assist</string>
+    <string name="action_ha_open">Open Home Assistant</string>
+
+    <!-- Media Actions -->
+    <string name="action_play_pause">Play / Pause</string>
+    <string name="action_next">Next Track</string>
+    <string name="action_previous">Previous Track</string>
+    <string name="action_vol_up">Volume Up</string>
+    <string name="action_vol_down">Volume Down</string>
+    <string name="action_open_media_player">Open Media Controller</string>
+
+    <!-- Toasts & Notifications -->
+    <string name="toast_parking_saved">Parking spot saved!</string>
+    <string name="toast_parking_acquiring">Acquiring GPS fix…</string>
+    <string name="toast_parking_empty">No parking spot saved yet</string>
+    <string name="toast_parking_no_gps">GPS not available</string>
+    <string name="toast_parking_perm_needed">Location permission required</string>
+    <string name="toast_maps_not_found">Maps app not found</string>
+    <string name="toast_adb_mode_on">Sideload Mode: ON (Screen &amp; WiFi kept alive)</string>
+    <string name="toast_adb_mode_off">Sideload Mode: OFF</string>
+    <string name="toast_lte_on">LTE &amp; Mobile Data: ON</string>
+    <string name="toast_lte_off">LTE &amp; Mobile Data: OFF</string>
+    <string name="toast_glove_mode_on">Glove Mode: ON (High Touch Sensitivity)</string>
+    <string name="toast_glove_mode_off">Glove Mode: OFF</string>
+    <string name="toast_write_secure_needed">Run: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Ejecting water from speaker…</string>
+    <string name="toast_dnd_on">Do Not Disturb: ON</string>
+    <string name="toast_dnd_off">Do Not Disturb: OFF</string>
+    <string name="toast_ha_not_installed">Home Assistant companion app is not installed</string>
 </resources>

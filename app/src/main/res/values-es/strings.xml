@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">Ultra Remapper</string>
+    <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
+
+    <!-- Sections & Headers -->
+    <string name="hdr_center_button">Botón Central</string>
+    <string name="hdr_bottom_button">Botón Inferior</string>
+    <string name="hdr_samsung">Funciones Samsung</string>
+    <string name="hdr_utility">Utilidades Pro</string>
+    <string name="hdr_home_assistant">Home Assistant</string>
+    <string name="hdr_media">Multimedia y Volumen</string>
+    <string name="open_app">Abrir App…</string>
+    <string name="nothing">Nada</string>
+    <string name="select_app">Seleccionar App</string>
+    <string name="choose_from_apps">Elegir entre %d apps ›</string>
+
+    <!-- Gestures -->
+    <string name="gesture_single">Una pulsación</string>
+    <string name="gesture_double">Doble pulsación</string>
+    <string name="gesture_long">Pulsación larga</string>
+
+    <!-- Samsung Actions -->
+    <string name="action_flashlight">Linterna (Boost)</string>
+    <string name="action_shealth_workout">Samsung Health (Entreno)</string>
+    <string name="action_shealth_exercises">Lista de Ejercicios</string>
+    <string name="action_shealth_pick_workout">Elegir Ejercicio Rápido</string>
+    <string name="action_stopwatch">Cronómetro</string>
+    <string name="action_water_lock">Bloqueo de Agua</string>
+    <string name="action_assistant">Asistente Digital</string>
+    <string name="action_find_phone">Buscar mi Teléfono</string>
+
+    <!-- Utility Actions -->
+    <string name="action_red_flashlight">Linterna Roja (Máx)</string>
+    <string name="action_dnd_toggle">No Molestar</string>
+    <string name="action_save_parking">Guardar Parking</string>
+    <string name="action_nav_parking">Volver al Coche (Maps a pie)</string>
+    <string name="action_adb_mode">Modo Carga Fácil / ADB</string>
+    <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
+    <string name="action_lte_toggle">LTE y Datos Móviles</string>
+    <string name="action_glove_mode">Sensibilidad Táctil (Modo Guantes)</string>
+    <string name="action_buds_controller">Controlador Galaxy Buds</string>
+
+    <!-- Home Assistant Actions -->
+    <string name="action_ha_assist">Home Assistant Assist (Voz)</string>
+    <string name="action_ha_open">Abrir Home Assistant</string>
+
+    <!-- Media Actions -->
+    <string name="action_play_pause">Reproducir / Pausa</string>
+    <string name="action_next">Pista Siguiente</string>
+    <string name="action_previous">Pista Anterior</string>
+    <string name="action_vol_up">Subir Volumen</string>
+    <string name="action_vol_down">Bajar Volumen</string>
+    <string name="action_open_media_player">Abrir Controlador Multimedia</string>
+
+    <!-- Toasts & Notifications -->
+    <string name="toast_parking_saved">¡Ubicación de parking guardada!</string>
+    <string name="toast_parking_acquiring">Obteniendo señal GPS…</string>
+    <string name="toast_parking_empty">No hay ningún parking guardado</string>
+    <string name="toast_parking_no_gps">GPS no disponible</string>
+    <string name="toast_parking_perm_needed">Se necesita permiso de ubicación</string>
+    <string name="toast_maps_not_found">No se encontró app de mapas</string>
+    <string name="toast_adb_mode_on">Modo Carga Fácil: ON (Pantalla y WiFi activos)</string>
+    <string name="toast_adb_mode_off">Modo Carga Fácil: OFF</string>
+    <string name="toast_lte_on">LTE y Datos Móviles: ON</string>
+    <string name="toast_lte_off">LTE y Datos Móviles: OFF</string>
+    <string name="toast_glove_mode_on">Modo Guantes: ACTIVADO (Alta sensibilidad)</string>
+    <string name="toast_glove_mode_off">Modo Guantes: DESACTIVADO</string>
+    <string name="toast_write_secure_needed">Ejecuta: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Expulsando agua del altavoz…</string>
+    <string name="toast_dnd_on">No Molestar: ACTIVADO</string>
+    <string name="toast_dnd_off">No Molestar: DESACTIVADO</string>
+    <string name="toast_ha_not_installed">App Home Assistant Companion no instalada</string>
+</resources>

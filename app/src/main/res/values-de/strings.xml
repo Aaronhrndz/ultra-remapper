@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Ultra Remapper</string>
+    <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
+
+    <string name="hdr_center_button">Mittlere Taste</string>
+    <string name="hdr_bottom_button">Untere Taste</string>
+    <string name="hdr_samsung">Samsung-Funktionen</string>
+    <string name="hdr_utility">Dienstprogramme</string>
+    <string name="hdr_home_assistant">Home Assistant</string>
+    <string name="hdr_media">Medien &amp; Lautstärke</string>
+    <string name="open_app">App öffnen…</string>
+    <string name="nothing">Keine Aktion</string>
+    <string name="select_app">App auswählen</string>
+    <string name="choose_from_apps">Aus %d Apps wählen ›</string>
+
+    <string name="gesture_single">Einmal drücken</string>
+    <string name="gesture_double">Doppelt drücken</string>
+    <string name="gesture_long">Lange drücken</string>
+
+    <string name="action_flashlight">Taschenlampe (Boost)</string>
+    <string name="action_shealth_workout">Samsung Health (Training)</string>
+    <string name="action_shealth_exercises">Trainingsliste</string>
+    <string name="action_shealth_pick_workout">Schnell-Workout wählen</string>
+    <string name="action_stopwatch">Stoppuhr</string>
+    <string name="action_water_lock">Wassersperre</string>
+    <string name="action_assistant">Sprachassistent</string>
+    <string name="action_find_phone">Mein Telefon suchen</string>
+
+    <string name="action_red_flashlight">Rote Taschenlampe (Max)</string>
+    <string name="action_dnd_toggle">Nicht stören</string>
+    <string name="action_save_parking">Parkplatz speichern</string>
+    <string name="action_nav_parking">Zum Auto navigieren (zu Fuß)</string>
+    <string name="action_adb_mode">Sideload- / Wachbleibe-Modus</string>
+    <string name="action_water_eject">Wasser auswerfen (Lautsprecher)</string>
+    <string name="action_lte_toggle">LTE &amp; Mobile Daten</string>
+
+    <string name="action_ha_assist">Home Assistant Assist</string>
+    <string name="action_ha_open">Home Assistant öffnen</string>
+
+    <string name="action_play_pause">Wiedergabe / Pause</string>
+    <string name="action_next">Nächster Titel</string>
+    <string name="action_previous">Vorheriger Titel</string>
+    <string name="action_vol_up">Lauter</string>
+    <string name="action_vol_down">Leiser</string>
+    <string name="action_open_media_player">Mediensteuerung öffnen</string>
+
+    <string name="toast_parking_saved">Parkplatz gespeichert!</string>
+    <string name="toast_parking_acquiring">GPS-Signal wird gesucht…</string>
+    <string name="toast_parking_empty">Kein Parkplatz gespeichert</string>
+    <string name="toast_parking_no_gps">GPS nicht verfügbar</string>
+    <string name="toast_parking_perm_needed">Standortberechtigung erforderlich</string>
+    <string name="toast_maps_not_found">Keine Karten-App gefunden</string>
+    <string name="toast_adb_mode_on">Sideload-Modus: EIN</string>
+    <string name="toast_adb_mode_off">Sideload-Modus: AUS</string>
+    <string name="toast_lte_on">LTE &amp; Mobile Daten: EIN</string>
+    <string name="toast_lte_off">LTE &amp; Mobile Daten: AUS</string>
+    <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Wasser wird ausgestoßen…</string>
+    <string name="toast_dnd_on">Nicht stören: EIN</string>
+    <string name="toast_dnd_off">Nicht stören: AUS</string>
+    <string name="toast_ha_not_installed">Home Assistant Companion nicht installiert</string>
+</resources>

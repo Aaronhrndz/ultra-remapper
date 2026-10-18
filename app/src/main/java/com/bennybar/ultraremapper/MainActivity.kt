@@ -300,15 +300,15 @@ private fun Home(
     )
 
     val actionRows = remember {
-        Mapping.actionGestures.map { (gesture, name) ->
+        Mapping.actionGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
-            Triple(gesture, name, act to Mapping.label(context, act))
+            Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
         }
     }
     val bottomRows = remember {
-        Mapping.bottomGestures.map { (gesture, name) ->
+        Mapping.bottomGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
-            Triple(gesture, name, act to Mapping.label(context, act))
+            Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
         }
     }
 
@@ -429,7 +429,7 @@ private fun Home(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Center Button",
+                            text = context.getString(R.string.hdr_center_button),
                             color = Color.White,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
@@ -484,7 +484,7 @@ private fun Home(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Bottom Button",
+                            text = context.getString(R.string.hdr_bottom_button),
                             color = Color.White,
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
@@ -529,7 +529,8 @@ private fun ActionPicker(
     val context = LocalContext.current
     val current = remember(gesture) { Mapping.get(context, gesture) }
     val currentLabel = remember(current) { Mapping.label(context, current) }
-    val title = remember(gesture) { Mapping.gestures.toMap()[gesture] ?: gesture }
+    val titleRes = remember(gesture) { Mapping.gestures.toMap()[gesture] }
+    val title = remember(titleRes, gesture) { if (titleRes != null) context.getString(titleRes) else gesture }
     val isApp = remember(current) { current.startsWith("app:") }
 
     val columnState = rememberTransformingLazyColumnState()
@@ -569,7 +570,7 @@ private fun ActionPicker(
                     onSelect = onOpenAppList,
                     label = {
                         Text(
-                            "Open App…",
+                            context.getString(R.string.open_app),
                             fontWeight = FontWeight.SemiBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -577,7 +578,7 @@ private fun ActionPicker(
                     },
                     secondaryLabel = {
                         Text(
-                            if (isApp) currentLabel else "Choose from $appsCount apps ›",
+                            if (isApp) currentLabel else context.getString(R.string.choose_from_apps, appsCount),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -597,7 +598,7 @@ private fun ActionPicker(
                     onSelect = { onSelect("none") },
                     label = {
                         Text(
-                            "Nothing",
+                            context.getString(R.string.nothing),
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -611,6 +612,75 @@ private fun ActionPicker(
                 )
             }
 
+            // Utility Actions Section
+            item(key = "hdr_utility") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(context.getString(R.string.hdr_utility), color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            items(Mapping.utilityActions, key = { "ut_${it.first}" }) { (action, labelRes) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            context.getString(labelRes),
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // Home Assistant Section
+            item(key = "hdr_home_assistant") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(context.getString(R.string.hdr_home_assistant), color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            items(Mapping.homeAssistantActions, key = { "ha_${it.first}" }) { (action, labelRes) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            context.getString(labelRes),
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // Samsung Functions Section
             item(key = "hdr_samsung") {
                 ListHeader(
                     modifier = Modifier
@@ -619,18 +689,18 @@ private fun ActionPicker(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text("Samsung Functions", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(context.getString(R.string.hdr_samsung), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
 
-            items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, label) ->
+            items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, labelRes) ->
                 val selected = action == current
                 RadioButton(
                     selected = selected,
                     onSelect = { onSelect(action) },
                     label = {
                         Text(
-                            label,
+                            context.getString(labelRes),
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -644,6 +714,7 @@ private fun ActionPicker(
                 )
             }
 
+            // Media & Volume Section
             item(key = "hdr_media") {
                 ListHeader(
                     modifier = Modifier
@@ -652,18 +723,18 @@ private fun ActionPicker(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text("Media & Volume", color = Color.White, fontWeight = FontWeight.Bold)
+                    Text(context.getString(R.string.hdr_media), color = Color.White, fontWeight = FontWeight.Bold)
                 }
             }
 
-            items(Mapping.mediaActions, key = { "med_${it.first}" }) { (action, label) ->
+            items(Mapping.mediaActions, key = { "med_${it.first}" }) { (action, labelRes) ->
                 val selected = action == current
                 RadioButton(
                     selected = selected,
                     onSelect = { onSelect(action) },
                     label = {
                         Text(
-                            label,
+                            context.getString(labelRes),
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
@@ -712,7 +783,7 @@ private fun AppListPicker(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Text("Select App", color = UltraOrange, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                    Text(context.getString(R.string.select_app), color = UltraOrange, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
                 }
             }
 

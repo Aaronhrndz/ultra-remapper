@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">Ultra Remapper</string>
+    <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
+
+    <string name="hdr_center_button">Bouton Central</string>
+    <string name="hdr_bottom_button">Bouton Inférieur</string>
+    <string name="hdr_samsung">Fonctions Samsung</string>
+    <string name="hdr_utility">Utilitaires Pro</string>
+    <string name="hdr_home_assistant">Home Assistant</string>
+    <string name="hdr_media">Médias et Volume</string>
+    <string name="open_app">Ouvrir une app…</string>
+    <string name="nothing">Aucune action</string>
+    <string name="select_app">Sélectionner une app</string>
+    <string name="choose_from_apps">Choisir parmi %d apps ›</string>
+
+    <string name="gesture_single">Simple appui</string>
+    <string name="gesture_double">Double appui</string>
+    <string name="gesture_long">Appui long</string>
+
+    <string name="action_flashlight">Lampe torche (Boost)</string>
+    <string name="action_shealth_workout">Samsung Health (Entraînement)</string>
+    <string name="action_shealth_exercises">Liste d’exercices</string>
+    <string name="action_shealth_pick_workout">Choisir un entraînement</string>
+    <string name="action_stopwatch">Chronomètre</string>
+    <string name="action_water_lock">Mode Eau</string>
+    <string name="action_assistant">Assistant vocal</string>
+    <string name="action_find_phone">Localiser mon téléphone</string>
+
+    <string name="action_red_flashlight">Lampe Rouge (Max)</string>
+    <string name="action_dnd_toggle">Ne pas déranger</string>
+    <string name="action_save_parking">Enregistrer le stationnement</string>
+    <string name="action_nav_parking">Retourner à la voiture (à pied)</string>
+    <string name="action_adb_mode">Mode Chargement Facile / ADB</string>
+    <string name="action_water_eject">Éjection d’eau (Haut-parleur)</string>
+    <string name="action_lte_toggle">LTE et Données mobiles</string>
+
+    <string name="action_ha_assist">Home Assistant Assist</string>
+    <string name="action_ha_open">Ouvrir Home Assistant</string>
+
+    <string name="action_play_pause">Lecture / Pause</string>
+    <string name="action_next">Piste suivante</string>
+    <string name="action_previous">Piste précédente</string>
+    <string name="action_vol_up">Volume haut</string>
+    <string name="action_vol_down">Volume bas</string>
+    <string name="action_open_media_player">Ouvrir le contrôleur média</string>
+
+    <string name="toast_parking_saved">Position de stationnement enregistrée !</string>
+    <string name="toast_parking_acquiring">Recherche du signal GPS…</string>
+    <string name="toast_parking_empty">Aucun stationnement enregistré</string>
+    <string name="toast_parking_no_gps">GPS indisponible</string>
+    <string name="toast_parking_perm_needed">Autorisation de localisation requise</string>
+    <string name="toast_maps_not_found">Application de cartes introuvable</string>
+    <string name="toast_adb_mode_on">Mode Sideload : ACTIVÉ</string>
+    <string name="toast_adb_mode_off">Mode Sideload : DÉSACTIVÉ</string>
+    <string name="toast_lte_on">LTE et Données : ACTIVÉ</string>
+    <string name="toast_lte_off">LTE et Données : DÉSACTIVÉ</string>
+    <string name="toast_write_secure_needed">Exécutez : adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Éjection de l’eau en cours…</string>
+    <string name="toast_dnd_on">Ne pas déranger : ACTIVÉ</string>
+    <string name="toast_dnd_off">Ne pas déranger : DÉSACTIVÉ</string>
+    <string name="toast_ha_not_installed">Application Home Assistant Companion non installée</string>
+</resources>
