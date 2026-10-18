@@ -195,8 +195,11 @@ object UpdateChecker {
         onProgress: (progressFraction: Float, statusText: String) -> Unit
     ) {
         val cacheDir = File(context.cacheDir, "updates").apply { mkdirs() }
+        // Clean up any old, leftover or partial APKs from previous update attempts to preserve flash storage
+        cacheDir.listFiles()?.forEach { file ->
+            try { file.delete() } catch (_: Exception) {}
+        }
         val apkFile = File(cacheDir, "ultra-remapper-v$version.apk")
-        if (apkFile.exists()) apkFile.delete()
 
         val totalLength = conn.contentLength.toLong()
         var downloaded = 0L

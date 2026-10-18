@@ -186,6 +186,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         UpdateChecker.scheduleDailyCheck(this)
+        // Clean any leftover APKs in cache asynchronously to keep watch storage minimal
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute {
+            try {
+                File(cacheDir, "updates").listFiles()?.forEach { it.delete() }
+            } catch (_: Exception) {}
+        }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
