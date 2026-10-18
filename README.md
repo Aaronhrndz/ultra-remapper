@@ -33,15 +33,15 @@
  
 - **Hardware-Aware Button Remapping**:
   - **Quick / Action Button (Center Button)**: On models equipped with a third physical key (**Galaxy Watch Ultra, Ultra 2, Watch 8 Classic**), independently remap **Single Press**, **Double Press**, and **Long Press**.
-  - **Dynamic Device Detection**: On standard 2-button watches without a physical center button (e.g. Galaxy Watch 4, 5, 6, 7), the center button configuration dynamically hides to keep the UI clean, while the **Bottom (Back) Button Long Press** remains fully customizable.
-  - **Bottom Button (Back Key)**: Remap **Double Press**, **Triple Press**, and **Long Press** on the bottom key across all supported Galaxy Watches while preserving the stock short-press for system-wide *Back* navigation.
+  - **Dynamic Device Detection**: On standard 2-button watches without a physical center button (e.g. Galaxy Watch 4, 5, 6, 7), the center button configuration dynamically hides to keep the UI clean, while the **Bottom (Back) Button** remains fully customizable.
+  - **Bottom Button (Back Key)**: Remap **Double Press**, **Triple Press**, and **Long Press** across all supported Galaxy Watches. Rapid double and triple taps execute cleanly with zero conflict against Samsung's hardcoded 500ms long-press timer (avoiding unwanted Samsung Wallet launches), while preserving the native *Back* navigation on single press.
 - **Direct In-Watch Updates (Autonomous OTA)**:
-  - Automatic GitHub release detection with a one-tap direct download and in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
+  - Automatic GitHub release detection with a live **download progress bar & percentage indicator**, and one-tap in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
 - **Categorized Action Picker**:
   - **Smart Utilities**:
-    - **Wireless Debugging (ADB)**: Automatically turns on ADB WiFi and opens developer options directly.
+    - **Wireless Debugging (ADB)**: Direct shortcut that opens the Wireless Debugging screen and automatically toggles on ADB Wi-Fi via accessibility after a 1.2s settling delay, displaying your connection IP and port immediately on your wrist.
+    - **Keep Screen Awake (Sideload / ADB)**: Keeps the screen awake and prevents Wi-Fi/CPU sleep during wireless ADB package installations, avoiding lock screen PIN re-prompts.
     - **Save Parking Spot & Navigate to Car**: Saves exact GPS coordinates with 1 press and opens Google Maps in walking navigation mode (`google.navigation:q=LAT,LON&mode=w`).
-    - **Sideload / Keep-Awake Mode**: Keeps the screen awake and prevents WiFi/ADB timeout when installing apps over wireless ADB, preventing re-prompting for lock screen PINs.
     - **Touch Sensitivity (Glove Mode)**: Toggles Samsung high-sensitivity screen mode for gloves or wet hands.
     - **Red Flashlight (Max)**: Full-screen red light at 100% brightness (tactical night vision preserving).
     - **Do Not Disturb**: Quick toggle for DND with tactile vibration feedback.

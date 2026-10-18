@@ -13,8 +13,11 @@ import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -28,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -1002,6 +1006,7 @@ private fun UpdateDetailsScreen(
 
     val context = LocalContext.current
     var downloadProgress by remember { mutableStateOf("") }
+    var downloadFraction by remember { mutableFloatStateOf(0f) }
     val isDownloading = downloadProgress.isNotEmpty()
 
     ScreenScaffold(scrollState = columnState) { _ ->
@@ -1029,7 +1034,8 @@ private fun UpdateDetailsScreen(
                 Button(
                     onClick = {
                         if (!isDownloading) {
-                            UpdateChecker.downloadAndInstallOnWatch(context, update) { status ->
+                            UpdateChecker.downloadAndInstallOnWatch(context, update) { fraction, status ->
+                                downloadFraction = fraction
                                 downloadProgress = status
                             }
                         }
@@ -1043,7 +1049,24 @@ private fun UpdateDetailsScreen(
                         )
                     },
                     secondaryLabel = {
-                        Text(context.getString(R.string.update_install_watch_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        if (isDownloading && downloadFraction > 0f) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.White.copy(alpha = 0.35f))
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth(downloadFraction.coerceIn(0f, 1f))
+                                        .height(4.dp)
+                                        .background(Color.White)
+                                )
+                            }
+                        } else {
+                            Text(context.getString(R.string.update_install_watch_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = UltraOrange,
@@ -1055,6 +1078,32 @@ private fun UpdateDetailsScreen(
                         .fillMaxWidth()
                         .transformedHeight(this, transformationSpec)
                 )
+            }
+
+            if (isDownloading && downloadFraction > 0f) {
+                item(key = "upd_progress_indicator") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(6.dp)
+                                .clip(CircleShape)
+                                .background(Color.White.copy(alpha = 0.2f))
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(downloadFraction.coerceIn(0.02f, 1f))
+                                    .height(6.dp)
+                                    .background(UltraOrange)
+                            )
+                        }
+                    }
+                }
             }
 
             item(key = "upd_open_phone") {

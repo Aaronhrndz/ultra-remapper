@@ -147,7 +147,11 @@ object UpdateChecker {
         }
     }
 
-    fun downloadAndInstallOnWatch(context: Context, update: ReleaseUpdate, onProgress: (String) -> Unit = {}) {
+    fun downloadAndInstallOnWatch(
+        context: Context,
+        update: ReleaseUpdate,
+        onProgress: (progressFraction: Float, statusText: String) -> Unit = { _, _ -> }
+    ) {
         val appCtx = context.applicationContext
         val apkUrl = update.apkDownloadUrl
         if (apkUrl.isNullOrEmpty()) {
@@ -157,7 +161,7 @@ object UpdateChecker {
 
         executor.execute {
             try {
-                mainHandler.post { onProgress(appCtx.getString(R.string.update_downloading)) }
+                mainHandler.post { onProgress(0f, appCtx.getString(R.string.update_downloading)) }
                 val url = URL(apkUrl)
                 val conn = (url.openConnection() as HttpURLConnection).apply {
                     instanceFollowRedirects = true
@@ -178,7 +182,7 @@ object UpdateChecker {
             } catch (e: Exception) {
                 mainHandler.post {
                     Toast.makeText(appCtx, "Download error: ${e.message}", Toast.LENGTH_LONG).show()
-                    onProgress("")
+                    onProgress(0f, "")
                 }
             }
         }
@@ -188,20 +192,37 @@ object UpdateChecker {
         context: Context,
         conn: HttpURLConnection,
         version: String,
-        onProgress: (String) -> Unit
+        onProgress: (progressFraction: Float, statusText: String) -> Unit
     ) {
         val cacheDir = File(context.cacheDir, "updates").apply { mkdirs() }
         val apkFile = File(cacheDir, "ultra-remapper-v$version.apk")
         if (apkFile.exists()) apkFile.delete()
 
+        val totalLength = conn.contentLength.toLong()
+        var downloaded = 0L
+
         conn.inputStream.use { input ->
             apkFile.outputStream().use { output ->
-                input.copyTo(output)
+                val buffer = ByteArray(8192)
+                var bytesRead: Int
+                var lastProgressUpdate = 0L
+                while (input.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                    downloaded += bytesRead
+                    val now = System.currentTimeMillis()
+                    if (now - lastProgressUpdate > 100L) {
+                        lastProgressUpdate = now
+                        val fraction = if (totalLength > 0) downloaded.toFloat() / totalLength.toFloat() else 0f
+                        val percent = if (totalLength > 0) (fraction * 100).toInt() else 0
+                        val status = if (totalLength > 0) "$percent%" else "${downloaded / 1024} KB"
+                        mainHandler.post { onProgress(fraction, status) }
+                    }
+                }
             }
         }
 
         mainHandler.post {
-            onProgress(context.getString(R.string.update_launching))
+            onProgress(1f, context.getString(R.string.update_launching))
             try {
                 val apkUri: Uri = androidx.core.content.FileProvider.getUriForFile(
                     context,
@@ -217,7 +238,7 @@ object UpdateChecker {
             } catch (e: Exception) {
                 Toast.makeText(context, "Install failed: ${e.message}", Toast.LENGTH_LONG).show()
             }
-            onProgress("")
+            onProgress(0f, "")
         }
     }
 }
