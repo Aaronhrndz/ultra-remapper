@@ -86,4 +86,5 @@
     <string name="toast_dnd_on">Nicht stören: EIN</string>
     <string name="toast_dnd_off">Nicht stören: AUS</string>
     <string name="toast_ha_not_installed">Home Assistant Companion nicht installiert</string>
+    <string name="app_version">v%s</string>
 </resources>

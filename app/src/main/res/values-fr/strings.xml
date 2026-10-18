@@ -86,4 +86,5 @@
     <string name="toast_dnd_on">Ne pas déranger : ACTIVÉ</string>
     <string name="toast_dnd_off">Ne pas déranger : DÉSACTIVÉ</string>
     <string name="toast_ha_not_installed">Application Home Assistant Companion non installée</string>
+    <string name="app_version">v%s</string>
 </resources>

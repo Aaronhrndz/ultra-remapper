@@ -590,6 +590,25 @@ private fun Home(
                         .transformedHeight(this, transformationSpec)
                 )
             }
+
+            item(key = "app_version_footer") {
+                val installedVersion = remember {
+                    try {
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.1.0"
+                    } catch (e: Exception) {
+                        "1.1.0"
+                    }
+                }
+                Text(
+                    text = context.getString(R.string.app_version, installedVersion),
+                    color = Color(0xFF6A717E),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 14.dp, bottom = 4.dp)
+                )
+            }
         }
     }
 }

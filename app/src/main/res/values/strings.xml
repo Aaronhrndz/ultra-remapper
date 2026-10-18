@@ -95,4 +95,5 @@
     <string name="toast_dnd_on">Do Not Disturb: ON</string>
     <string name="toast_dnd_off">Do Not Disturb: OFF</string>
     <string name="toast_ha_not_installed">Home Assistant companion app is not installed</string>
+    <string name="app_version">v%s</string>
 </resources>
