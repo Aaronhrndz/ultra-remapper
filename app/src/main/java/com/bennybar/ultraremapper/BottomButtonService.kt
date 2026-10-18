@@ -32,6 +32,7 @@ class BottomButtonService : AccessibilityService() {
     private val onLongPress = Runnable {
         longPressFired = true
         Mapping.perform(this, "bottom_long", backToHome = true)
+        UpdateChecker.checkOpportunistic(applicationContext)
     }
 
     override fun onServiceConnected() {

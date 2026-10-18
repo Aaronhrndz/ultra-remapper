@@ -39,6 +39,10 @@
     <string name="update_downloading">Downloading APK…</string>
     <string name="update_launching">Launching installer…</string>
     <string name="update_opened_phone">Opened on phone</string>
+    <string name="notif_channel_updates">App Updates</string>
+    <string name="notif_update_title">Update Available: v%s</string>
+    <string name="notif_update_desc">Tap to install directly on watch</string>
+    <string name="notif_action_install">Install on Watch</string>
     <!-- Gestures -->
     <string name="gesture_single">Single press</string>
     <string name="gesture_double">Double press</string>

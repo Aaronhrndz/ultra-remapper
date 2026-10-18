@@ -38,6 +38,10 @@
     <string name="update_downloading">Téléchargement de l’APK…</string>
     <string name="update_launching">Ouverture de l’installateur…</string>
     <string name="update_opened_phone">Ouvert sur le téléphone</string>
+    <string name="notif_channel_updates">Mises à jour de l’application</string>
+    <string name="notif_update_title">Mise à jour disponible : v%s</string>
+    <string name="notif_update_desc">Appuyez pour installer directement sur la montre</string>
+    <string name="notif_action_install">Installer sur la montre</string>
 
     <string name="gesture_single">Simple appui</string>
     <string name="gesture_double">Double appui</string>

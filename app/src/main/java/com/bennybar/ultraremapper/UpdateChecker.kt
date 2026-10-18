@@ -24,6 +24,56 @@ object UpdateChecker {
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
     private const val LATEST_RELEASE_API = "https://api.github.com/repos/Aaronhrndz/ultra-remapper/releases/latest"
+    private const val PREFS_NAME = "update_checker"
+    private const val KEY_LAST_CHECK = "last_check_time"
+    private const val KEY_NOTIFIED_VER = "last_notified_version"
+    private const val CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000L // 24 hours
+
+    fun scheduleDailyCheck(context: Context) {
+        try {
+            val am = context.getSystemService(Context.ALARM_SERVICE) as? android.app.AlarmManager ?: return
+            val intent = Intent(context, UpdateReceiver::class.java).apply {
+                action = UpdateReceiver.ACTION_CHECK_UPDATE
+            }
+            val pi = android.app.PendingIntent.getBroadcast(
+                context,
+                901,
+                intent,
+                android.app.PendingIntent.FLAG_UPDATE_CURRENT or android.app.PendingIntent.FLAG_IMMUTABLE
+            )
+            val triggerAt = System.currentTimeMillis() + CHECK_INTERVAL_MS
+            // Inexact inexact repeating or setAndAllowWhileIdle for battery friendliness
+            am.setInexactRepeating(
+                android.app.AlarmManager.RTC,
+                triggerAt,
+                CHECK_INTERVAL_MS,
+                pi
+            )
+        } catch (_: Exception) {}
+    }
+
+    /**
+     * Called in background (e.g. from AlarmManager or button presses).
+     * Only queries network if at least 24 hours have passed since last check.
+     */
+    fun checkOpportunistic(context: Context) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val lastCheck = prefs.getLong(KEY_LAST_CHECK, 0L)
+        val now = System.currentTimeMillis()
+        if (now - lastCheck < CHECK_INTERVAL_MS) return
+
+        prefs.edit().putLong(KEY_LAST_CHECK, now).apply()
+
+        check(context) { update ->
+            if (update != null) {
+                val lastNotified = prefs.getString(KEY_NOTIFIED_VER, "")
+                if (lastNotified != update.versionName) {
+                    prefs.edit().putString(KEY_NOTIFIED_VER, update.versionName).apply()
+                    UpdateReceiver.showUpdateNotification(context, update)
+                }
+            }
+        }
+    }
 
     fun check(context: Context, onResult: (ReleaseUpdate?) -> Unit) {
         val currentVersion = try {

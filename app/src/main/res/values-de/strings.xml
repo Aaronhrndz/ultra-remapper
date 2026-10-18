@@ -38,6 +38,10 @@
     <string name="update_downloading">APK wird heruntergeladen…</string>
     <string name="update_launching">Installer wird geöffnet…</string>
     <string name="update_opened_phone">Auf dem Smartphone geöffnet</string>
+    <string name="notif_channel_updates">App-Updates</string>
+    <string name="notif_update_title">Update verfügbar: v%s</string>
+    <string name="notif_update_desc">Tippen für direkte Installation auf der Uhr</string>
+    <string name="notif_action_install">Auf der Uhr installieren</string>
 
     <string name="gesture_single">Einmal drücken</string>
     <string name="gesture_double">Doppelt drücken</string>

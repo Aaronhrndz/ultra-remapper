@@ -17,7 +17,10 @@ class ActionButtonService : Service() {
             5 -> if (intent.getIntExtra("ACTION_KEY_COUNT", 0) == 2) "double" else null
             else -> null
         }
-        if (gesture != null) Mapping.perform(this, gesture)
+        if (gesture != null) {
+            Mapping.perform(this, gesture)
+            UpdateChecker.checkOpportunistic(applicationContext)
+        }
         stopSelf(startId)
         return START_NOT_STICKY
     }

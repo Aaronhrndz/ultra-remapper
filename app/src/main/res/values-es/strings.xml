@@ -39,6 +39,10 @@
     <string name="update_downloading">Descargando APK…</string>
     <string name="update_launching">Abriendo instalador…</string>
     <string name="update_opened_phone">Abierto en el teléfono</string>
+    <string name="notif_channel_updates">Actualizaciones de la App</string>
+    <string name="notif_update_title">Actualización disponible: v%s</string>
+    <string name="notif_update_desc">Toca para instalar directamente en el reloj</string>
+    <string name="notif_action_install">Instalar en el Reloj</string>
     <!-- Gestures -->
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>

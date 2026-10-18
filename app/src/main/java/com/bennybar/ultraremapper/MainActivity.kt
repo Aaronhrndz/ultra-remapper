@@ -181,6 +181,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UpdateChecker.scheduleDailyCheck(this)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+            }
+        }
+        val targetDestination = intent?.getStringExtra("open_destination") ?: "home"
+
         setContent {
             MaterialTheme {
                 AppScaffold {
@@ -230,6 +238,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     val nav = rememberSwipeDismissableNavController()
+                    LaunchedEffect(targetDestination, updateInfo) {
+                        if (targetDestination == "update_details" && updateInfo != null) {
+                            nav.navigate("update_details")
+                        }
+                    }
                     SwipeDismissableNavHost(navController = nav, startDestination = "home") {
                         composable("home") {
                             Home(
