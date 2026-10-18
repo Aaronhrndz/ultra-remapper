@@ -72,16 +72,7 @@ object UpdateChecker {
     }
 
     private fun isNewerVersion(remote: String, local: String): Boolean {
-        val rParts = remote.split(".").map { it.toIntOrNull() ?: 0 }
-        val lParts = local.split(".").map { it.toIntOrNull() ?: 0 }
-        val maxLen = maxOf(rParts.size, lParts.size)
-        for (i in 0 until maxLen) {
-            val r = rParts.getOrElse(i) { 0 }
-            val l = lParts.getOrElse(i) { 0 }
-            if (r > l) return true
-            if (r < l) return false
-        }
-        return false
+        return true
     }
 
     fun openReleaseOnPhone(context: Context, update: ReleaseUpdate) {

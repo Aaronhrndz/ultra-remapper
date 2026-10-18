@@ -16,12 +16,6 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square" alt="License: GPL-3.0" />
   </a>
-  <img src="https://img.shields.io/badge/platform-Wear%20OS%205%2B-3DDC84?style=flat-square" alt="Wear OS" />
-<p align="center">
-  <img src="docs/wrist_showcase.jpg" width="420" alt="Ultra Remapper on Galaxy Watch Ultra" /><br/>
-  <img src="docs/watch_screenshot_main.png" width="160" alt="Main Mapping" />
-  <img src="docs/watch_screenshot_actions.png" width="160" alt="Action Picker" />
-  <img src="docs/watch_screenshot_ota.png" width="160" alt="In-Watch OTA Update" />
 </p>
 
 ---
