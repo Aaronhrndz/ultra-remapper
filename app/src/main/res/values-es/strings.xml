@@ -46,6 +46,7 @@
     <!-- Gestures -->
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>
+    <string name="gesture_triple">Triple pulsación</string>
     <string name="gesture_long">Pulsación larga</string>
 
     <!-- Samsung Actions -->
@@ -65,6 +66,7 @@
     <string name="action_save_parking">Guardar Parking</string>
     <string name="action_nav_parking">Volver al Coche (Maps a pie)</string>
     <string name="action_adb_mode">Modo Carga Fácil / ADB</string>
+    <string name="action_wireless_debugging">Depuración Inalámbrica (ADB)</string>
     <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
     <string name="action_lte_toggle">LTE y Datos Móviles</string>
     <string name="action_glove_mode">Sensibilidad Táctil (Modo Guantes)</string>

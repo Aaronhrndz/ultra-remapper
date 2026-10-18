@@ -239,6 +239,43 @@ object UtilityActions {
         }
     }
 
+    fun openWirelessDebugging(context: Context, backToHome: Boolean = false) {
+        val appCtx = context.applicationContext
+        // 1. Ensure adb_wifi_enabled is active in Settings.Global
+        try {
+            Settings.Global.putInt(appCtx.contentResolver, "adb_wifi_enabled", 1)
+        } catch (_: Exception) {}
+
+        // 2. Open Developer Options screen directly
+        val devIntents = listOf(
+            Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS),
+            Intent().setClassName(
+                "com.google.android.apps.wearable.settings",
+                "com.samsung.android.clockwork.settings.developer.StDevOptionsActivity"
+            ),
+            Intent("com.google.android.clockwork.settings.DEVELOPER_OPTIONS")
+        )
+
+        var launched = false
+        for (intent in devIntents) {
+            try {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (backToHome) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                }
+                appCtx.startActivity(intent)
+                launched = true
+                break
+            } catch (_: Exception) {}
+        }
+
+        if (launched) {
+            vibrateDouble(appCtx)
+        } else {
+            Toast.makeText(appCtx, "Developer options not available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     // ------------------------------------------------------------------------
     // 3. TOUCH SENSITIVITY / GLOVE MODE TOGGLE
     // ------------------------------------------------------------------------

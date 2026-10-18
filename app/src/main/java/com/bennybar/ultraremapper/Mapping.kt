@@ -18,7 +18,11 @@ object Mapping {
         "double" to R.string.gesture_double,
         "long" to R.string.gesture_long,
     )
-    val bottomGestures = listOf("bottom_long" to R.string.gesture_long)
+    val bottomGestures = listOf(
+        "bottom_double_tap" to R.string.gesture_double,
+        "bottom_triple_tap" to R.string.gesture_triple,
+        "bottom_long" to R.string.gesture_long,
+    )
     val gestures = actionGestures + bottomGestures
 
     val samsungActions = listOf(
@@ -40,6 +44,7 @@ object Mapping {
         "save_parking" to R.string.action_save_parking,
         "nav_parking" to R.string.action_nav_parking,
         "adb_mode" to R.string.action_adb_mode,
+        "wireless_debugging" to R.string.action_wireless_debugging,
         "water_eject" to R.string.action_water_eject,
         "lte_toggle" to R.string.action_lte_toggle,
     )
@@ -123,6 +128,7 @@ object Mapping {
             "save_parking" -> UtilityActions.saveParking(context)
             "nav_parking" -> UtilityActions.navigateToParking(context, backToHome)
             "adb_mode" -> UtilityActions.toggleAdbEasyMode(context)
+            "wireless_debugging" -> UtilityActions.openWirelessDebugging(context, backToHome)
             "water_eject" -> UtilityActions.ejectWater(context)
             "lte_toggle" -> UtilityActions.toggleLteData(context)
             "find_phone" -> triggerFindPhone(context, backToHome)
