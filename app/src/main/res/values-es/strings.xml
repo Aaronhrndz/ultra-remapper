@@ -3,9 +3,7 @@
     <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
     <!-- Master Switch -->
-    <string name="master_switch_title">Remapper Activo</string>
-    <string name="master_switch_enabled">Remapeo de botones activado</string>
-    <string name="master_switch_disabled">Desactivado (Botones de fábrica)</string>
+    <string name="master_switch_title">Remapear</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Botón Central</string>

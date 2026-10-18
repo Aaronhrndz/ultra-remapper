@@ -3,9 +3,7 @@
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
     <!-- Master Switch -->
-    <string name="master_switch_title">Remapper Active</string>
-    <string name="master_switch_enabled">Button remapping enabled</string>
-    <string name="master_switch_disabled">Disabled (Stock buttons)</string>
+    <string name="master_switch_title">Remap</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Center Button</string>

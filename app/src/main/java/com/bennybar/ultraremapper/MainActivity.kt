@@ -241,6 +241,9 @@ class MainActivity : ComponentActivity() {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
                                 setup = readSetupState(context)
+                                UpdateChecker.check(context) { info ->
+                                    updateInfo = info
+                                }
                             }
                         }
                         lifecycleOwner.lifecycle.addObserver(observer)
@@ -396,7 +399,7 @@ private fun Home(
 
         TransformingLazyColumn(
             state = columnState,
-            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
+            contentPadding = PaddingValues(top = 42.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
         ) {
             item(key = "master_switch") {
                 Button(
@@ -412,7 +415,7 @@ private fun Home(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                "Remap",
+                                context.getString(R.string.master_switch_title),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 fontWeight = FontWeight.Bold,
@@ -436,19 +439,9 @@ private fun Home(
                             }
                         }
                     },
-                    secondaryLabel = {
-                        Text(
-                            if (isMasterEnabled) context.getString(R.string.master_switch_enabled)
-                            else context.getString(R.string.master_switch_disabled),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = if (isMasterEnabled) UltraOrange else Color.Gray
-                        )
-                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = SlateCard,
-                        contentColor = Color.White,
-                        secondaryContentColor = if (isMasterEnabled) UltraOrange else Color.Gray
+                        contentColor = Color.White
                     ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
