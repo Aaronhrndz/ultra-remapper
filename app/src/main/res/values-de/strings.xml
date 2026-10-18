@@ -62,7 +62,7 @@
     <string name="action_dnd_toggle">Nicht stören</string>
     <string name="action_save_parking">Parkplatz speichern</string>
     <string name="action_nav_parking">Zum Auto navigieren (zu Fuß)</string>
-    <string name="action_adb_mode">Sideload- / Wachbleibe-Modus</string>
+    <string name="action_adb_mode">Bildschirm wachhalten (Sideload / ADB)</string>
     <string name="action_wireless_debugging">Drahtlose ADB-Fehlerbehebung</string>
     <string name="action_water_eject">Wasser auswerfen (Lautsprecher)</string>
     <string name="action_lte_toggle">LTE &amp; Mobile Daten</string>
@@ -83,8 +83,8 @@
     <string name="toast_parking_no_gps">GPS nicht verfügbar</string>
     <string name="toast_parking_perm_needed">Standortberechtigung erforderlich</string>
     <string name="toast_maps_not_found">Keine Karten-App gefunden</string>
-    <string name="toast_adb_mode_on">Sideload-Modus: EIN</string>
-    <string name="toast_adb_mode_off">Sideload-Modus: AUS</string>
+    <string name="toast_adb_mode_on">Wachhalten: EIN (Bildschirm &amp; WLAN aktiv)</string>
+    <string name="toast_adb_mode_off">Wachhalten: AUS</string>
     <string name="toast_lte_on">LTE &amp; Mobile Daten: EIN</string>
     <string name="toast_lte_off">LTE &amp; Mobile Daten: AUS</string>
     <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>

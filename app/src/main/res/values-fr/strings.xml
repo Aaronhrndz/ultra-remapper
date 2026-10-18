@@ -62,7 +62,7 @@
     <string name="action_dnd_toggle">Ne pas déranger</string>
     <string name="action_save_parking">Enregistrer le stationnement</string>
     <string name="action_nav_parking">Retourner à la voiture (à pied)</string>
-    <string name="action_adb_mode">Mode Chargement Facile / ADB</string>
+    <string name="action_adb_mode">Garder écran actif (Sideload / ADB)</string>
     <string name="action_wireless_debugging">Débogage sans fil (ADB)</string>
     <string name="action_water_eject">Éjection d’eau (Haut-parleur)</string>
     <string name="action_lte_toggle">LTE et Données mobiles</string>
@@ -83,8 +83,8 @@
     <string name="toast_parking_no_gps">GPS indisponible</string>
     <string name="toast_parking_perm_needed">Autorisation de localisation requise</string>
     <string name="toast_maps_not_found">Application de cartes introuvable</string>
-    <string name="toast_adb_mode_on">Mode Sideload : ACTIVÉ</string>
-    <string name="toast_adb_mode_off">Mode Sideload : DÉSACTIVÉ</string>
+    <string name="toast_adb_mode_on">Écran actif : ACTIVÉ (Écran et Wi-Fi maintenus)</string>
+    <string name="toast_adb_mode_off">Écran actif : DÉSACTIVÉ</string>
     <string name="toast_lte_on">LTE et Données : ACTIVÉ</string>
     <string name="toast_lte_off">LTE et Données : DÉSACTIVÉ</string>
     <string name="toast_write_secure_needed">Exécutez : adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>

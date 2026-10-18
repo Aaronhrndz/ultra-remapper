@@ -24,6 +24,9 @@ class BottomButtonService : AccessibilityService() {
 
         @Volatile
         var pendingBoostFromAction: Boolean = false
+
+        @Volatile
+        var pendingWirelessAdbAutoToggle: Boolean = false
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -95,6 +98,7 @@ class BottomButtonService : AccessibilityService() {
         if (instance === this) instance = null
         isFlashlightWindowActive = false
         pendingBoostFromAction = false
+        pendingWirelessAdbAutoToggle = false
         resetGestureState()
         tapHandler.removeCallbacksAndMessages(null)
         return super.onUnbind(intent)
@@ -104,6 +108,7 @@ class BottomButtonService : AccessibilityService() {
         if (instance === this) instance = null
         isFlashlightWindowActive = false
         pendingBoostFromAction = false
+        pendingWirelessAdbAutoToggle = false
         resetGestureState()
         tapHandler.removeCallbacksAndMessages(null)
         super.onDestroy()
@@ -188,9 +193,17 @@ class BottomButtonService : AccessibilityService() {
                     pendingBoostFromAction = false
                     scheduleBoostTaps(1150L, 1290L)
                 }
+            } else if (pendingWirelessAdbAutoToggle) {
+                tapHandler.removeCallbacksAndMessages(null)
+                tapHandler.postDelayed({
+                    if (pendingWirelessAdbAutoToggle) {
+                        performWirelessAdbClick()
+                    }
+                }, 1200L)
             } else if (pkg != "android" && pkg != "com.bennybar.ultraremapper") {
                 isFlashlightWindowActive = false
                 pendingBoostFromAction = false
+                pendingWirelessAdbAutoToggle = false
                 tapHandler.removeCallbacksAndMessages(null)
                 setWindowTrackingEnabled(false)
             }
@@ -226,9 +239,84 @@ class BottomButtonService : AccessibilityService() {
         scheduleBoostTaps(1400L, 1540L)
     }
 
+    fun autoToggleWirelessAdb() {
+        setWindowTrackingEnabled(true)
+        pendingWirelessAdbAutoToggle = true
+        // Solid delay fallback (1200ms) to ensure activity layout and animations complete
+        tapHandler.postDelayed({
+            if (pendingWirelessAdbAutoToggle) {
+                performWirelessAdbClick()
+            }
+        }, 1200L)
+    }
+
+    private fun performWirelessAdbClick() {
+        try {
+            val root = rootInActiveWindow ?: return
+
+            // 1. Check if checkable switch exists on current screen (Wireless Debugging page)
+            val checkableNodes = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
+            findCheckableNodes(root, checkableNodes)
+
+            for (node in checkableNodes) {
+                if (!node.isChecked) {
+                    node.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
+                    vibrateTick(50)
+                    finishWirelessAdbAutoToggle()
+                    return
+                } else {
+                    vibrateTick(30)
+                    finishWirelessAdbAutoToggle()
+                    return
+                }
+            }
+
+            // 2. If no checkable node found, we may be on root Developer Options screen
+            val keywords = listOf("inalámbrica", "wireless", "drahtlos", "sans fil", "debugging")
+            for (kw in keywords) {
+                val matches = root.findAccessibilityNodeInfosByText(kw)
+                for (item in matches) {
+                    var clickable: android.view.accessibility.AccessibilityNodeInfo? = item
+                    while (clickable != null && !clickable.isClickable) {
+                        clickable = clickable.parent
+                    }
+                    if (clickable != null && clickable.isClickable) {
+                        clickable.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
+                        // Wait for sub-screen to load (1200ms) and toggle the switch
+                        tapHandler.postDelayed({
+                            performWirelessAdbClick()
+                        }, 1200L)
+                        return
+                    }
+                }
+            }
+        } catch (_: Exception) {
+        } finally {
+            tapHandler.postDelayed({
+                finishWirelessAdbAutoToggle()
+            }, 3000L)
+        }
+    }
+
+    private fun finishWirelessAdbAutoToggle() {
+        pendingWirelessAdbAutoToggle = false
+        setWindowTrackingEnabled(false)
+    }
+
+    private fun findCheckableNodes(node: android.view.accessibility.AccessibilityNodeInfo?, list: MutableList<android.view.accessibility.AccessibilityNodeInfo>) {
+        if (node == null) return
+        if (node.isCheckable) {
+            list.add(node)
+        }
+        for (i in 0 until node.childCount) {
+            findCheckableNodes(node.getChild(i), list)
+        }
+    }
+
     fun cancelFlashlightTaps() {
         isFlashlightWindowActive = false
         pendingBoostFromAction = false
+        pendingWirelessAdbAutoToggle = false
         tapHandler.removeCallbacksAndMessages(null)
         setWindowTrackingEnabled(false)
     }

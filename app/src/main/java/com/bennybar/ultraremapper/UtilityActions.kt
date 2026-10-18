@@ -241,13 +241,13 @@ object UtilityActions {
 
     fun openWirelessDebugging(context: Context, backToHome: Boolean = false) {
         val appCtx = context.applicationContext
-        // 1. Ensure adb_wifi_enabled is active in Settings.Global
-        try {
-            Settings.Global.putInt(appCtx.contentResolver, "adb_wifi_enabled", 1)
-        } catch (_: Exception) {}
 
-        // 2. Open Developer Options screen directly
+        // 1. Trigger auto-toggle via Accessibility with solid delay
+        BottomButtonService.instance?.autoToggleWirelessAdb()
+
+        // 2. Open Developer Options / Wireless Debugging screen directly
         val devIntents = listOf(
+            Intent("android.settings.WIRELESS_DEBUGGING_SETTINGS"),
             Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS),
             Intent().setClassName(
                 "com.google.android.apps.wearable.settings",
