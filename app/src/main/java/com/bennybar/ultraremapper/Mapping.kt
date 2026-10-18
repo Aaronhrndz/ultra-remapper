@@ -1,10 +1,15 @@
 package com.bennybar.ultraremapper
 
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.provider.Settings
 import android.view.KeyEvent
+import android.widget.Toast
 
 /** Gesture → action assignments, categorized into Samsung Factory Actions, Media & Volume, and Installed Apps. */
 object Mapping {
@@ -18,6 +23,8 @@ object Mapping {
 
     val samsungActions = listOf(
         "flashlight" to "Flashlight (Boost)",
+        "red_flashlight" to "Red Flashlight (Max)",
+        "dnd_toggle" to "Do Not Disturb",
         "shealth_workout" to "Samsung Health (Workout)",
         "shealth_exercises" to "Exercise List",
         "shealth_pick_workout" to "Pick Quick Workout",
@@ -89,6 +96,8 @@ object Mapping {
         when (action) {
             "none" -> Unit
             "flashlight" -> toggleFlashlight(context, backToHome)
+            "red_flashlight" -> toggleRedFlashlight(context)
+            "dnd_toggle" -> toggleDoNotDisturb(context)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
             "shealth_exercises" -> launchComponent(
                 context,
@@ -122,6 +131,54 @@ object Mapping {
                         }
                     }
             }
+        }
+    }
+
+    private fun toggleRedFlashlight(context: Context) {
+        val current = RedFlashlightActivity.currentInstance
+        if (current != null) {
+            current.finish()
+            return
+        }
+        val intent = Intent(context.applicationContext, RedFlashlightActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        try {
+            context.applicationContext.startActivity(intent)
+        } catch (_: Exception) {
+        }
+    }
+
+    private fun toggleDoNotDisturb(context: Context) {
+        val nm = context.getSystemService(NotificationManager::class.java) ?: return
+        // Notice: NotificationListenerService already grants Notification Policy Access when enabled!
+        if (!nm.isNotificationPolicyAccessGranted) {
+            try {
+                context.startActivity(
+                    Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                )
+            } catch (_: Exception) {
+            }
+            return
+        }
+        val currentFilter = nm.currentInterruptionFilter
+        val enableDnd = currentFilter == NotificationManager.INTERRUPTION_FILTER_ALL
+        val nextFilter = if (enableDnd) {
+            NotificationManager.INTERRUPTION_FILTER_NONE
+        } else {
+            NotificationManager.INTERRUPTION_FILTER_ALL
+        }
+        try {
+            nm.setInterruptionFilter(nextFilter)
+            val vib = context.getSystemService(Vibrator::class.java)
+            if (enableDnd) {
+                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 60, 50, 60), -1))
+                Toast.makeText(context.applicationContext, "Do Not Disturb: ON", Toast.LENGTH_SHORT).show()
+            } else {
+                vib?.vibrate(VibrationEffect.createOneShot(90, VibrationEffect.DEFAULT_AMPLITUDE))
+                Toast.makeText(context.applicationContext, "Do Not Disturb: OFF", Toast.LENGTH_SHORT).show()
+            }
+        } catch (_: Exception) {
         }
     }
 
