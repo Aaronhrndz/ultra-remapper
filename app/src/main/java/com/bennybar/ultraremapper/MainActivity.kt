@@ -216,7 +216,6 @@ class MainActivity : ComponentActivity() {
                                 setup = setup,
                                 updateInfo = updateInfo,
                                 onOpenUpdateDetails = {
-                                    updateInfo?.let { UpdateChecker.openReleaseOnPhone(context, it) }
                                     nav.navigate("update_details")
                                 },
                                 onOpenA11ySettings = {

@@ -312,32 +312,54 @@ object UtilityActions {
         Thread {
             val audio = appCtx.getSystemService(AudioManager::class.java)
             val prevAlarm = audio?.getStreamVolume(AudioManager.STREAM_ALARM) ?: 10
+            val prevMusic = audio?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 10
             val prevRing = audio?.getStreamVolume(AudioManager.STREAM_RING) ?: 10
             val maxAlarm = audio?.getStreamMaxVolume(AudioManager.STREAM_ALARM) ?: 15
-            val maxRing = audio?.getStreamMaxVolume(AudioManager.STREAM_RING) ?: 15
             val maxMusic = audio?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 15
+            val maxRing = audio?.getStreamMaxVolume(AudioManager.STREAM_RING) ?: 15
 
             try {
-                // Set volume on all speaker output channels to hardware ceiling
+                // Maximum hardware gain for water expulsion
                 audio?.setStreamVolume(AudioManager.STREAM_ALARM, maxAlarm, 0)
-                audio?.setStreamVolume(AudioManager.STREAM_RING, maxRing, 0)
                 audio?.setStreamVolume(AudioManager.STREAM_MUSIC, maxMusic, 0)
+                audio?.setStreamVolume(AudioManager.STREAM_RING, maxRing, 0)
 
                 val sampleRate = 44100
-                val durationSec = 7
-                val numSamples = sampleRate * durationSec
-                val samples = ShortArray(numSamples)
-                val freq = 165.0
+                val totalSec = 10.0
+                val totalSamples = (sampleRate * totalSec).toInt()
+                val samples = ShortArray(totalSamples)
 
-                for (i in 0 until numSamples) {
+                // 10 distinct ejection cycles: 0.8s acoustic expulsion sweep + 0.2s pause
+                // Sweep from 145 Hz to 240 Hz with smooth attack/decay envelope to prevent clipping distortion
+                var phase = 0.0
+                val cycleDuration = 1.0 // 1.0s total per cycle (0.8s tone, 0.2s gap)
+                val toneDuration = 0.80
+
+                for (i in 0 until totalSamples) {
                     val t = i.toDouble() / sampleRate
-                    // Pulsing cadence: 0.5s tone, 0.1s silence
-                    val cycle = t % 0.60
-                    val env = if (cycle < 0.50) 1.0 else 0.0
-                    val fundamental = sin(2.0 * PI * freq * t)
-                    val secondHarmonic = 0.30 * sin(2.0 * PI * (freq * 2.0) * t)
-                    val sample = ((fundamental + secondHarmonic) / 1.30 * env).coerceIn(-1.0, 1.0)
-                    samples[i] = (sample * 32767.0).toInt().toShort()
+                    val cyclePos = t % cycleDuration
+
+                    if (cyclePos < toneDuration) {
+                        val progress = cyclePos / toneDuration
+                        // Acoustic sweep: starts deep at 145 Hz, sweeps up to 240 Hz
+                        val currentFreq = 145.0 + (95.0 * progress)
+                        val freqStep = 2.0 * PI * currentFreq / sampleRate
+                        phase += freqStep
+
+                        // Soft envelope: 15ms fade-in, 30ms fade-out (eliminates harsh clicking/buzz)
+                        val envelope = when {
+                            cyclePos < 0.015 -> cyclePos / 0.015
+                            cyclePos > (toneDuration - 0.030) -> (toneDuration - cyclePos) / 0.030
+                            else -> 1.0
+                        }
+
+                        // Fundamental resonant tone + subtle 2nd harmonic (adds diaphragm physical thrust)
+                        val wave = sin(phase) + 0.22 * sin(phase * 2.0)
+                        val normalized = (wave / 1.22 * envelope).coerceIn(-1.0, 1.0)
+                        samples[i] = (normalized * 32767.0).toInt().toShort()
+                    } else {
+                        samples[i] = 0
+                    }
                 }
 
                 val track = AudioTrack.Builder()
@@ -363,16 +385,24 @@ object UtilityActions {
                 track.write(samples, 0, samples.size)
                 track.play()
 
+                // Synchronized haptic motor pulses: 10 bursts matching the 1.0s cycles
                 val vib = appCtx.getSystemService(Vibrator::class.java)
-                vib?.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 500, 100, 500, 100, 500, 100, 500, 100, 500, 100, 500), -1))
+                val timing = LongArray(21) // 0 wait, 10 pairs of (800ms vibrate, 200ms sleep)
+                timing[0] = 0
+                for (c in 0 until 10) {
+                    timing[1 + c * 2] = 800
+                    timing[2 + c * 2] = 200
+                }
+                vib?.vibrate(VibrationEffect.createWaveform(timing, -1))
 
-                Thread.sleep(durationSec * 1000L)
+                Thread.sleep((totalSec * 1000).toLong())
                 track.stop()
                 track.release()
             } catch (_: Exception) {
             } finally {
                 try {
                     audio?.setStreamVolume(AudioManager.STREAM_ALARM, prevAlarm, 0)
+                    audio?.setStreamVolume(AudioManager.STREAM_MUSIC, prevMusic, 0)
                     audio?.setStreamVolume(AudioManager.STREAM_RING, prevRing, 0)
                 } catch (_: Exception) {
                 }
