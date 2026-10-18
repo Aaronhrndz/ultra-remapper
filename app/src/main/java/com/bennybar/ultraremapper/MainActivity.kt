@@ -189,7 +189,7 @@ class MainActivity : ComponentActivity() {
         // Clean any leftover APKs in cache asynchronously to keep watch storage minimal
         java.util.concurrent.Executors.newSingleThreadExecutor().execute {
             try {
-                File(cacheDir, "updates").listFiles()?.forEach { it.delete() }
+                java.io.File(cacheDir, "updates").listFiles()?.forEach { file -> file.delete() }
             } catch (_: Exception) {}
         }
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
