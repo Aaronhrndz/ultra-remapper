@@ -23,6 +23,12 @@ class BottomButtonService : AccessibilityService() {
         var isFlashlightWindowActive: Boolean = false
 
         @Volatile
+        var currentActivePackage: String? = null
+
+        @Volatile
+        var currentActiveClass: String? = null
+
+        @Volatile
         var pendingBoostFromAction: Boolean = false
 
         @Volatile
@@ -137,6 +143,16 @@ class BottomButtonService : AccessibilityService() {
     }
 
     fun isSamsungHealthWorkoutActive(): Boolean {
+        // Fast path: cached active window event
+        if (currentActivePackage == "com.samsung.android.wear.shealth") {
+            val cls = currentActiveClass ?: ""
+            if (cls.contains("During", ignoreCase = true) ||
+                cls.contains("Exercise", ignoreCase = true) ||
+                cls.contains("Workout", ignoreCase = true)) {
+                return true
+            }
+        }
+
         return try {
             val root = rootInActiveWindow ?: return false
             val pkg = root.packageName?.toString()
@@ -212,6 +228,9 @@ class BottomButtonService : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             val pkg = event.packageName?.toString() ?: return
+            currentActivePackage = pkg
+            currentActiveClass = event.className?.toString()
+
             if (pkg == "com.samsung.android.watch.flashlight") {
                 isFlashlightWindowActive = true
                 if (pendingBoostFromAction) {
@@ -230,7 +249,6 @@ class BottomButtonService : AccessibilityService() {
                 pendingBoostFromAction = false
                 pendingWirelessAdbAutoToggle = false
                 tapHandler.removeCallbacksAndMessages(null)
-                setWindowTrackingEnabled(false)
             }
         }
     }

@@ -13,8 +13,8 @@ android {
         applicationId = "com.bennybar.ultraremapper"
         minSdk = 30
         targetSdk = 37
-        versionCode = 21
-        versionName = "1.3.7"
+        versionCode = 22
+        versionName = "1.3.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

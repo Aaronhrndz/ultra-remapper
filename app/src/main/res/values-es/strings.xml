@@ -29,6 +29,11 @@
     <string name="diag_media_sub">Activar acceso a notificaciones</string>
     <string name="diag_secure_settings">Falta Secure Settings</string>
     <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
+    <string name="diag_dialog_adb_title">Comando ADB necesario</string>
+    <string name="diag_dialog_close">Entendido</string>
+    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService</string>
     <string name="update_banner_title">Actualización v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
     <string name="update_available">Actualización disponible</string>

@@ -327,32 +327,31 @@ object Mapping {
     private fun triggerSamsungHealthQuickButton(context: Context, backToHome: Boolean) {
         val appCtx = context.applicationContext
 
-        // 1. First try native ActionButtonService dispatch (stock system behavior)
-        val svcIntent = Intent().apply {
-            component = ComponentName(
-                "com.samsung.android.wear.shealth",
-                "com.samsung.android.wear.shealth.service.ActionButtonService"
-            )
-            putExtra("ACTION_KEY_EVENT", 2)
-            putExtra("ACTION_KEY_COUNT", 1)
-        }
+        // 1. Direct explicit launch of Samsung Health ExerciseListActivity (Favorites & recent workout screen)
         try {
-            val started = appCtx.startService(svcIntent)
-            if (started != null) return
-        } catch (_: Exception) {
-        }
-
-        // 2. Launch Samsung Health ExerciseListActivity with START_RECENT_WORKOUT action (opens favorites list)
-        try {
-            val listIntent = Intent("com.samsung.android.wear.shealth.intent.action.START_RECENT_WORKOUT").apply {
-                setPackage("com.samsung.android.wear.shealth")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val listIntent = Intent("com.samsung.android.wear.shealth.intent.action.VIEW_OPEN_EXERCISE_LIST_ACTIVITY").apply {
+                component = ComponentName(
+                    "com.samsung.android.wear.shealth",
+                    "com.samsung.android.wear.shealth.app.exercise.view.ExerciseListActivity"
+                )
+                addCategory(Intent.CATEGORY_DEFAULT)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
             }
             appCtx.startActivity(listIntent)
             return
-        } catch (_: Exception) {
-        }
+        } catch (_: Exception) {}
+
+        // 2. Action VIEW_EXERCISE_ACTIVITY_TYPES
+        try {
+            val typesIntent = Intent("com.samsung.android.wear.shealth.intent.action.VIEW_EXERCISE_ACTIVITY_TYPES").apply {
+                setPackage("com.samsung.android.wear.shealth")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            }
+            appCtx.startActivity(typesIntent)
+            return
+        } catch (_: Exception) {}
 
         // 3. Fallback: ExerciseActivity
         launchComponent(

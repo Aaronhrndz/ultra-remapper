@@ -21,9 +21,12 @@ class ActionButtonService : Service() {
 
         val appEnabled = Mapping.isEnabled(this)
         val workoutActive = BottomButtonService.instance?.isSamsungHealthWorkoutActive() == true
+        val singleAction = Mapping.get(this, "single")
+        val yieldSinglePress = singleAction == "none" || singleAction == "shealth_workout" || workoutActive
 
-        if (!appEnabled || (workoutActive && gesture == "single")) {
-            // Forward raw intent to stock Samsung Health ActionButtonService
+        // If master switch disabled, or workout active, or single press is unmapped / shealth:
+        // Always forward raw hardware key events (DOWN=0, UP=1, PRESS=2) to stock Samsung Health service
+        if (!appEnabled || (yieldSinglePress && (keyEvent in 0..2))) {
             forwardToSamsungHealth(intent)
             stopSelf(startId)
             return START_NOT_STICKY
@@ -49,14 +52,7 @@ class ActionButtonService : Service() {
                 }
             }
             startService(shealthIntent)
-        } catch (_: Exception) {
-            // If service has strict signature permission, launch workout screen fallback
-            try {
-                val launchIntent = packageManager.getLaunchIntentForPackage("com.samsung.android.wear.shealth")
-                launchIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                if (launchIntent != null) startActivity(launchIntent)
-            } catch (_: Exception) {}
-        }
+        } catch (_: Exception) {}
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

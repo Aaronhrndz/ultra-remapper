@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -94,14 +95,20 @@ private fun hasHardwareActionButton(context: Context): Boolean {
     } catch (_: Throwable) {
         null
     }
-    if (currentSetting != null) return true
+    if (currentSetting != null && currentSetting != "None/None" && currentSetting.isNotBlank()) return true
 
     // 2. Fallback check for Galaxy Watch Ultra / Ultra 2 / Watch 8 Classic hardware signatures
+    // Watch 8 Classic (hypothetical SM-R10x / SM-L80x / Watch8 Classic) and Ultra (SM-L700, SM-L705, Ultra)
     val model = android.os.Build.MODEL.uppercase()
     val product = android.os.Build.PRODUCT.uppercase()
     val device = android.os.Build.DEVICE.uppercase()
-    val ultraKeywords = listOf("ULTRA", "CLASSIC", "SM-L700", "SM-L705", "SM-R9", "SM-L3")
-    return ultraKeywords.any { kw -> model.contains(kw) || product.contains(kw) || device.contains(kw) }
+    val isExplicitUltra = listOf("ULTRA", "SM-L700", "SM-L705").any {
+        model.contains(it) || product.contains(it) || device.contains(it)
+    }
+    val isWatch8Classic = (model.contains("CLASSIC") || product.contains("CLASSIC") || device.contains("CLASSIC")) &&
+            (model.contains("8") || product.contains("8") || device.contains("8"))
+
+    return isExplicitUltra || isWatch8Classic
 }
 
 private fun isActionButtonRouted(context: Context): Boolean {
@@ -237,6 +244,13 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            kotlinx.coroutines.delay(1000L)
+                            setup = readSetupState(context)
+                        }
+                    }
+
                     DisposableEffect(lifecycleOwner) {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
@@ -287,8 +301,15 @@ class MainActivity : ComponentActivity() {
                                         } catch (_: Throwable) {}
                                     }
                                 },
+                                onShowAdbHelp = { helpText ->
+                                    nav.navigate("help/${Uri.encode(helpText)}")
+                                },
                                 onPick = { nav.navigate("pick/$it") }
                             )
+                        }
+                        composable("help/{text}") { entry ->
+                            val text = Uri.decode(entry.arguments?.getString("text") ?: "")
+                            AdbHelpScreen(text = text, onDone = { nav.popBackStack() })
                         }
                         composable("update_details") {
                             val info = updateInfo
@@ -338,6 +359,7 @@ private fun Home(
     onOpenA11ySettings: () -> Unit,
     onOpenAppInfo: () -> Unit,
     onOpenNotifListeners: () -> Unit,
+    onShowAdbHelp: (String) -> Unit,
     onPick: (String) -> Unit,
 ) {
     val context = LocalContext.current
@@ -389,7 +411,7 @@ private fun Home(
     }
 
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
-            (!setup.actionRouted) ||
+            (setup.hasActionButton && !setup.actionRouted) ||
             (!setup.overlayAllowed) ||
             (!setup.mediaListenerEnabled && needsMediaBridge) ||
             (!setup.secureSettingsGranted && needsSecureSettings)
@@ -485,10 +507,12 @@ private fun Home(
                         Text(context.getString(R.string.diag_header_status), color = UltraOrange, fontWeight = FontWeight.Bold)
                     }
                 }
-                if (!setup.actionRouted) {
+                if (setup.hasActionButton && !setup.actionRouted) {
                     item(key = "diag_route") {
                         Button(
-                            onClick = onOpenAppInfo,
+                            onClick = {
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_route_body))
+                            },
                             label = { Text(context.getString(R.string.diag_route_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_route_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
@@ -502,8 +526,37 @@ private fun Home(
                 if (!setup.overlayAllowed) {
                     item(key = "diag_overlay") {
                         Button(
-                            onClick = onOpenAppInfo,
-                            label = { Text(context.getString(R.string.diag_overlay_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            onClick = {
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_overlay_body))
+                            },
+                            label = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        context.getString(R.string.diag_overlay_title),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF2E323A))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "ADB",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            },
                             secondaryLabel = { Text(context.getString(R.string.diag_overlay_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
@@ -544,8 +597,37 @@ private fun Home(
                 if (!setup.secureSettingsGranted && needsSecureSettings) {
                     item(key = "diag_secure") {
                         Button(
-                            onClick = {},
-                            label = { Text(context.getString(R.string.diag_secure_settings), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            onClick = {
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_secure_body))
+                            },
+                            label = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        context.getString(R.string.diag_secure_settings),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF2E323A))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "ADB",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            },
                             secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
@@ -1206,6 +1288,71 @@ private fun UpdateDetailsScreen(
                             .transformedHeight(this, transformationSpec)
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AdbHelpScreen(
+    text: String,
+    onDone: () -> Unit,
+) {
+    val columnState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+    val context = LocalContext.current
+
+    ScreenScaffold(scrollState = columnState) { _ ->
+        TransformingLazyColumn(
+            state = columnState,
+            contentPadding = PaddingValues(top = 26.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
+        ) {
+            item(key = "help_title") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        context.getString(R.string.diag_dialog_adb_title),
+                        color = UltraOrange,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            item(key = "help_body") {
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp, vertical = 8.dp)
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+            item(key = "help_close") {
+                Button(
+                    onClick = onDone,
+                    label = {
+                        Text(
+                            context.getString(R.string.diag_dialog_close),
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = UltraOrange,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
             }
         }
     }
