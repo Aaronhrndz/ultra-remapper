@@ -1086,31 +1086,6 @@ private fun UpdateDetailsScreen(
                 )
             }
 
-            if (isDownloading && downloadFraction > 0f) {
-                item(key = "upd_progress_indicator") {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 6.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(6.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.2f))
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth(downloadFraction.coerceIn(0.02f, 1f))
-                                    .height(6.dp)
-                                    .background(UltraOrange)
-                            )
-                        }
-                    }
-                }
-            }
 
             item(key = "upd_open_phone") {
                 Button(
