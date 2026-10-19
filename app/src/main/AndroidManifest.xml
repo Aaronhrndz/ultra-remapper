@@ -61,7 +61,7 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity="com.bennybar.ultraremapper.flashlight"
+            android:taskAffinity="com.aaronhrndz.ultraremapper.flashlight"
             android:noHistory="true"
             android:screenOrientation="nosensor"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
@@ -109,8 +109,8 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-                <action android:name="com.bennybar.ultraremapper.action.CHECK_UPDATE" />
-                <action android:name="com.bennybar.ultraremapper.action.INSTALL_UPDATE" />
+                <action android:name="com.aaronhrndz.ultraremapper.action.CHECK_UPDATE" />
+                <action android:name="com.aaronhrndz.ultraremapper.action.INSTALL_UPDATE" />
             </intent-filter>
         </receiver>
 

@@ -18,8 +18,8 @@ import java.util.concurrent.Executors
 class UpdateReceiver : BroadcastReceiver() {
 
     companion object {
-        const val ACTION_INSTALL_UPDATE = "com.bennybar.ultraremapper.action.INSTALL_UPDATE"
-        const val ACTION_CHECK_UPDATE = "com.bennybar.ultraremapper.action.CHECK_UPDATE"
+        const val ACTION_INSTALL_UPDATE = "com.aaronhrndz.ultraremapper.action.INSTALL_UPDATE"
+        const val ACTION_CHECK_UPDATE = "com.aaronhrndz.ultraremapper.action.CHECK_UPDATE"
         const val EXTRA_VERSION = "extra_version"
         const val EXTRA_APK_URL = "extra_apk_url"
         const val CHANNEL_ID = "app_updates_channel"
