@@ -37,7 +37,7 @@
     <string name="diag_dialog_overlay_body">To display overlays and maximum brightness flashlight, run in your terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
     <string name="diag_dialog_secure_body">To toggle LTE, Glove Mode, or Debugging, run in your terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="diag_dialog_route_body">To route the Action button to Ultra Remapper, go to:\n\nWatch Settings › Buttons &amp; Gestures › Action Button › Choose Ultra Remapper\n\nOr via ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
-    <string name="diag_dialog_media_body">To enable Media Controls (Play/Pause/Volume) for music apps, run in your terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
+    <string name="diag_dialog_media_body">To enable Media Controls (Play/Pause/Volume) and ensure 100% native compatibility with Samsung Health workouts (pausing/finishing workouts by holding the back button), run in your terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Update v%s available</string>
     <string name="update_banner_title_beta">Beta Update v%s available</string>
     <string name="update_banner_sub">Tap for changelog &amp; direct install</string>

@@ -442,8 +442,8 @@ private fun Home(
     val needsSecureSettings = remember(allConfiguredActions) {
         allConfiguredActions.any { it in setOf("glove_mode", "lte_toggle", "adb_mode") }
     }
-    val needsMediaBridge = remember(allConfiguredActions) {
-        allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
+    val needsMediaBridge = remember(allConfiguredActions, setup.a11yEnabled) {
+        setup.a11yEnabled || allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
     }
 
     val needsOverlay = remember(allConfiguredActions) {

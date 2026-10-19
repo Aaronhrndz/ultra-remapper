@@ -37,7 +37,7 @@
     <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
     <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
-    <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS, ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
+    <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS y garantizar compatibilidad nativa con entrenos de Samsung Health (pausar o finalizar entreno manteniendo pulsado el botón inferior), ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Actualización v%s disponible</string>
     <string name="update_banner_title_beta">Actualización Beta v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>

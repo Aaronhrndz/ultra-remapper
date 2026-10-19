@@ -191,6 +191,12 @@ class BottomButtonService : AccessibilityService() {
         val hasDoubleTap = Mapping.get(this, "bottom_double_tap") != "none"
         val hasTripleTap = Mapping.get(this, "bottom_triple_tap") != "none"
         val hasLongPress = Mapping.get(this, "bottom_long") != "none"
+
+        // If bottom button is completely unmapped ("Nada"), yield 100% to stock OS
+        if (!hasDoubleTap && !hasTripleTap && !hasLongPress) {
+            return false
+        }
+
         val anyMultiGesture = hasDoubleTap || hasTripleTap
 
         val now = System.currentTimeMillis()
