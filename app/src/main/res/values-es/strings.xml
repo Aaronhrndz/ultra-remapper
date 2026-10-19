@@ -8,7 +8,9 @@
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Botón Central</string>
     <string name="hdr_bottom_button">Botón Inferior</string>
+    <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Funciones Samsung</string>
+    <string name="hdr_dev">Desarrollo (ADB)</string>
     <string name="hdr_utility">Utilidades</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Multimedia y Volumen</string>

@@ -25,16 +25,23 @@ object Mapping {
     )
     val gestures = actionGestures + bottomGestures
 
-    val samsungActions = listOf(
-        "flashlight" to R.string.action_flashlight,
+    val shealthActions = listOf(
         "shealth_workout" to R.string.action_shealth_workout,
         "shealth_route" to R.string.action_shealth_route,
-        "shealth_exercises" to R.string.action_shealth_exercises,
         "shealth_pick_workout" to R.string.action_shealth_pick_workout,
+    )
+
+    val samsungActions = listOf(
+        "flashlight" to R.string.action_flashlight,
         "stopwatch" to R.string.action_stopwatch,
         "water_lock" to R.string.action_water_lock,
         "assistant" to R.string.action_assistant,
         "find_phone" to R.string.action_find_phone,
+    )
+
+    val devActions = listOf(
+        "wireless_debugging" to R.string.action_wireless_debugging,
+        "adb_mode" to R.string.action_adb_mode,
     )
 
     val utilityActions = listOf(
@@ -43,8 +50,6 @@ object Mapping {
         "glove_mode" to R.string.action_glove_mode,
         "save_parking" to R.string.action_save_parking,
         "nav_parking" to R.string.action_nav_parking,
-        "adb_mode" to R.string.action_adb_mode,
-        "wireless_debugging" to R.string.action_wireless_debugging,
         "water_eject" to R.string.action_water_eject,
         "lte_toggle" to R.string.action_lte_toggle,
     )
@@ -62,7 +67,7 @@ object Mapping {
         "open_media_player" to R.string.action_open_media_player,
     )
 
-    val actionDefinitions = (samsungActions + utilityActions + homeAssistantActions + mediaActions)
+    val actionDefinitions = (shealthActions + samsungActions + devActions + utilityActions + homeAssistantActions + mediaActions)
 
     private val defaults = mapOf(
         "single" to "flashlight",
@@ -104,7 +109,9 @@ object Mapping {
     fun categoryLabel(context: Context, action: String): String = when {
         action == "none" -> ""
         action.startsWith("app:") -> "App"
+        shealthActions.any { it.first == action } -> "Health"
         samsungActions.any { it.first == action } -> "Samsung"
+        devActions.any { it.first == action } -> "Dev"
         utilityActions.any { it.first == action } -> "Utility"
         homeAssistantActions.any { it.first == action } -> "HA"
         mediaActions.any { it.first == action } -> "Media"
@@ -143,12 +150,6 @@ object Mapping {
             "ha_assist" -> triggerHaAssist(context, backToHome)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
             "shealth_route" -> launchRouteMode(context, backToHome)
-            "shealth_exercises" -> launchComponent(
-                context,
-                "com.samsung.android.wear.shealth",
-                "com.samsung.android.wear.shealth.app.exercise.view.ExerciseActivity",
-                backToHome
-            )
             "shealth_pick_workout" -> launchComponent(
                 context,
                 "com.samsung.android.wear.shealth",

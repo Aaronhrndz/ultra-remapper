@@ -6,7 +6,9 @@
 
     <string name="hdr_center_button">Mittlere Taste</string>
     <string name="hdr_bottom_button">Untere Taste</string>
+    <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Samsung-Funktionen</string>
+    <string name="hdr_dev">Entwicklung (ADB)</string>
     <string name="hdr_utility">Dienstprogramme</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Medien &amp; Lautstärke</string>

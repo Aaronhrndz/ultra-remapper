@@ -38,24 +38,26 @@
 - **Direct In-Watch Updates (Autonomous OTA)**:
   - Automatic GitHub release detection with a live **download progress bar & percentage indicator**, and one-tap in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
 - **Categorized Action Picker**:
-  - **Smart Utilities**:
+  - **Samsung Health**:
+    - **My Workouts (Stock)**: Native Quick Button hook (`ActionButtonService`), jumping straight into your pinned **Favorite Exercises** or starting your default exercise shortcut.
+    - **Route Workout Mode**: Direct shortcut to launch Samsung Health Route & GPX workout view (`shealth_route`).
+    - **Pick Quick Workout**: Native exercise picker selector (`ExerciseActionButtonSelectionActivity`).
+  - **Samsung Functions**:
+    - **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12` on Ultra / supported models), and toggles off cleanly on repeat press. Uses dynamic `serviceInfo` event subscription so idle battery impact is **zero**.
+    - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
+    - **Stopwatch**: Launches Samsung Stopwatch (`com.samsung.android.watch.stopwatch`).
+    - **Water Lock**: Activates Samsung's native Water Lock mode (`StWaterLockSettingActivity`).
+    - **Digital Assistant**: Triggers Google Assistant / Gemini (`ACTION_VOICE_COMMAND`).
+  - **Development (ADB)**:
     - **Wireless Debugging (ADB)**: Direct shortcut that opens the Wireless Debugging screen and automatically toggles on ADB Wi-Fi via accessibility after a 1.2s settling delay, displaying your connection IP and port immediately on your wrist.
     - **Keep Screen Awake (Sideload / ADB)**: Keeps the screen awake and prevents Wi-Fi/CPU sleep during wireless ADB package installations, avoiding lock screen PIN re-prompts.
+  - **Smart Utilities**:
     - **Save Parking Spot & Navigate to Car**: Saves exact GPS coordinates with 1 press and opens Google Maps in walking navigation mode (`google.navigation:q=LAT,LON&mode=w`).
     - **Touch Sensitivity (Glove Mode)**: Toggles Samsung high-sensitivity screen mode for gloves or wet hands.
     - **Red Flashlight (Max)**: Full-screen red light at 100% brightness (tactical night vision preserving).
     - **Do Not Disturb**: Quick toggle for DND with tactile vibration feedback.
     - **Water Eject Speaker**: High-resonance acoustic wave (145 Hz -> 240 Hz sweep with envelope smoothing) at maximum hardware volume with synchronized vibration bursts to expel water droplets from the speaker grille.
     - **LTE & Mobile Data**: Toggle cellular connectivity on LTE watch variants.
-  - **Samsung Functions**:
-    - **Workout / Favorites (Stock)**: Triggers Samsung Health's native Quick Button hook (`ActionButtonService`), jumping straight into your pinned **Favorite Exercises** or starting your default exercise shortcut.
-    - **All Exercises (Full List)**: Direct shortcut to launch Samsung Health's root workout list (`ExerciseActivity`).
-    - **Route Workout Mode**: Direct shortcut to launch Samsung Health Route & GPX workout view (`shealth_route`).
-    - **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12`), and toggles off cleanly on repeat press. Uses dynamic `serviceInfo` event subscription so idle battery impact is **zero**.
-    - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
-    - **Stopwatch**: Launches Samsung Stopwatch (`com.samsung.android.watch.stopwatch`).
-    - **Water Lock**: Activates Samsung's native Water Lock mode (`StWaterLockSettingActivity`).
-    - **Digital Assistant**: Triggers Google Assistant / Gemini (`ACTION_VOICE_COMMAND`).
   - **Home Assistant Companion**:
     - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app without needing server logins on the watch.
   - **Media & Volume (with Bridged Phone & KDE Connect Support)**:
@@ -139,6 +141,15 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > ```bash
 > adb shell settings put global setting_action_button_press com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService
 > ```
+
+### 🏃 Why Samsung Health Laps need Single Click set to "My Workouts" (The 5-Year-Old Analogy)
+
+> [!IMPORTANT]
+> **How it works:**
+> Imagine Samsung Health is a **secret school club** where only the official president is allowed inside to ring the bell (mark a Lap or Pause).
+> - Third-party apps (like Ultra Remapper) are **not on the club's guest list**. If Ultra Remapper tries to knock on the door or ring Samsung Health's bell, Android security yells: *"Permission Denial: You can't enter!"* and blocks it.
+> - But when the watch system sees you click the orange button, if the click points directly to **Samsung Health ("My Workouts")**, the **watch itself rings the bell from the inside**, which is allowed!
+> - Therefore: **Keep Single Press mapped to "My Workouts" (or unmapped)** if you want native workout Laps and Pause during your runs. Double press and Long press remain 100% free for your custom shortcuts (Flashlight, Assistant, Media, etc.).
 
 ---
 

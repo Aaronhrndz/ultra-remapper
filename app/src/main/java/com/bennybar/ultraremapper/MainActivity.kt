@@ -900,7 +900,127 @@ private fun ActionPicker(
                 )
             }
 
-            // Utility Actions Section (separated with 20.dp top padding)
+            // Samsung Health Section
+            item(key = "hdr_shealth") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        context.getString(R.string.hdr_shealth),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            items(Mapping.shealthActions, key = { "sh_${it.first}" }) { (action, labelRes) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // Samsung Functions Section
+            item(key = "hdr_samsung") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        context.getString(R.string.hdr_samsung),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, labelRes) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // Development / ADB Section
+            item(key = "hdr_dev") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 20.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        context.getString(R.string.hdr_dev),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            items(Mapping.devActions, key = { "dev_${it.first}" }) { (action, labelRes) ->
+                val selected = action == current
+                RadioButton(
+                    selected = selected,
+                    onSelect = { onSelect(action) },
+                    label = {
+                        Text(
+                            context.getString(labelRes),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
+                    },
+                    colors = radioColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // Utility Actions Section
             item(key = "hdr_utility") {
                 ListHeader(
                     modifier = Modifier
@@ -940,7 +1060,7 @@ private fun ActionPicker(
                 )
             }
 
-            // Home Assistant Section (separated with 20.dp top padding, grayed out if not installed)
+            // Home Assistant Section
             item(key = "hdr_home_assistant") {
                 ListHeader(
                     modifier = Modifier
@@ -991,47 +1111,7 @@ private fun ActionPicker(
                 )
             }
 
-            // Samsung Functions Section (separated with 20.dp top padding)
-            item(key = "hdr_samsung") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Text(
-                        context.getString(R.string.hdr_samsung),
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            items(Mapping.samsungActions, key = { "sam_${it.first}" }) { (action, labelRes) ->
-                val selected = action == current
-                RadioButton(
-                    selected = selected,
-                    onSelect = { onSelect(action) },
-                    label = {
-                        Text(
-                            context.getString(labelRes),
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                            maxLines = 1,
-                            modifier = Modifier.basicMarquee()
-                        )
-                    },
-                    colors = radioColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            // Media & Volume Section (separated with 20.dp top padding)
+            // Media & Volume Section
             item(key = "hdr_media") {
                 ListHeader(
                     modifier = Modifier

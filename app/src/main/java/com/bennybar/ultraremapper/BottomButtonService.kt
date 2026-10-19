@@ -60,7 +60,6 @@ class BottomButtonService : AccessibilityService() {
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
                     performGlobalAction(GLOBAL_ACTION_BACK)
-                    performGlobalAction(GLOBAL_ACTION_BACK)
                 }
             }
             3 -> {
@@ -69,11 +68,11 @@ class BottomButtonService : AccessibilityService() {
                     Mapping.perform(this, "bottom_triple_tap", backToHome = true)
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
-                    for (i in 0 until 3) performGlobalAction(GLOBAL_ACTION_BACK)
+                    performGlobalAction(GLOBAL_ACTION_BACK)
                 }
             }
             else -> {
-                for (i in 0 until count) performGlobalAction(GLOBAL_ACTION_BACK)
+                performGlobalAction(GLOBAL_ACTION_BACK)
             }
         }
     }
@@ -97,6 +96,11 @@ class BottomButtonService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         instance = this
+        val info = serviceInfo
+        if (info != null) {
+            info.flags = info.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
+            serviceInfo = info
+        }
         setWindowTrackingEnabled(false)
     }
 
@@ -161,13 +165,9 @@ class BottomButtonService : AccessibilityService() {
         if (!Mapping.isEnabled(this)) return false
         if (event.keyCode != KeyEvent.KEYCODE_STEM_PRIMARY) return false
 
-        // During an active Samsung Health workout, yield bottom single press completely to Samsung
-        if (isSamsungHealthWorkoutActive()) {
-            return false
-        }
-
         val hasDoubleTap = Mapping.get(this, "bottom_double_tap") != "none"
         val hasTripleTap = Mapping.get(this, "bottom_triple_tap") != "none"
+        val hasLongPress = Mapping.get(this, "bottom_long") != "none"
         val anyMultiGesture = hasDoubleTap || hasTripleTap
 
         val now = System.currentTimeMillis()
@@ -181,7 +181,7 @@ class BottomButtonService : AccessibilityService() {
                 tapCount = 0
             }
 
-            if (tapCount == 0) {
+            if (tapCount == 0 && hasLongPress) {
                 handler.postDelayed(onHoldTimeout, 400L)
             }
         } else if (event.action == KeyEvent.ACTION_UP) {
