@@ -113,13 +113,9 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 
 ---
 
-### Step-by-Step Setup via Wireless ADB
+### ⚡ Quick Setup via Wireless ADB
 
-> [!NOTE]
-> **Why do some permissions require ADB in Wear OS?**
-> Samsung One UI Watch stripped the standard Android settings screens for **Notification Listener Access** and **Draw Over Other Apps (Overlay)**. Tapping them inside Wear OS settings normally redirects to the main settings root because the UI activity simply does not exist on the watch. Granting them via ADB is a 1-time setup.
-
-1. Enable **Settings â†’ Developer options â†’ ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
+1. Enable **Settings → Developer options → ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
    ```bash
    adb pair <WATCH_IP>:<PAIRING_PORT>
    adb connect <WATCH_IP>:<CONNECTION_PORT>
@@ -128,40 +124,54 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    ```bash
    adb install -r ultra-remapper-v1.3.26.apk
    ```
-3. **One-Liner: Grant All Permissions at Once**
-   Run this single command block in PowerShell or Bash to clear all 4 diagnostic banners instantly:
-   ```bash
-   adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
-   ```
 
-4. Or grant them individually:
-   - **Route Quick / Action Button**:
-     ```bash
-     adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService
-     ```
-   - **Overlay Permission** (floating UI & max flashlight):
-     ```bash
-     adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow
-     ```
-   - **Accessibility Service** (bottom button remapping):
-     ```bash
-     adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService
-     adb shell settings put secure accessibility_enabled 1
-     ```
-   - **Media Bridge** (phone media controls & volume):
-     ```bash
-     adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService
-     ```
-   - **Secure Settings & Location** (LTE toggle, glove mode, parking GPS):
-     ```bash
-     adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS
-     adb shell pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION
-     ```
+> [!TIP]
+> ### 🚀 Recommended: All-In-One Megacommand
+> Run this single command block in your terminal (PowerShell, CMD or Bash) to **automatically grant all 4 elevated permissions and configure hardware buttons in one second**:
+>
+> ```bash
+> adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
+> ```
+> *This automatically enroutes the Action Button, enables Accessibility for the Back key, unlocks Overlays and Media Listener, and grants Secure Settings with zero manual steps.*
 
-> **Note:** Changing the Quick Button mapping inside Samsung's native Watch Settings will overwrite step 3. To restore Samsung's default Quick Button behavior at any time:
+<details>
+<summary><b>🔧 Advanced: Grant permissions individually (Step-by-Step)</b></summary>
+
+If you prefer to grant permissions manually one by one instead of using the megacommand:
+
+- **1. Route Quick / Action Button**:
+  ```bash
+  adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService
+  ```
+- **2. Enable Accessibility Service** (Bottom / Back button remapping):
+  ```bash
+  adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService
+  adb shell settings put secure accessibility_enabled 1
+  ```
+- **3. Allow Overlay Permission** (floating UI & full-screen red flashlight):
+  ```bash
+  adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow
+  ```
+- **4. Enable Media Bridge** (phone media controls & volume sync):
+  ```bash
+  adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService
+  ```
+- **5. Grant Secure Settings & GPS Location** (LTE toggle, glove mode, parking GPS):
+  ```bash
+  adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS
+  adb shell pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION
+  ```
+- **6. Battery Whitelist** (prevent service sleep):
+  ```bash
+  adb shell cmd deviceidle whitelist +com.aaronhrndz.ultraremapper
+  ```
+
+> **Note:** Changing the Quick Button mapping inside Samsung's native Watch Settings will overwrite the Action Button routing. To restore Samsung's default Quick Button behavior at any time:
 > ```bash
 > adb shell settings put global setting_action_button_press com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService
 > ```
+
+</details>
 ---
 
 ## â˜• Support & Donations
