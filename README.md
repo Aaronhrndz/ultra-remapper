@@ -86,7 +86,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > **Samsung Health Foreground Coexistence**: Button remapping remains active across the system. When Samsung Health is actively on screen, custom actions execute seamlessly alongside native exercise tracking.
 
 > [!WARNING]
-> **Upgrading from older versions**: If you previously had an older custom package installed, **uninstall it completely before installing this version** (`adb uninstall com.aaronhrndz.ultraremapper`) to prevent package conflict or duplicated services.
+> **Upgrading from older versions**: Starting in **v1.3.25**, the package name changed from `com.bennybar.ultraremapper` to `com.aaronhrndz.ultraremapper`. If you previously had **v1.3.24 or older** installed, **uninstall it completely before installing this version** (`adb uninstall com.bennybar.ultraremapper`) to prevent duplicate apps or permission conflicts.
 
 ### Permissions & Actions Matrix
 
