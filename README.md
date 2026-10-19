@@ -48,7 +48,7 @@
 
 ## Download & Installation
 
-Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-v1.3.24.apk`).
+Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaronhrndz/ultra-remapper/releases/latest) page (`ultra-remapper-vX.X.X.apk`).
 
 > [!IMPORTANT]
 > **Charging State Note**: When placed on the magnetic charger dock, Wear OS enters battery charging mode and suspends accessibility and button remapping to prevent phantom touches. Button remapping resumes automatically once taken off the charger.
@@ -71,9 +71,9 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    adb pair <WATCH_IP>:<PAIRING_PORT>
    adb connect <WATCH_IP>:<CONNECTION_PORT>
    ```
-2. Install the latest APK:
+2. Install the downloaded APK:
    ```bash
-   adb install -r ultra-remapper-v1.3.26.apk
+   adb install -r ultra-remapper-*.apk
    ```
 
 > [!TIP]
