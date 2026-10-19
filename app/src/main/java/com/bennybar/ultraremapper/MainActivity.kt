@@ -442,9 +442,13 @@ private fun Home(
         allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
     }
 
+    val needsOverlay = remember(allConfiguredActions) {
+        allConfiguredActions.contains("red_flashlight")
+    }
+
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
             (setup.hasActionButton && !setup.actionRouted) ||
-            (!setup.overlayAllowed) ||
+            (!setup.overlayAllowed && needsOverlay) ||
             (!setup.mediaListenerEnabled && needsMediaBridge) ||
             (!setup.secureSettingsGranted && needsSecureSettings)
 
@@ -556,7 +560,7 @@ private fun Home(
                         )
                     }
                 }
-                if (!setup.overlayAllowed) {
+                if (!setup.overlayAllowed && needsOverlay) {
                     item(key = "diag_overlay") {
                         Button(
                             onClick = {
@@ -616,8 +620,37 @@ private fun Home(
                 if (!setup.mediaListenerEnabled && needsMediaBridge) {
                     item(key = "diag_media") {
                         Button(
-                            onClick = onOpenNotifListeners,
-                            label = { Text(context.getString(R.string.diag_media_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            onClick = {
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_media_body))
+                            },
+                            label = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        context.getString(R.string.diag_media_title),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF2E323A))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "ADB",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            },
                             secondaryLabel = { Text(context.getString(R.string.diag_media_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),

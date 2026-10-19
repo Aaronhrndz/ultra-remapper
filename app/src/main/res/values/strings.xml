@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
@@ -15,10 +15,10 @@
     <string name="hdr_utility">Utilities</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Media &amp; Volume</string>
-    <string name="open_app">Open App…</string>
+    <string name="open_app">Open Appâ€¦</string>
     <string name="nothing">Nothing</string>
     <string name="select_app">Select App</string>
-    <string name="choose_from_apps">Choose from %d apps ›</string>
+    <string name="choose_from_apps">Choose from %d apps â€º</string>
     <string name="app_not_installed">App not installed</string>
 
     <string name="diag_header_status">Action Required</string>
@@ -34,9 +34,10 @@
     <string name="diag_secure_settings_sub">Grant permission via ADB</string>
     <string name="diag_dialog_adb_title">ADB Command Required</string>
     <string name="diag_dialog_close">Got it</string>
-    <string name="diag_dialog_overlay_body">To display overlays and maximum brightness flashlight, run in your terminal:\n\nadb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
-    <string name="diag_dialog_secure_body">To toggle LTE, Glove Mode, or Debugging, run in your terminal:\n\nadb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="diag_dialog_route_body">To route the Action button to Ultra Remapper, go to:\n\nWatch Settings › Buttons &amp; Gestures › Action Button › Choose Ultra Remapper\n\nOr via ADB:\nadb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_overlay_body">To display overlays and maximum brightness flashlight, run in your terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">To toggle LTE, Glove Mode, or Debugging, run in your terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_route_body">To route the Action button to Ultra Remapper, go to:\n\nWatch Settings â€º Buttons &amp; Gestures â€º Action Button â€º Choose Ultra Remapper\n\nOr via ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_media_body">To enable Media Controls (Play/Pause/Volume) for music apps, run in your terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Update v%s available</string>
     <string name="update_banner_sub">Tap for changelog &amp; direct install</string>
     <string name="update_available">Update Available</string>
@@ -46,9 +47,9 @@
     <string name="update_open_phone">Open on Phone</string>
     <string name="update_open_phone_sub">Opens GitHub release page</string>
     <string name="update_adb_hint_title">Install via ADB</string>
-    <string name="update_whats_new">What’s New</string>
-    <string name="update_downloading">Downloading APK…</string>
-    <string name="update_launching">Launching installer…</string>
+    <string name="update_whats_new">Whatâ€™s New</string>
+    <string name="update_downloading">Downloading APKâ€¦</string>
+    <string name="update_launching">Launching installerâ€¦</string>
     <string name="update_opened_phone">Opened on phone</string>
     <string name="notif_channel_updates">App Updates</string>
     <string name="notif_update_title">Update Available: v%s</string>
@@ -59,7 +60,7 @@
     <string name="gesture_double">Double press</string>
     <string name="gesture_triple">Triple press</string>
     <string name="gesture_long">Long press</string>
-    <string name="hint_workout_laps">⚠️ Workout laps require Single press set to My Workouts</string>
+    <string name="hint_workout_laps">âš ï¸ Workout laps require Single press set to My Workouts</string>
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Flashlight (Boost)</string>
@@ -95,7 +96,7 @@
 
     <!-- Toasts & Notifications -->
     <string name="toast_parking_saved">Parking spot saved!</string>
-    <string name="toast_parking_acquiring">Acquiring GPS fix…</string>
+    <string name="toast_parking_acquiring">Acquiring GPS fixâ€¦</string>
     <string name="toast_parking_empty">No parking spot saved yet</string>
     <string name="toast_parking_no_gps">GPS not available</string>
     <string name="toast_parking_perm_needed">Location permission required</string>
@@ -106,8 +107,8 @@
     <string name="toast_lte_off">LTE &amp; Mobile Data: OFF</string>
     <string name="toast_glove_mode_on">Glove Mode: ON (High Touch Sensitivity)</string>
     <string name="toast_glove_mode_off">Glove Mode: OFF</string>
-    <string name="toast_write_secure_needed">Run: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="toast_water_eject">Ejecting water from speaker…</string>
+    <string name="toast_write_secure_needed">Run: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Ejecting water from speakerâ€¦</string>
     <string name="toast_dnd_on">Do Not Disturb: ON</string>
     <string name="toast_dnd_off">Do Not Disturb: OFF</string>
     <string name="toast_ha_not_installed">Home Assistant companion app is not installed</string>

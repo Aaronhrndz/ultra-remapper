@@ -92,28 +92,32 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 
 | Category | Action / Feature | Required Permission | Elevation Method | ADB Command / Setup |
 |---|---|---|---|---|
-| **Hardware** | Quick / Action Button (Orange) | Global Action Hook | One-time ADB Settings | `adb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService` |
-| **Hardware** | Bottom Button (Double, Triple & Long Press) | `ACCESSIBILITY` | Accessibility Settings or ADB | `adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService`<br/>`adb shell settings put secure accessibility_enabled 1` |
-| **System** | Background App / Activity Launch | `SYSTEM_ALERT_WINDOW` | ADB AppOps | `adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow` |
-| **System** | Standalone Background Service | Battery Whitelist | ADB Whitelist | `adb shell cmd deviceidle whitelist +com.bennybar.ultraremapper` |
+| **Hardware** | Quick / Action Button (Orange) | Global Action Hook | Watch Settings or ADB | `adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService` |
+| **Hardware** | Bottom Button (Double, Triple & Long Press) | `ACCESSIBILITY` | Accessibility Settings or ADB | `adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService`<br/>`adb shell settings put secure accessibility_enabled 1` |
+| **System** | Background App / Activity Launch & Overlays | `SYSTEM_ALERT_WINDOW` | ADB AppOps *(Wear OS hides UI)* | `adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow` |
+| **Media** | Bridged Phone Media Controls (Spotify, YouTube, KDE Connect) | `NotificationListenerService` | ADB *(Wear OS hides UI)* | `adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService` |
+| **System** | Standalone Background Service | Battery Whitelist | ADB Whitelist | `adb shell cmd deviceidle whitelist +com.aaronhrndz.ultraremapper` |
 | **Utilities** | Wireless Debugging (ADB auto-toggle) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Enables Wi-Fi debugging switch automatically via accessibility node interaction |
 | **Utilities** | Keep Screen Awake (Sideload / ADB) | `WAKE_LOCK` | Auto-granted | No ADB command needed |
-| **Utilities** | Save Parking Spot & Navigate | `ACCESS_FINE_LOCATION` | Runtime prompt or ADB | `adb shell pm grant com.bennybar.ultraremapper android.permission.ACCESS_FINE_LOCATION` |
-| **Utilities** | Touch Sensitivity (Glove Mode) | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
-| **Utilities** | LTE & Mobile Data Toggle | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
-| **Utilities** | Do Not Disturb | `ACCESS_NOTIFICATION_POLICY` | Notification Policy Access | `adb shell cmd notification allow_listener ...` or In-App prompt |
+| **Utilities** | Save Parking Spot & Navigate | `ACCESS_FINE_LOCATION` | Runtime prompt or ADB | `adb shell pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION` |
+| **Utilities** | Touch Sensitivity (Glove Mode) | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
+| **Utilities** | LTE & Mobile Data Toggle | `WRITE_SECURE_SETTINGS` | ADB Permission Grant | `adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS` |
+| **Utilities** | Do Not Disturb | `ACCESS_NOTIFICATION_POLICY` | ADB Listener or In-App prompt | Covered by notification listener / in-app grant |
 | **Utilities** | Red Flashlight (Max) | None | None | Launches full-screen composable light (no extra permissions needed) |
 | **Utilities** | Water Eject Speaker | `MODIFY_AUDIO_SETTINGS` | Auto-granted | Plays synthesized acoustic sweep at max stream volume |
 | **Samsung** | Flashlight (Boost brightness) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Monitors foreground window to step up brightness to level 12 |
 | **Samsung** | Stock Workout / Favorites | None | None | Triggers native `setting_action_button_press` hook directly |
 | **Samsung** | All Exercises, Route Workout | None | None | Direct package intent launch |
 | **Samsung** | Find My Phone, Stopwatch, Water Lock | None | None | Direct system intent launch |
-| **Media** | Bridged Phone Media Controls (KDE Connect, Spotify, YouTube) | `NotificationListenerService` | Notification Listener Access | `adb shell cmd notification allow_listener com.bennybar.ultraremapper/com.bennybar.ultraremapper.MediaControlService` |
 | **OTA Updates** | In-Watch Direct Installer | `REQUEST_INSTALL_PACKAGES` | Prompts on first OTA install | Uses Android `PackageInstaller` + `FileProvider` |
 
 ---
 
 ### Step-by-Step Setup via Wireless ADB
+
+> [!NOTE]
+> **Why do some permissions require ADB in Wear OS?**
+> Samsung One UI Watch stripped the standard Android settings screens for **Notification Listener Access** and **Draw Over Other Apps (Overlay)**. Tapping them inside Wear OS settings normally redirects to the main settings root because the UI activity simply does not exist on the watch. Granting them via ADB is a 1-time setup.
 
 1. Enable **Settings → Developer options → ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
    ```bash
@@ -122,47 +126,42 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    ```
 2. Install the latest APK:
    ```bash
-   adb install -r ultra-remapper-v1.3.2.apk
+   adb install -r ultra-remapper-v1.3.23.apk
    ```
-3. Route the Orange Quick Button to **Ultra Remapper**:
+3. **One-Liner: Grant All Permissions at Once**
+   Run this single command block in PowerShell or Bash to clear all 4 diagnostic banners instantly:
    ```bash
-   adb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService
+   adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
    ```
-4. Allow background app/activity launches and exempt from battery optimization:
-   ```bash
-   adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow
-   adb shell cmd deviceidle whitelist +com.bennybar.ultraremapper
-   ```
-5. Enable the **Accessibility Service** (for Bottom Button multi-press and Flashlight Boost):
-   ```bash
-   adb shell appops set com.bennybar.ultraremapper ACCESSIBILITY Allow
-   adb shell settings put secure enabled_accessibility_services com.bennybar.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
-   adb shell settings put secure accessibility_enabled 1
-   ```
-6. Enable the **Media Session Bridge** (so Media Play/Pause/Next/Prev controls bridged phone notifications like **KDE Connect**, Spotify, etc.):
-   ```bash
-   adb shell cmd notification allow_listener com.bennybar.ultraremapper/com.bennybar.ultraremapper.MediaControlService
-   ```
-7. Grant **Location & Secure Settings** (for Parking GPS, LTE toggle, and Glove Mode):
-   ```bash
-   adb shell pm grant com.bennybar.ultraremapper android.permission.ACCESS_FINE_LOCATION
-   adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS
-   ```
+
+4. Or grant them individually:
+   - **Route Quick / Action Button**:
+     ```bash
+     adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService
+     ```
+   - **Overlay Permission** (floating UI & max flashlight):
+     ```bash
+     adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow
+     ```
+   - **Accessibility Service** (bottom button remapping):
+     ```bash
+     adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
+     adb shell settings put secure accessibility_enabled 1
+     ```
+   - **Media Bridge** (phone media controls & volume):
+     ```bash
+     adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService
+     ```
+   - **Secure Settings & Location** (LTE toggle, glove mode, parking GPS):
+     ```bash
+     adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS
+     adb shell pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION
+     ```
 
 > **Note:** Changing the Quick Button mapping inside Samsung's native Watch Settings will overwrite step 3. To restore Samsung's default Quick Button behavior at any time:
 > ```bash
 > adb shell settings put global setting_action_button_press com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService
 > ```
-
-### 🏃 Why Samsung Health Laps need Single Click set to "My Workouts" (The 5-Year-Old Analogy)
-
-> [!IMPORTANT]
-> **How it works:**
-> Imagine Samsung Health is a **secret school club** where only the official president is allowed inside to ring the bell (mark a Lap or Pause).
-> - Third-party apps (like Ultra Remapper) are **not on the club's guest list**. If Ultra Remapper tries to knock on the door or ring Samsung Health's bell, Android security yells: *"Permission Denial: You can't enter!"* and blocks it.
-> - But when the watch system sees you click the orange button, if the click points directly to **Samsung Health ("My Workouts")**, the **watch itself rings the bell from the inside**, which is allowed!
-> - Therefore: **Keep Single Press mapped to "My Workouts" (or unmapped)** if you want native workout Laps and Pause during your runs. Double press and Long press remain 100% free for your custom shortcuts (Flashlight, Assistant, Media, etc.).
-
 ---
 
 ## ☕ Support & Donations
