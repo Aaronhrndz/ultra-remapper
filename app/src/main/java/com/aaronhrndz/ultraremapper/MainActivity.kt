@@ -1643,8 +1643,17 @@ private fun AnimatedSplashScreen(onFinished: () -> Unit) {
                 )
             }
             Spacer(modifier = Modifier.height(12.dp))
+            val isBetaChannel = remember { UpdateChecker.isBetaChannel(context) }
+            val isBetaInstalled = remember { versionName.contains("beta", ignoreCase = true) }
+            val splashVersionText = if (isBetaInstalled) {
+                "v$versionName (Beta)"
+            } else if (isBetaChannel) {
+                "v$versionName [Beta]"
+            } else {
+                "v$versionName"
+            }
             Text(
-                text = "v$versionName",
+                text = splashVersionText,
                 color = UltraOrange.copy(alpha = versionAlpha.value * exitAlpha.value),
                 fontSize = 13.sp,
                 fontWeight = FontWeight.Bold,
