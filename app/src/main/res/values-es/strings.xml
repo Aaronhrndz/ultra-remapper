@@ -7,6 +7,7 @@
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Botón Central</string>
+    <string name="hdr_center_button_note">Con Samsung Health en pantalla la app se pausa para permitir los controles nativos.</string>
     <string name="hdr_bottom_button">Botón Inferior</string>
     <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Funciones Samsung</string>
@@ -58,13 +59,12 @@
     <string name="gesture_double">Doble pulsación</string>
     <string name="gesture_triple">Triple pulsación</string>
     <string name="gesture_long">Pulsación larga</string>
+    <string name="hint_workout_laps">⚠️ Para vueltas (laps), asigna pulsación simple a Mis entrenamientos</string>
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Linterna (Boost)</string>
     <string name="action_shealth_workout">Mis entrenamientos</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
-    <string name="action_shealth_exercises">Todos los Ejercicios (Lista)</string>
-    <string name="action_shealth_pick_workout">Elegir Ejercicio Rápido</string>
     <string name="action_stopwatch">Cronómetro</string>
     <string name="action_water_lock">Bloqueo de Agua</string>
     <string name="action_assistant">Asistente Digital</string>

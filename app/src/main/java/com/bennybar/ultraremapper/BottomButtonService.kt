@@ -33,6 +33,8 @@ class BottomButtonService : AccessibilityService() {
 
         @Volatile
         var pendingWirelessAdbAutoToggle: Boolean = false
+        @Volatile
+        var pendingWalletDismissAction: Boolean = false
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -77,12 +79,23 @@ class BottomButtonService : AccessibilityService() {
         }
     }
 
+    private val walletFallbackAction = Runnable {
+        if (pendingWalletDismissAction) {
+            pendingWalletDismissAction = false
+            Mapping.perform(this, "bottom_long", backToHome = true)
+            UpdateChecker.checkOpportunistic(applicationContext)
+        }
+    }
+
     private val onHoldTimeout = Runnable {
         actionFired = true
-        android.util.Log.d("BottomButton", "onHoldTimeout: firing bottom_long")
+        android.util.Log.d("BottomButton", "onHoldTimeout: arming for Samsung Wallet launch")
         vibrateTick(45)
-        Mapping.perform(this, "bottom_long", backToHome = true)
-        UpdateChecker.checkOpportunistic(applicationContext)
+        // Set flag to wait for Samsung Wallet/Pay window to appear
+        pendingWalletDismissAction = true
+        handler.removeCallbacks(walletFallbackAction)
+        // Fallback: if Samsung Wallet doesn't open within 650ms (e.g. not configured), execute mapped action anyway
+        handler.postDelayed(walletFallbackAction, 650L)
     }
 
     private fun resetGestureState() {
@@ -101,16 +114,16 @@ class BottomButtonService : AccessibilityService() {
             info.flags = info.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
             serviceInfo = info
         }
-        setWindowTrackingEnabled(false)
     }
 
     override fun onUnbind(intent: android.content.Intent?): Boolean {
         if (instance === this) instance = null
         isFlashlightWindowActive = false
         pendingBoostFromAction = false
-        pendingWirelessAdbAutoToggle = false
+        pendingWalletDismissAction = false
         resetGestureState()
         tapHandler.removeCallbacksAndMessages(null)
+        handler.removeCallbacks(walletFallbackAction)
         return super.onUnbind(intent)
     }
 
@@ -119,22 +132,16 @@ class BottomButtonService : AccessibilityService() {
         isFlashlightWindowActive = false
         pendingBoostFromAction = false
         pendingWirelessAdbAutoToggle = false
+        pendingWalletDismissAction = false
         resetGestureState()
         tapHandler.removeCallbacksAndMessages(null)
+        handler.removeCallbacks(walletFallbackAction)
         super.onDestroy()
     }
 
     private fun setWindowTrackingEnabled(enabled: Boolean) {
-        try {
-            val info = serviceInfo ?: return
-            val targetTypes = if (enabled) AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED else 0
-            info.flags = info.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_REQUEST_FILTER_KEY_EVENTS
-            if (info.eventTypes != targetTypes) {
-                info.eventTypes = targetTypes
-                serviceInfo = info
-            }
-        } catch (ignored: Exception) {
-        }
+        // Kept for backward compatibility with tapBoostOnOpen / autoToggleWirelessAdb callers.
+        // Window tracking remains enabled so dynamic Samsung Health handover runs whenever foreground changes.
     }
 
     fun isSamsungFlashlightOnScreen(): Boolean {
@@ -165,6 +172,20 @@ class BottomButtonService : AccessibilityService() {
         if (!Mapping.isEnabled(this)) return false
         if (event.keyCode != KeyEvent.KEYCODE_STEM_PRIMARY) return false
 
+        // Drop delayed / stale key events (> 800ms old) to prevent queued execution burst
+        val eventUptime = event.eventTime
+        if (eventUptime > 0L) {
+            val nowUptime = android.os.SystemClock.uptimeMillis()
+            if (nowUptime - eventUptime > 800L) {
+                return true
+            }
+        }
+
+        // In active Samsung Health workout (e.g. pause/stop workout), yield completely to stock OS
+        if (isSamsungHealthWorkoutActive()) {
+            return false
+        }
+
         val hasDoubleTap = Mapping.get(this, "bottom_double_tap") != "none"
         val hasTripleTap = Mapping.get(this, "bottom_triple_tap") != "none"
         val hasLongPress = Mapping.get(this, "bottom_long") != "none"
@@ -188,7 +209,7 @@ class BottomButtonService : AccessibilityService() {
             handler.removeCallbacks(onHoldTimeout)
             lastUpTime = now
 
-            if (!actionFired) {
+            if (!actionFired && !pendingWalletDismissAction) {
                 tapCount++
                 if (!anyMultiGesture) {
                     resetGestureState()
@@ -205,7 +226,10 @@ class BottomButtonService : AccessibilityService() {
                     }
                 }
             } else {
-                resetGestureState()
+                // If action fired (or hold was triggered), do NOT emit BACK on key up!
+                handler.removeCallbacks(firePendingTaps)
+                tapCount = 0
+                actionFired = false
             }
         }
         return true
@@ -216,6 +240,53 @@ class BottomButtonService : AccessibilityService() {
             val pkg = event.packageName?.toString() ?: return
             currentActivePackage = pkg
             currentActiveClass = event.className?.toString()
+
+            // Dynamic handover of Orange Action Button to Samsung Health during workout/exercise
+            if (UtilityActions.hasHardwareActionButton(this) &&
+                checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED
+            ) {
+                if (pkg == "com.samsung.android.wear.shealth") {
+                    try {
+                        android.provider.Settings.Global.putString(
+                            contentResolver,
+                            "setting_action_button_press",
+                            "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+                        )
+                    } catch (_: Throwable) {}
+                } else if (pkg != "android" && pkg != "com.bennybar.ultraremapper") {
+                    val isMasterOn = Mapping.isEnabled(this)
+                    val target = if (!isMasterOn) {
+                        "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+                    } else {
+                        "$packageName/${ActionButtonService::class.java.name}"
+                    }
+                    try {
+                        val cur = android.provider.Settings.Global.getString(contentResolver, "setting_action_button_press")
+                        if (cur != target) {
+                            android.provider.Settings.Global.putString(contentResolver, "setting_action_button_press", target)
+                        }
+                    } catch (_: Throwable) {}
+                }
+            }
+
+            // Clean interception: When Samsung Wallet opens upon bottom button hold,
+            // dismiss Wallet and immediately bring our mapped action to the top!
+            val isWalletOrPay = pkg.contains("wallet", ignoreCase = true) || pkg.contains("pay", ignoreCase = true)
+            if (isWalletOrPay && pendingWalletDismissAction) {
+                pendingWalletDismissAction = false
+                handler.removeCallbacks(walletFallbackAction)
+                Mapping.perform(this, "bottom_long", backToHome = false)
+                UpdateChecker.checkOpportunistic(applicationContext)
+                // Wait slightly for mapped activity to start before sending BACK so we never kill our own new activity
+                handler.postDelayed({
+                    if (currentActivePackage?.contains("wallet", ignoreCase = true) == true ||
+                        currentActivePackage?.contains("pay", ignoreCase = true) == true
+                    ) {
+                        performGlobalAction(GLOBAL_ACTION_BACK)
+                    }
+                }, 140L)
+                return
+            }
 
             if (pkg == "com.samsung.android.watch.flashlight") {
                 isFlashlightWindowActive = true
@@ -235,7 +306,6 @@ class BottomButtonService : AccessibilityService() {
                 pendingBoostFromAction = false
                 pendingWirelessAdbAutoToggle = false
                 tapHandler.removeCallbacksAndMessages(null)
-                setWindowTrackingEnabled(false)
             }
         }
     }

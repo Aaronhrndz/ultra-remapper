@@ -7,6 +7,7 @@
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Center Button</string>
+    <string name="hdr_center_button_note">With Samsung Health on screen, remapping pauses to allow native controls.</string>
     <string name="hdr_bottom_button">Bottom Button</string>
     <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Samsung Functions</string>
@@ -58,13 +59,12 @@
     <string name="gesture_double">Double press</string>
     <string name="gesture_triple">Triple press</string>
     <string name="gesture_long">Long press</string>
+    <string name="hint_workout_laps">⚠️ Workout laps require Single press set to My Workouts</string>
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Flashlight (Boost)</string>
     <string name="action_shealth_workout">My Workouts</string>
     <string name="action_shealth_route">Route Workout Mode</string>
-    <string name="action_shealth_exercises">All Exercises (Full List)</string>
-    <string name="action_shealth_pick_workout">Pick Quick Workout</string>
     <string name="action_stopwatch">Stopwatch</string>
     <string name="action_water_lock">Water Lock</string>
     <string name="action_assistant">Digital Assistant</string>

@@ -52,11 +52,11 @@
     <string name="gesture_triple">Triple appui</string>
     <string name="gesture_long">Appui long</string>
 
+    <string name="hint_workout_laps">⚠️ Les tours (laps) nécessitent le clic simple sur Mes entraînements</string>
+
     <string name="action_flashlight">Lampe torche (Boost)</string>
     <string name="action_shealth_workout">Mes entraînements</string>
     <string name="action_shealth_route">Mode Itinéraire (Samsung Health)</string>
-    <string name="action_shealth_exercises">Tous les exercices (Liste)</string>
-    <string name="action_shealth_pick_workout">Choisir un entraînement</string>
     <string name="action_stopwatch">Chronomètre</string>
     <string name="action_water_lock">Mode Eau</string>
     <string name="action_assistant">Assistant vocal</string>

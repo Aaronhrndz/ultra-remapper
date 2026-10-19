@@ -10,8 +10,14 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
@@ -21,8 +27,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -48,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -78,6 +88,8 @@ private val SlateHighlight = Color(0xFF2B313B)
 private val WarnAmber = Color(0xFFFF9800)
 
 private fun isAccessibilityServiceEnabled(context: Context): Boolean {
+    val a11yGlobal = Settings.Secure.getInt(context.contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED, 0) == 1
+    if (!a11yGlobal) return false
     val expected = ComponentName(context, BottomButtonService::class.java)
     val enabledServices = Settings.Secure.getString(
         context.contentResolver,
@@ -276,12 +288,18 @@ class MainActivity : ComponentActivity() {
                     }
 
                     val nav = rememberSwipeDismissableNavController()
+                    var splashVisible by remember { mutableStateOf(targetDestination == "home") }
+
                     LaunchedEffect(targetDestination, updateInfo) {
                         if (targetDestination == "update_details" && updateInfo != null) {
                             nav.navigate("update_details")
                         }
                     }
-                    SwipeDismissableNavHost(navController = nav, startDestination = "home") {
+
+                    if (splashVisible) {
+                        AnimatedSplashScreen(onFinished = { splashVisible = false })
+                    } else {
+                        SwipeDismissableNavHost(navController = nav, startDestination = "home") {
                         composable("home") {
                             Home(
                                 setup = setup,
@@ -357,6 +375,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         }
+                    }
                     }
                 }
             }
@@ -682,6 +701,22 @@ private fun Home(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+                    }
+                }
+
+                val hasShealthMapped = allConfiguredActions.contains("shealth_workout")
+                if (hasShealthMapped) {
+                    item(key = "hdr_action_note") {
+                        Text(
+                            text = context.getString(R.string.hdr_center_button_note),
+                            color = Color(0xFF9EA7B8),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 4.dp)
+                        )
                     }
                 }
 
@@ -1452,3 +1487,82 @@ private fun AdbHelpScreen(
     }
 }
 
+@Composable
+private fun AnimatedSplashScreen(onFinished: () -> Unit) {
+    val context = LocalContext.current
+    val scale = remember { Animatable(0.85f) }
+    val offsetY = remember { Animatable(0f) }
+    val versionAlpha = remember { Animatable(0f) }
+    val exitAlpha = remember { Animatable(1f) }
+    val versionName = remember {
+        try {
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.3.21"
+        } catch (_: Exception) {
+            "1.3.21"
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        // 1. Initial short pause centered (300ms)
+        delay(300L)
+
+        // 2. Displace upward while enlarging (scale 0.85 -> 1.18, offset 0 -> -20dp) over 500ms
+        coroutineScope {
+            launch {
+                scale.animateTo(1.18f, animationSpec = tween(500, easing = FastOutSlowInEasing))
+            }
+            launch {
+                offsetY.animateTo(-20f, animationSpec = tween(500, easing = FastOutSlowInEasing))
+            }
+            launch {
+                // Version code fades in smoothly as logo reaches upper position
+                delay(150L)
+                versionAlpha.animateTo(1f, animationSpec = tween(350, easing = FastOutSlowInEasing))
+            }
+        }
+
+        // 3. Hold complete splash (350ms)
+        delay(350L)
+
+        // 4. Smooth exit fade-out transition into menu (300ms) -> total = 1.5s
+        exitAlpha.animateTo(0f, animationSpec = tween(300, easing = FastOutSlowInEasing))
+        onFinished()
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .offset(y = offsetY.value.dp)
+                .padding(16.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(70.dp)
+                    .scale(scale.value),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = null,
+                    alpha = exitAlpha.value,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "v$versionName",
+                color = UltraOrange.copy(alpha = versionAlpha.value * exitAlpha.value),
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}

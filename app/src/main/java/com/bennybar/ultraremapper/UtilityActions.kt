@@ -463,4 +463,34 @@ object UtilityActions {
         } catch (_: Exception) {
         }
     }
+
+    fun hasHardwareActionButton(context: Context): Boolean {
+        val model = android.os.Build.MODEL.uppercase()
+        val product = android.os.Build.PRODUCT.uppercase()
+        val device = android.os.Build.DEVICE.uppercase()
+
+        // 1. Explicitly exclude older 2-button watches (Watch 4/5/6/7 series: SM-R8xx, SM-R9xx, SM-L3xx)
+        val isTwoButtonModel = listOf("SM-R8", "SM-R9", "SM-L30", "SM-L31", "WISE4", "WISE6", "FRESH").any {
+            model.contains(it) || product.contains(it) || device.contains(it)
+        }
+        if (isTwoButtonModel) return false
+
+        // 2. Hardware 3-button models: Galaxy Watch Ultra series (SM-L7xx) & Galaxy Watch 8 Classic (SM-L5xx)
+        val actionKeywords = listOf(
+            "ULTRA", "SM-L700", "SM-L705", "SM-L710", "SM-L715", "PROJECTV2UL",
+            "SM-L500", "SM-L505"
+        )
+        if (actionKeywords.any { kw -> model.contains(kw) || product.contains(kw) || device.contains(kw) }) {
+            return true
+        }
+
+        // 3. Fallback: check if system has native setting_action_button_press defined by manufacturer
+        return try {
+            val settingVal = Settings.Global.getString(context.contentResolver, "setting_action_button_press")
+            !settingVal.isNullOrBlank()
+        } catch (_: Throwable) {
+            false
+        }
+    }
 }
+

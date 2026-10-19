@@ -11,6 +11,16 @@ import android.os.IBinder
 class ActionButtonService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val eventTime = intent?.getLongExtra("ACTION_KEY_EVENT_TIME", 0L) ?: 0L
+        if (eventTime > 0L) {
+            val nowUptime = android.os.SystemClock.uptimeMillis()
+            if (nowUptime - eventTime > 1200L) {
+                // Drop queued / delayed hardware intent
+                stopSelf(startId)
+                return START_NOT_STICKY
+            }
+        }
+
         val keyEvent = intent?.getIntExtra("ACTION_KEY_EVENT", -1) ?: -1
         val gesture = when (keyEvent) {
             2 -> "single"
@@ -22,47 +32,56 @@ class ActionButtonService : Service() {
         val appEnabled = Mapping.isEnabled(this)
         val workoutActive = BottomButtonService.instance?.isSamsungHealthWorkoutActive() == true
         val singleAction = Mapping.get(this, "single")
-        val yieldSinglePress = singleAction == "none" || singleAction == "shealth_workout" || workoutActive
 
-        // If workout became active or single press should yield:
-        // Automatically restore setting_action_button_press to stock Samsung Health so system_server dispatches natively
-        if (yieldSinglePress) {
-            try {
-                android.provider.Settings.Global.putString(
-                    contentResolver,
-                    "setting_action_button_press",
-                    "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
-                )
-            } catch (_: Throwable) {}
-        }
-
-        if (!appEnabled || (yieldSinglePress && (keyEvent in 0..2))) {
+        // 1. If master switch is OFF, always forward to stock Samsung Health
+        if (!appEnabled) {
             forwardToSamsungHealth(intent)
             stopSelf(startId)
             return START_NOT_STICKY
         }
 
+        // 2. If Samsung Health is in foreground or workout is actively ongoing:
+        // ALWAYS forward hardware event directly to Samsung Health so Lap / Pause / Carousel work natively
+        val inSamsungHealth = BottomButtonService.currentActivePackage == "com.samsung.android.wear.shealth" || workoutActive
+        if (inSamsungHealth) {
+            forwardToSamsungHealth(intent)
+            stopSelf(startId)
+            return START_NOT_STICKY
+        }
+
+        // 3. Normal gesture dispatch (each gesture is routed independently)
         if (gesture != null) {
-            Mapping.perform(this, gesture)
+            val configuredAction = Mapping.get(this, gesture)
+            when (configuredAction) {
+                "none" -> {
+                    forwardToSamsungHealth(intent)
+                }
+                "shealth_workout" -> {
+                    // Launch workout activity carousel/list reliably
+                    Mapping.perform(this, gesture)
+                }
+                else -> Mapping.perform(this, gesture)
+            }
             UpdateChecker.checkOpportunistic(applicationContext)
         }
         stopSelf(startId)
         return START_NOT_STICKY
     }
 
-    private fun forwardToSamsungHealth(originalIntent: Intent?) {
-        try {
-            val shealthIntent = Intent().apply {
-                component = android.content.ComponentName(
+    /** Re-sends the hardware event exactly as received (action, data, extras) to Samsung Health's handler. */
+    private fun forwardToSamsungHealth(originalIntent: Intent?): Boolean {
+        if (originalIntent == null) return false
+        return try {
+            val shealthIntent = Intent(originalIntent).setComponent(
+                android.content.ComponentName(
                     "com.samsung.android.wear.shealth",
                     "com.samsung.android.wear.shealth.service.ActionButtonService"
                 )
-                if (originalIntent != null) {
-                    putExtras(originalIntent)
-                }
-            }
-            startService(shealthIntent)
-        } catch (_: Exception) {}
+            )
+            startService(shealthIntent) != null
+        } catch (_: Exception) {
+            false
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

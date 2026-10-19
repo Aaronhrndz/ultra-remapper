@@ -28,11 +28,9 @@ object Mapping {
     val shealthActions = listOf(
         "shealth_workout" to R.string.action_shealth_workout,
         "shealth_route" to R.string.action_shealth_route,
-        "shealth_pick_workout" to R.string.action_shealth_pick_workout,
     )
 
     val samsungActions = listOf(
-        "flashlight" to R.string.action_flashlight,
         "stopwatch" to R.string.action_stopwatch,
         "water_lock" to R.string.action_water_lock,
         "assistant" to R.string.action_assistant,
@@ -45,6 +43,7 @@ object Mapping {
     )
 
     val utilityActions = listOf(
+        "flashlight" to R.string.action_flashlight,
         "red_flashlight" to R.string.action_red_flashlight,
         "dnd_toggle" to R.string.action_dnd_toggle,
         "glove_mode" to R.string.action_glove_mode,
@@ -150,12 +149,6 @@ object Mapping {
             "ha_assist" -> triggerHaAssist(context, backToHome)
             "shealth_workout" -> triggerSamsungHealthQuickButton(context, backToHome)
             "shealth_route" -> launchRouteMode(context, backToHome)
-            "shealth_pick_workout" -> launchComponent(
-                context,
-                "com.samsung.android.wear.shealth",
-                "com.samsung.android.wear.shealth.app.exercise.view.actionButton.ExerciseActionButtonSelectionActivity",
-                backToHome
-            )
             "stopwatch" -> triggerStopwatch(context, backToHome)
             "water_lock" -> triggerWaterLock(context, backToHome)
             "assistant" -> triggerAssistant(context, backToHome)
@@ -328,39 +321,37 @@ object Mapping {
     private fun triggerSamsungHealthQuickButton(context: Context, backToHome: Boolean) {
         val appCtx = context.applicationContext
 
-        // 1. Direct explicit launch of Samsung Health ExerciseListActivity (Favorites & recent workout screen)
+        // 1. Direct standard action for Samsung Health exercise carousel / list
         try {
-            val listIntent = Intent("com.samsung.android.wear.shealth.intent.action.VIEW_OPEN_EXERCISE_LIST_ACTIVITY").apply {
-                component = ComponentName(
-                    "com.samsung.android.wear.shealth",
-                    "com.samsung.android.wear.shealth.app.exercise.view.ExerciseListActivity"
-                )
-                addCategory(Intent.CATEGORY_DEFAULT)
+            val intent = Intent("com.samsung.android.wear.shealth.intent.action.VIEW_OPEN_EXERCISE_ACTIVITY").apply {
+                setPackage("com.samsung.android.wear.shealth")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
             }
-            appCtx.startActivity(listIntent)
+            appCtx.startActivity(intent)
             return
         } catch (_: Exception) {}
 
-        // 2. Action VIEW_EXERCISE_ACTIVITY_TYPES
+        // 2. Component launch: ExerciseActivity
         try {
-            val typesIntent = Intent("com.samsung.android.wear.shealth.intent.action.VIEW_EXERCISE_ACTIVITY_TYPES").apply {
-                setPackage("com.samsung.android.wear.shealth")
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val intent = Intent().apply {
+                component = ComponentName("com.samsung.android.wear.shealth", "com.samsung.android.wear.shealth.app.exercise.view.ExerciseActivity")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
             }
-            appCtx.startActivity(typesIntent)
+            appCtx.startActivity(intent)
             return
         } catch (_: Exception) {}
 
-        // 3. Fallback: ExerciseActivity
-        launchComponent(
-            context,
-            "com.samsung.android.wear.shealth",
-            "com.samsung.android.wear.shealth.app.exercise.view.ExerciseActivity",
-            backToHome
-        )
+        // 3. Fallback: package main launch intent
+        val launch = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.wear.shealth")
+        if (launch != null) {
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (backToHome) launch.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            try {
+                appCtx.startActivity(launch)
+            } catch (_: Exception) {}
+        }
     }
 
     private fun triggerStopwatch(context: Context, backToHome: Boolean) {
@@ -455,16 +446,13 @@ object Mapping {
             lastOpenTimestamp = 0L
             val svc = BottomButtonService.instance
             svc?.cancelFlashlightTaps()
-            if (svc != null) {
-                svc.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
-            } else {
+            svc?.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK)
+            try {
                 val offIntent = Intent("com.samsung.android.watch.flashlight.INTENT_BIXBY_FLASHLIGHT_TURN_OFF")
                     .setClassName("com.samsung.android.watch.flashlight", "com.samsung.android.watch.flashlight.main.FlashLightActivity")
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                try {
-                    appContext.startActivity(offIntent)
-                } catch (ignored: Exception) {
-                }
+                appContext.startActivity(offIntent)
+            } catch (_: Exception) {
             }
             return
         }

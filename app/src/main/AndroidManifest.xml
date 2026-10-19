@@ -61,6 +61,8 @@
             android:exported="false"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
+            android:taskAffinity="com.bennybar.ultraremapper.flashlight"
+            android:noHistory="true"
             android:screenOrientation="nosensor"
             android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
 
