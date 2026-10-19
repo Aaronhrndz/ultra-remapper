@@ -1,4 +1,4 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
@@ -19,7 +19,8 @@ data class ReleaseUpdate(
     val versionName: String,
     val htmlUrl: String,
     val apkDownloadUrl: String?,
-    val releaseNotes: String
+    val releaseNotes: String,
+    val isPrerelease: Boolean = false
 )
 
 object UpdateChecker {
@@ -136,8 +137,9 @@ object UpdateChecker {
                             }
                         }
                     }
+                    val isPre = json.optBoolean("prerelease", false)
                     if (tag.isNotEmpty() && isNewerVersion(tag, currentVersion.removePrefix("v"))) {
-                        val update = ReleaseUpdate(tag, htmlUrl, apkUrl, notes)
+                        val update = ReleaseUpdate(tag, htmlUrl, apkUrl, notes, isPre)
                         mainHandler.post { onResult(update) }
                         return@execute
                     }

@@ -39,6 +39,7 @@
     <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
     <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS, ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Actualización v%s disponible</string>
+    <string name="update_banner_title_beta">Actualización Beta v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
     <string name="update_available">Actualización disponible</string>
     <string name="update_details_title">Actualización v%s</string>

@@ -1,4 +1,4 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
@@ -518,8 +518,13 @@ private fun Home(
                     Button(
                         onClick = onOpenUpdateDetails,
                         label = {
+                            val bannerTitleRes = if (updateInfo.isPrerelease) {
+                                R.string.update_banner_title_beta
+                            } else {
+                                R.string.update_banner_title
+                            }
                             Text(
-                                context.getString(R.string.update_banner_title, updateInfo.versionName),
+                                context.getString(bannerTitleRes, updateInfo.versionName),
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 fontWeight = FontWeight.Bold
@@ -872,16 +877,19 @@ private fun Home(
                     }
                 }
                 var tapCount by remember { mutableStateOf(0) }
-                val isBeta = remember { UpdateChecker.isBetaChannel(context) }
-                val displayText = if (isBeta) {
+                val isBetaInstalled = remember { installedVersion.contains("beta", ignoreCase = true) }
+                val isBetaChannel = remember { UpdateChecker.isBetaChannel(context) }
+                val displayText = if (isBetaInstalled) {
                     context.getString(R.string.app_version, "$installedVersion (Beta)")
+                } else if (isBetaChannel) {
+                    context.getString(R.string.app_version, "$installedVersion [Beta Channel]")
                 } else {
                     context.getString(R.string.app_version, installedVersion)
                 }
 
                 Text(
                     text = displayText,
-                    color = if (isBeta) UltraOrange else Color(0xFF6A717E),
+                    color = if (isBetaChannel) UltraOrange else Color(0xFF6A717E),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -891,11 +899,7 @@ private fun Home(
                             tapCount++
                             if (tapCount >= 7) {
                                 tapCount = 0
-                                Toast.makeText(context, context.getString(R.string.dev_unlocked), Toast.LENGTH_SHORT).show()
                                 onOpenDevOptions()
-                            } else if (tapCount >= 3) {
-                                val remaining = 7 - tapCount
-                                Toast.makeText(context, context.getString(R.string.dev_steps_remaining, remaining), Toast.LENGTH_SHORT).show()
                             }
                         }
                 )
