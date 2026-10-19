@@ -1,49 +1,49 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
-    <string name="bottom_service_description">Permet Ã  Ultra Remapper de rÃ©assigner lâ€™appui long du bouton infÃ©rieur.</string>
+    <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
     <!-- Master Switch -->
     <string name="master_switch_title">Remapper les boutons</string>
 
     <string name="hdr_center_button">Bouton Central</string>
-    <string name="hdr_bottom_button">Bouton InfÃ©rieur</string>
+    <string name="hdr_bottom_button">Bouton Inférieur</string>
     <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Fonctions Samsung</string>
-    <string name="hdr_dev">DÃ©veloppement (ADB)</string>
+    <string name="hdr_dev">Développement (ADB)</string>
     <string name="hdr_utility">Utilitaires</string>
     <string name="hdr_home_assistant">Home Assistant</string>
-    <string name="hdr_media">MÃ©dias et Volume</string>
-    <string name="open_app">Ouvrir une appâ€¦</string>
+    <string name="hdr_media">Médias et Volume</string>
+    <string name="open_app">Ouvrir une app…</string>
     <string name="nothing">Aucune action</string>
-    <string name="select_app">SÃ©lectionner une app</string>
-    <string name="choose_from_apps">Choisir parmi %d apps â€º</string>
-    <string name="app_not_installed">App non installÃ©e</string>
+    <string name="select_app">Sélectionner une app</string>
+    <string name="choose_from_apps">Choisir parmi %d apps ›</string>
+    <string name="app_not_installed">App non installée</string>
 
     <string name="diag_header_status">Actions requises</string>
-    <string name="diag_a11y_title">Activer lâ€™AccessibilitÃ©</string>
-    <string name="diag_a11y_sub">Bouton infÃ©rieur &amp; boost lampe</string>
+    <string name="diag_a11y_title">Activer l’Accessibilité</string>
+    <string name="diag_a11y_sub">Bouton inférieur &amp; boost lampe</string>
     <string name="diag_route_title">Routage du bouton inactif</string>
-    <string name="diag_route_sub">Configurer dans les ParamÃ¨tres</string>
+    <string name="diag_route_sub">Configurer dans les Paramètres</string>
     <string name="diag_overlay_title">Permission de superposition requise</string>
-    <string name="diag_overlay_sub">Autoriser dans Infos sur lâ€™app</string>
-    <string name="diag_media_title">ContrÃ´le multimÃ©dia inactif</string>
-    <string name="diag_media_sub">Activer lâ€™accÃ¨s aux notifications</string>
-    <string name="diag_secure_settings">ParamÃ¨tres sÃ©curisÃ©s manquants</string>
+    <string name="diag_overlay_sub">Autoriser dans Infos sur l’app</string>
+    <string name="diag_media_title">Contrôle multimédia inactif</string>
+    <string name="diag_media_sub">Activer l’accès aux notifications</string>
+    <string name="diag_secure_settings">Paramètres sécurisés manquants</string>
     <string name="diag_secure_settings_sub">Accorder la permission via ADB</string>
-    <string name="update_banner_title">Mise Ã  jour v%s disponible</string>
-    <string name="update_banner_sub">Toucher pour voir les nouveautÃ©s</string>
-    <string name="update_available">Mise Ã  jour disponible</string>
-    <string name="update_details_title">Mise Ã  jour v%s</string>
-    <string name="update_install_watch">Mettre Ã  jour sur la montre</string>
-    <string name="update_install_watch_sub">TÃ©lÃ©chargement et installation directe</string>
-    <string name="update_open_phone">Ouvrir sur le tÃ©lÃ©phone</string>
+    <string name="update_banner_title">Mise à jour v%s disponible</string>
+    <string name="update_banner_sub">Toucher pour voir les nouveautés</string>
+    <string name="update_available">Mise à jour disponible</string>
+    <string name="update_details_title">Mise à jour v%s</string>
+    <string name="update_install_watch">Mettre à jour sur la montre</string>
+    <string name="update_install_watch_sub">Téléchargement et installation directe</string>
+    <string name="update_open_phone">Ouvrir sur le téléphone</string>
     <string name="update_open_phone_sub">Ouvre la page de version GitHub</string>
     <string name="update_adb_hint_title">Installer via ADB</string>
-    <string name="update_whats_new">NouveautÃ©s</string>
-    <string name="update_downloading">TÃ©lÃ©chargement de lâ€™APKâ€¦</string>
-    <string name="update_launching">Ouverture de lâ€™installateurâ€¦</string>
-    <string name="update_opened_phone">Ouvert sur le tÃ©lÃ©phone</string>
-    <string name="notif_channel_updates">Mises Ã  jour de lâ€™application</string>
-    <string name="notif_update_title">Mise Ã  jour disponible : v%s</string>
+    <string name="update_whats_new">Nouveautés</string>
+    <string name="update_downloading">Téléchargement de l’APK…</string>
+    <string name="update_launching">Ouverture de l’installateur…</string>
+    <string name="update_opened_phone">Ouvert sur le téléphone</string>
+    <string name="notif_channel_updates">Mises à jour de l’application</string>
+    <string name="notif_update_title">Mise à jour disponible : v%s</string>
     <string name="notif_update_desc">Appuyez pour installer directement sur la montre</string>
     <string name="notif_action_install">Installer sur la montre</string>
 
@@ -52,49 +52,49 @@
     <string name="gesture_triple">Triple appui</string>
     <string name="gesture_long">Appui long</string>
 
-    <string name="hint_workout_laps">âš ï¸ Les tours (laps) nÃ©cessitent le clic simple sur Mes entraÃ®nements</string>
+    <string name="hint_workout_laps">⚠️ Les tours (laps) nécessitent le clic simple sur Mes entraînements</string>
 
     <string name="action_flashlight">Lampe torche (Boost)</string>
-    <string name="action_shealth_workout">Mes entraÃ®nements</string>
-    <string name="action_shealth_route">Mode ItinÃ©raire (Samsung Health)</string>
-    <string name="action_stopwatch">ChronomÃ¨tre</string>
+    <string name="action_shealth_workout">Mes entraînements</string>
+    <string name="action_shealth_route">Mode Itinéraire (Samsung Health)</string>
+    <string name="action_stopwatch">Chronomètre</string>
     <string name="action_water_lock">Mode Eau</string>
     <string name="action_assistant">Assistant vocal</string>
-    <string name="action_find_phone">Localiser mon tÃ©lÃ©phone</string>
+    <string name="action_find_phone">Localiser mon téléphone</string>
 
     <string name="action_red_flashlight">Lampe Rouge (Max)</string>
-    <string name="action_dnd_toggle">Ne pas dÃ©ranger</string>
+    <string name="action_dnd_toggle">Ne pas déranger</string>
     <string name="action_save_parking">Enregistrer le stationnement</string>
-    <string name="action_nav_parking">Retourner Ã  la voiture (Ã  pied)</string>
-    <string name="action_adb_mode">Garder Ã©cran actif (Sideload / ADB)</string>
-    <string name="action_wireless_debugging">DÃ©bogage sans fil (ADB)</string>
-    <string name="action_water_eject">Ã‰jection dâ€™eau (Haut-parleur)</string>
-    <string name="action_lte_toggle">LTE et DonnÃ©es mobiles</string>
+    <string name="action_nav_parking">Retourner à la voiture (à pied)</string>
+    <string name="action_adb_mode">Garder écran actif (Sideload / ADB)</string>
+    <string name="action_wireless_debugging">Débogage sans fil (ADB)</string>
+    <string name="action_water_eject">Éjection d’eau (Haut-parleur)</string>
+    <string name="action_lte_toggle">LTE et Données mobiles</string>
 
     <string name="action_ha_assist">Home Assistant Assist</string>
     <string name="action_ha_open">Ouvrir Home Assistant</string>
 
     <string name="action_play_pause">Lecture / Pause</string>
     <string name="action_next">Piste suivante</string>
-    <string name="action_previous">Piste prÃ©cÃ©dente</string>
+    <string name="action_previous">Piste précédente</string>
     <string name="action_vol_up">Volume haut</string>
     <string name="action_vol_down">Volume bas</string>
-    <string name="action_open_media_player">Ouvrir le contrÃ´leur mÃ©dia</string>
+    <string name="action_open_media_player">Ouvrir le contrôleur média</string>
 
-    <string name="toast_parking_saved">Position de stationnement enregistrÃ©e !</string>
-    <string name="toast_parking_acquiring">Recherche du signal GPSâ€¦</string>
-    <string name="toast_parking_empty">Aucun stationnement enregistrÃ©</string>
+    <string name="toast_parking_saved">Position de stationnement enregistrée !</string>
+    <string name="toast_parking_acquiring">Recherche du signal GPS…</string>
+    <string name="toast_parking_empty">Aucun stationnement enregistré</string>
     <string name="toast_parking_no_gps">GPS indisponible</string>
     <string name="toast_parking_perm_needed">Autorisation de localisation requise</string>
     <string name="toast_maps_not_found">Application de cartes introuvable</string>
-    <string name="toast_adb_mode_on">Ã‰cran actif : ACTIVÃ‰ (Ã‰cran et Wi-Fi maintenus)</string>
-    <string name="toast_adb_mode_off">Ã‰cran actif : DÃ‰SACTIVÃ‰</string>
-    <string name="toast_lte_on">LTE et DonnÃ©es : ACTIVÃ‰</string>
-    <string name="toast_lte_off">LTE et DonnÃ©es : DÃ‰SACTIVÃ‰</string>
-    <string name="toast_write_secure_needed">ExÃ©cutez : adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="toast_water_eject">Ã‰jection de lâ€™eau en coursâ€¦</string>
-    <string name="toast_dnd_on">Ne pas dÃ©ranger : ACTIVÃ‰</string>
-    <string name="toast_dnd_off">Ne pas dÃ©ranger : DÃ‰SACTIVÃ‰</string>
-    <string name="toast_ha_not_installed">Application Home Assistant Companion non installÃ©e</string>
+    <string name="toast_adb_mode_on">Écran actif : ACTIVÉ (Écran et Wi-Fi maintenus)</string>
+    <string name="toast_adb_mode_off">Écran actif : DÉSACTIVÉ</string>
+    <string name="toast_lte_on">LTE et Données : ACTIVÉ</string>
+    <string name="toast_lte_off">LTE et Données : DÉSACTIVÉ</string>
+    <string name="toast_write_secure_needed">Exécutez : adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Éjection de l’eau en cours…</string>
+    <string name="toast_dnd_on">Ne pas déranger : ACTIVÉ</string>
+    <string name="toast_dnd_off">Ne pas déranger : DÉSACTIVÉ</string>
+    <string name="toast_ha_not_installed">Application Home Assistant Companion non installée</string>
     <string name="app_version">v%s</string>
 </resources>

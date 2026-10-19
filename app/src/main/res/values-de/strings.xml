@@ -1,6 +1,6 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
-    <string name="bottom_service_description">ErmÃ¶glicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
+    <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
     <!-- Master Switch -->
     <string name="master_switch_title">Tasten neu belegen</string>
 
@@ -11,11 +11,11 @@
     <string name="hdr_dev">Entwicklung (ADB)</string>
     <string name="hdr_utility">Dienstprogramme</string>
     <string name="hdr_home_assistant">Home Assistant</string>
-    <string name="hdr_media">Medien &amp; LautstÃ¤rke</string>
-    <string name="open_app">App Ã¶ffnenâ€¦</string>
+    <string name="hdr_media">Medien &amp; Lautstärke</string>
+    <string name="open_app">App öffnen…</string>
     <string name="nothing">Keine Aktion</string>
-    <string name="select_app">App auswÃ¤hlen</string>
-    <string name="choose_from_apps">Aus %d Apps wÃ¤hlen â€º</string>
+    <string name="select_app">App auswählen</string>
+    <string name="choose_from_apps">Aus %d Apps wählen ›</string>
     <string name="app_not_installed">App nicht installiert</string>
 
     <string name="diag_header_status">Erforderliche Aktionen</string>
@@ -23,36 +23,36 @@
     <string name="diag_a11y_sub">Untere Taste &amp; Taschenlampen-Boost</string>
     <string name="diag_route_title">Schnelltasten-Routing inaktiv</string>
     <string name="diag_route_sub">In den Einstellungen konfigurieren</string>
-    <string name="diag_overlay_title">Ãœberlagerungsberechtigung fehlt</string>
+    <string name="diag_overlay_title">Überlagerungsberechtigung fehlt</string>
     <string name="diag_overlay_sub">In App-Einstellungen erlauben</string>
     <string name="diag_media_title">Mediensteuerung inaktiv</string>
     <string name="diag_media_sub">Benachrichtigungszugriff aktivieren</string>
     <string name="diag_secure_settings">Secure Settings fehlen</string>
-    <string name="diag_secure_settings_sub">Berechtigung Ã¼ber ADB erteilen</string>
-    <string name="update_banner_title">Update v%s verfÃ¼gbar</string>
-    <string name="update_banner_sub">Tippen fÃ¼r Changelog &amp; Installation</string>
-    <string name="update_available">Update verfÃ¼gbar</string>
+    <string name="diag_secure_settings_sub">Berechtigung über ADB erteilen</string>
+    <string name="update_banner_title">Update v%s verfügbar</string>
+    <string name="update_banner_sub">Tippen für Changelog &amp; Installation</string>
+    <string name="update_available">Update verfügbar</string>
     <string name="update_details_title">Update v%s</string>
     <string name="update_install_watch">Auf der Uhr aktualisieren</string>
     <string name="update_install_watch_sub">Direkter Download &amp; Installation</string>
-    <string name="update_open_phone">Download auf dem Smartphone Ã¶ffnen</string>
-    <string name="update_open_phone_sub">Ã–ffnet die GitHub-Releases auf dem Smartphone</string>
-    <string name="update_adb_hint_title">Ãœber ADB installieren</string>
+    <string name="update_open_phone">Download auf dem Smartphone öffnen</string>
+    <string name="update_open_phone_sub">Öffnet die GitHub-Releases auf dem Smartphone</string>
+    <string name="update_adb_hint_title">Über ADB installieren</string>
     <string name="update_whats_new">Neuheiten</string>
-    <string name="update_downloading">APK wird heruntergeladenâ€¦</string>
-    <string name="update_launching">Installer wird geÃ¶ffnetâ€¦</string>
-    <string name="update_opened_phone">Auf dem Smartphone geÃ¶ffnet</string>
+    <string name="update_downloading">APK wird heruntergeladen…</string>
+    <string name="update_launching">Installer wird geöffnet…</string>
+    <string name="update_opened_phone">Auf dem Smartphone geöffnet</string>
     <string name="notif_channel_updates">App-Updates</string>
-    <string name="notif_update_title">Update verfÃ¼gbar: v%s</string>
-    <string name="notif_update_desc">Tippen fÃ¼r direkte Installation auf der Uhr</string>
+    <string name="notif_update_title">Update verfügbar: v%s</string>
+    <string name="notif_update_desc">Tippen für direkte Installation auf der Uhr</string>
     <string name="notif_action_install">Auf der Uhr installieren</string>
 
-    <string name="gesture_single">Einmal drÃ¼cken</string>
-    <string name="gesture_double">Doppelt drÃ¼cken</string>
-    <string name="gesture_triple">Dreifach drÃ¼cken</string>
-    <string name="gesture_long">Lange drÃ¼cken</string>
+    <string name="gesture_single">Einmal drücken</string>
+    <string name="gesture_double">Doppelt drücken</string>
+    <string name="gesture_triple">Dreifach drücken</string>
+    <string name="gesture_long">Lange drücken</string>
 
-    <string name="hint_workout_laps">âš ï¸ Runden (Laps) erfordern Einfachklick auf Meine Trainings</string>
+    <string name="hint_workout_laps">⚠️ Runden (Laps) erfordern Einfachklick auf Meine Trainings</string>
 
     <string name="action_flashlight">Taschenlampe (Boost)</string>
     <string name="action_shealth_workout">Meine Trainings</string>
@@ -63,38 +63,38 @@
     <string name="action_find_phone">Mein Telefon suchen</string>
 
     <string name="action_red_flashlight">Rote Taschenlampe (Max)</string>
-    <string name="action_dnd_toggle">Nicht stÃ¶ren</string>
+    <string name="action_dnd_toggle">Nicht stören</string>
     <string name="action_save_parking">Parkplatz speichern</string>
-    <string name="action_nav_parking">Zum Auto navigieren (zu FuÃŸ)</string>
+    <string name="action_nav_parking">Zum Auto navigieren (zu Fuß)</string>
     <string name="action_adb_mode">Bildschirm wachhalten (Sideload / ADB)</string>
     <string name="action_wireless_debugging">Drahtlose ADB-Fehlerbehebung</string>
     <string name="action_water_eject">Wasser auswerfen (Lautsprecher)</string>
     <string name="action_lte_toggle">LTE &amp; Mobile Daten</string>
 
     <string name="action_ha_assist">Home Assistant Assist</string>
-    <string name="action_ha_open">Home Assistant Ã¶ffnen</string>
+    <string name="action_ha_open">Home Assistant öffnen</string>
 
     <string name="action_play_pause">Wiedergabe / Pause</string>
-    <string name="action_next">NÃ¤chster Titel</string>
+    <string name="action_next">Nächster Titel</string>
     <string name="action_previous">Vorheriger Titel</string>
     <string name="action_vol_up">Lauter</string>
     <string name="action_vol_down">Leiser</string>
-    <string name="action_open_media_player">Mediensteuerung Ã¶ffnen</string>
+    <string name="action_open_media_player">Mediensteuerung öffnen</string>
 
     <string name="toast_parking_saved">Parkplatz gespeichert!</string>
-    <string name="toast_parking_acquiring">GPS-Signal wird gesuchtâ€¦</string>
+    <string name="toast_parking_acquiring">GPS-Signal wird gesucht…</string>
     <string name="toast_parking_empty">Kein Parkplatz gespeichert</string>
-    <string name="toast_parking_no_gps">GPS nicht verfÃ¼gbar</string>
+    <string name="toast_parking_no_gps">GPS nicht verfügbar</string>
     <string name="toast_parking_perm_needed">Standortberechtigung erforderlich</string>
     <string name="toast_maps_not_found">Keine Karten-App gefunden</string>
     <string name="toast_adb_mode_on">Wachhalten: EIN (Bildschirm &amp; WLAN aktiv)</string>
     <string name="toast_adb_mode_off">Wachhalten: AUS</string>
     <string name="toast_lte_on">LTE &amp; Mobile Daten: EIN</string>
     <string name="toast_lte_off">LTE &amp; Mobile Daten: AUS</string>
-    <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="toast_water_eject">Wasser wird ausgestoÃŸenâ€¦</string>
-    <string name="toast_dnd_on">Nicht stÃ¶ren: EIN</string>
-    <string name="toast_dnd_off">Nicht stÃ¶ren: AUS</string>
+    <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Wasser wird ausgestoßen…</string>
+    <string name="toast_dnd_on">Nicht stören: EIN</string>
+    <string name="toast_dnd_off">Nicht stören: AUS</string>
     <string name="toast_ha_not_installed">Home Assistant Companion nicht installiert</string>
     <string name="app_version">v%s</string>
 </resources>

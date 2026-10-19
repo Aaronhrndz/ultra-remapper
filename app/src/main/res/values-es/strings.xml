@@ -1,32 +1,32 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
-    <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsaciÃ³n larga del botÃ³n inferior. La pulsaciÃ³n corta sigue volviendo atrÃ¡s.</string>
+    <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
     <!-- Master Switch -->
     <string name="master_switch_title">Remapear botones</string>
 
     <!-- Sections & Headers -->
-    <string name="hdr_center_button">BotÃ³n Central</string>
+    <string name="hdr_center_button">Botón Central</string>
     <string name="hdr_center_button_note">Con Samsung Health en pantalla la app se pausa para permitir los controles nativos.</string>
-    <string name="hdr_bottom_button">BotÃ³n Inferior</string>
+    <string name="hdr_bottom_button">Botón Inferior</string>
     <string name="hdr_shealth">Samsung Health</string>
     <string name="hdr_samsung">Funciones Samsung</string>
     <string name="hdr_dev">Desarrollo (ADB)</string>
     <string name="hdr_utility">Utilidades</string>
     <string name="hdr_home_assistant">Home Assistant</string>
     <string name="hdr_media">Multimedia y Volumen</string>
-    <string name="open_app">Abrir Appâ€¦</string>
+    <string name="open_app">Abrir App…</string>
     <string name="nothing">Nada</string>
     <string name="select_app">Seleccionar App</string>
-    <string name="choose_from_apps">Elegir entre %d apps â€º</string>
+    <string name="choose_from_apps">Elegir entre %d apps ›</string>
     <string name="app_not_installed">App no instalada</string>
 
     <string name="diag_header_status">Acciones necesarias</string>
     <string name="diag_a11y_title">Activar Accesibilidad</string>
-    <string name="diag_a11y_sub">BotÃ³n inferior y boost linterna</string>
-    <string name="diag_route_title">Enrutado de botÃ³n inactivo</string>
-    <string name="diag_route_sub">Configura el botÃ³n rÃ¡pido en Ajustes</string>
-    <string name="diag_overlay_title">Falta permiso de superposiciÃ³n</string>
+    <string name="diag_a11y_sub">Botón inferior y boost linterna</string>
+    <string name="diag_route_title">Enrutado de botón inactivo</string>
+    <string name="diag_route_sub">Configura el botón rápido en Ajustes</string>
+    <string name="diag_overlay_title">Falta permiso de superposición</string>
     <string name="diag_overlay_sub">Concede permiso en Ajustes de apps</string>
     <string name="diag_media_title">Control multimedia inactivo</string>
     <string name="diag_media_sub">Activar acceso a notificaciones</string>
@@ -34,53 +34,52 @@
     <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
     <string name="diag_dialog_adb_title">Comando ADB necesario</string>
     <string name="diag_dialog_close">Entendido</string>
-    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
-    <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuraciÃ³n, ejecuta en tu terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="diag_dialog_route_body">Para asignar el botÃ³n de acciÃ³n a Ultra Remapper, ve a:\n\nAjustes del reloj â€º Botones y gestos â€º BotÃ³n de acciÃ³n â€º Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
-    <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS, ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
-    <string name="update_banner_title">ActualizaciÃ³n v%s disponible</string>
+    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService</string>
+    <string name="update_banner_title">Actualización v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
-    <string name="update_available">ActualizaciÃ³n disponible</string>
-    <string name="update_details_title">ActualizaciÃ³n v%s</string>
+    <string name="update_available">Actualización disponible</string>
+    <string name="update_details_title">Actualización v%s</string>
     <string name="update_install_watch">Actualizar en el Reloj</string>
     <string name="update_install_watch_sub">Descargar e instalar directamente</string>
-    <string name="update_open_phone">Abrir descarga en el telÃ©fono</string>
-    <string name="update_open_phone_sub">Abre la release de GitHub en el mÃ³vil</string>
+    <string name="update_open_phone">Abrir descarga en el teléfono</string>
+    <string name="update_open_phone_sub">Abre la release de GitHub en el móvil</string>
     <string name="update_adb_hint_title">Instalar por ADB</string>
     <string name="update_whats_new">Novedades</string>
-    <string name="update_downloading">Descargando APKâ€¦</string>
-    <string name="update_launching">Abriendo instaladorâ€¦</string>
-    <string name="update_opened_phone">Abierto en el telÃ©fono</string>
+    <string name="update_downloading">Descargando APK…</string>
+    <string name="update_launching">Abriendo instalador…</string>
+    <string name="update_opened_phone">Abierto en el teléfono</string>
     <string name="notif_channel_updates">Actualizaciones de la App</string>
-    <string name="notif_update_title">ActualizaciÃ³n disponible: v%s</string>
+    <string name="notif_update_title">Actualización disponible: v%s</string>
     <string name="notif_update_desc">Toca para instalar directamente en el reloj</string>
     <string name="notif_action_install">Instalar en el Reloj</string>
     <!-- Gestures -->
-    <string name="gesture_single">Una pulsaciÃ³n</string>
-    <string name="gesture_double">Doble pulsaciÃ³n</string>
-    <string name="gesture_triple">Triple pulsaciÃ³n</string>
-    <string name="gesture_long">PulsaciÃ³n larga</string>
-    <string name="hint_workout_laps">âš ï¸ Para vueltas (laps), asigna pulsaciÃ³n simple a Mis entrenamientos</string>
+    <string name="gesture_single">Una pulsación</string>
+    <string name="gesture_double">Doble pulsación</string>
+    <string name="gesture_triple">Triple pulsación</string>
+    <string name="gesture_long">Pulsación larga</string>
+    <string name="hint_workout_laps">⚠️ Para vueltas (laps), asigna pulsación simple a Mis entrenamientos</string>
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Linterna (Boost)</string>
     <string name="action_shealth_workout">Mis entrenamientos</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
-    <string name="action_stopwatch">CronÃ³metro</string>
+    <string name="action_stopwatch">Cronómetro</string>
     <string name="action_water_lock">Bloqueo de Agua</string>
     <string name="action_assistant">Asistente Digital</string>
-    <string name="action_find_phone">Hacer Sonar TelÃ©fono</string>
+    <string name="action_find_phone">Hacer Sonar Teléfono</string>
 
     <!-- Utility Actions -->
-    <string name="action_red_flashlight">Linterna Roja (MÃ¡x)</string>
+    <string name="action_red_flashlight">Linterna Roja (Máx)</string>
     <string name="action_dnd_toggle">No Molestar</string>
     <string name="action_save_parking">Guardar Parking</string>
     <string name="action_nav_parking">Volver al Coche (Maps a pie)</string>
     <string name="action_adb_mode">Mantener Pantalla Activa (Sideload / ADB)</string>
-    <string name="action_wireless_debugging">DepuraciÃ³n InalÃ¡mbrica (ADB)</string>
+    <string name="action_wireless_debugging">Depuración Inalámbrica (ADB)</string>
     <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
-    <string name="action_lte_toggle">LTE y Datos MÃ³viles</string>
-    <string name="action_glove_mode">Sensibilidad TÃ¡ctil (Modo Guantes)</string>
+    <string name="action_lte_toggle">LTE y Datos Móviles</string>
+    <string name="action_glove_mode">Sensibilidad Táctil (Modo Guantes)</string>
 
     <!-- Home Assistant Actions -->
     <string name="action_ha_assist">Home Assistant Assist (Voz)</string>
@@ -95,20 +94,20 @@
     <string name="action_open_media_player">Abrir Controlador Multimedia</string>
 
     <!-- Toasts & Notifications -->
-    <string name="toast_parking_saved">Â¡UbicaciÃ³n de parking guardada!</string>
-    <string name="toast_parking_acquiring">Obteniendo seÃ±al GPSâ€¦</string>
-    <string name="toast_parking_empty">No hay ningÃºn parking guardado</string>
+    <string name="toast_parking_saved">¡Ubicación de parking guardada!</string>
+    <string name="toast_parking_acquiring">Obteniendo señal GPS…</string>
+    <string name="toast_parking_empty">No hay ningún parking guardado</string>
     <string name="toast_parking_no_gps">GPS no disponible</string>
-    <string name="toast_parking_perm_needed">Se necesita permiso de ubicaciÃ³n</string>
-    <string name="toast_maps_not_found">No se encontrÃ³ app de mapas</string>
+    <string name="toast_parking_perm_needed">Se necesita permiso de ubicación</string>
+    <string name="toast_maps_not_found">No se encontró app de mapas</string>
     <string name="toast_adb_mode_on">Pantalla Activa: ON (Pantalla y WiFi despiertos)</string>
     <string name="toast_adb_mode_off">Pantalla Activa: OFF</string>
-    <string name="toast_lte_on">LTE y Datos MÃ³viles: ON</string>
-    <string name="toast_lte_off">LTE y Datos MÃ³viles: OFF</string>
+    <string name="toast_lte_on">LTE y Datos Móviles: ON</string>
+    <string name="toast_lte_off">LTE y Datos Móviles: OFF</string>
     <string name="toast_glove_mode_on">Modo Guantes: ACTIVADO (Alta sensibilidad)</string>
     <string name="toast_glove_mode_off">Modo Guantes: DESACTIVADO</string>
-    <string name="toast_write_secure_needed">Ejecuta: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="toast_water_eject">Expulsando agua del altavozâ€¦</string>
+    <string name="toast_write_secure_needed">Ejecuta: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_water_eject">Expulsando agua del altavoz…</string>
     <string name="toast_dnd_on">No Molestar: ACTIVADO</string>
     <string name="toast_dnd_off">No Molestar: DESACTIVADO</string>
     <string name="toast_ha_not_installed">App Home Assistant Companion no instalada</string>
