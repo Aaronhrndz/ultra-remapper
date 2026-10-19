@@ -126,7 +126,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
    ```
 2. Install the latest APK:
    ```bash
-   adb install -r ultra-remapper-v1.3.23.apk
+   adb install -r ultra-remapper-v1.3.26.apk
    ```
 3. **One-Liner: Grant All Permissions at Once**
    Run this single command block in PowerShell or Bash to clear all 4 diagnostic banners instantly:
