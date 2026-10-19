@@ -82,6 +82,9 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > [!IMPORTANT]
 > **Charging State Note**: When placed on the magnetic charger dock, Wear OS enters battery charging mode and suspends accessibility and button remapping to prevent phantom touches. Button remapping resumes automatically once taken off the charger.
 
+> [!IMPORTANT]
+> **Samsung Health Native Handover**: Whenever Samsung Health is in the foreground or a workout is actively running, button remapping automatically yields control back to stock Samsung Health. This guarantees 100% native laps, pause/resume, and exercise controls without any interference.
+
 > [!WARNING]
 > **Upgrading from upstream versions**: If you previously had Benny's original Ultra Remapper or an older custom package installed, **uninstall it completely before installing this version** (`adb uninstall com.bennybar.ultraremapper`) to prevent package conflict or duplicated services.
 
