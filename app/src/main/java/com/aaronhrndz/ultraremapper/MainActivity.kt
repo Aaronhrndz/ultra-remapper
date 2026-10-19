@@ -102,19 +102,7 @@ private fun isAccessibilityServiceEnabled(context: Context): Boolean {
         .any { it == expected }
 }
 
-private fun hasHardwareActionButton(context: Context): Boolean {
-    val model = android.os.Build.MODEL.uppercase()
-    val product = android.os.Build.PRODUCT.uppercase()
-    val device = android.os.Build.DEVICE.uppercase()
-    val ultraKeywords = listOf("ULTRA", "SM-L700", "SM-L705", "SM-L710", "SM-L715", "PROJECTV2UL")
-    val isExplicitUltra = ultraKeywords.any { kw ->
-        model.contains(kw) || product.contains(kw) || device.contains(kw)
-    }
-    val isWatch8Classic = (model.contains("CLASSIC") || product.contains("CLASSIC") || device.contains("CLASSIC")) &&
-            (model.contains("8") || product.contains("8") || device.contains("8"))
-
-    return isExplicitUltra || isWatch8Classic
-}
+private fun hasHardwareActionButton(context: Context): Boolean = true
 
 private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
 
