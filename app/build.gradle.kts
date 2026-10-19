@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.bennybar.ultraremapper"
+    namespace = "com.aaronhrndz.ultraremapper"
     compileSdk {
         version = release(37)
     }
@@ -13,8 +13,8 @@ android {
         applicationId = "com.aaronhrndz.ultraremapper"
         minSdk = 30
         targetSdk = 37
-        versionCode = 37
-        versionName = "1.3.23"
+        versionCode = 39
+        versionName = "1.3.25"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -24,7 +24,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             optimization {
                 enable = true
-                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**", "com.bennybar.**")
+                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**", "com.aaronhrndz.**")
             }
         }
     }

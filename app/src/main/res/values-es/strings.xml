@@ -34,9 +34,10 @@
     <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
     <string name="diag_dialog_adb_title">Comando ADB necesario</string>
     <string name="diag_dialog_close">Entendido</string>
-    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
-    <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">Para conmutar LTE, modo guantes o depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS, ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Actualización v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
     <string name="update_available">Actualización disponible</string>
@@ -106,7 +107,7 @@
     <string name="toast_lte_off">LTE y Datos Móviles: OFF</string>
     <string name="toast_glove_mode_on">Modo Guantes: ACTIVADO (Alta sensibilidad)</string>
     <string name="toast_glove_mode_off">Modo Guantes: DESACTIVADO</string>
-    <string name="toast_write_secure_needed">Ejecuta: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_write_secure_needed">Ejecuta: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="toast_water_eject">Expulsando agua del altavoz…</string>
     <string name="toast_dnd_on">No Molestar: ACTIVADO</string>
     <string name="toast_dnd_off">No Molestar: DESACTIVADO</string>

@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Hardware Button Remapper for Samsung Galaxy Watch Ultra, Ultra 2, Watch 8 Classic & Wear OS Watches</b><br/>
-  <sub>Dynamic Hardware Detection · Quick Button & Bottom Button Mapping · Samsung Flashlight Boost · Samsung Health Workouts & Favorites · Standalone OTA</sub>
+  <sub>Dynamic Hardware Detection Â· Quick Button & Bottom Button Mapping Â· Samsung Flashlight Boost Â· Samsung Health Workouts & Favorites Â· Standalone OTA</sub>
 </p>
 
 <p align="center">
@@ -39,7 +39,7 @@
   - **Dynamic Device Detection**: On standard 2-button watches without a physical center button (e.g. Galaxy Watch 4, 5, 6, 7), the center button configuration dynamically hides to keep the UI clean, while the **Bottom (Back) Button** remains fully customizable.
   - **Bottom Button (Back Key)**: Remap **Double Press**, **Triple Press**, and **Long Press** across all supported Galaxy Watches. Rapid double and triple taps execute cleanly with zero conflict against Samsung's hardcoded 500ms long-press timer (avoiding unwanted Samsung Wallet launches), while preserving the native *Back* navigation on single press.
 - **Direct In-Watch Updates (Autonomous OTA)**:
-  - Automatic GitHub release detection with a live **download progress bar & percentage indicator**, and one-tap in-watch installer (`PackageInstaller` + `FileProvider`) — no phone app or ADB required for future updates.
+  - Automatic GitHub release detection with a live **download progress bar & percentage indicator**, and one-tap in-watch installer (`PackageInstaller` + `FileProvider`) â€” no phone app or ADB required for future updates.
 - **Categorized Action Picker**:
   - **Samsung Health**:
     - **My Workouts (Stock)**: Native Quick Button hook (`ActionButtonService`), jumping straight into your pinned **Favorite Exercises** or starting your default exercise shortcut.
@@ -66,10 +66,10 @@
   - **Media & Volume (with Bridged Phone & KDE Connect Support)**:
     - **Play / Pause**, **Next Track**, **Previous Track**, **Volume Up**, **Volume Down**, and **Open Media Controller**.
     - Works with both local watch audio and **bridged phone media sessions** (including **KDE Connect** controlling a tablet or PC, Spotify, YouTube, etc.) via `MediaSessionManager` + `NotificationListenerService`.
-  - **Open App…**:
+  - **Open Appâ€¦**:
     - Dedicated app submenu with real circular app icons for every installed launcher app.
 - **Multilingual Support**:
-  - Full UI and action translations in **English**, **Español**, **Deutsch**, and **Français**.
+  - Full UI and action translations in **English**, **EspaÃ±ol**, **Deutsch**, and **FranÃ§ais**.
 - **Smart Contextual Diagnostics**:
   - Action Required banners (*"Acciones necesarias"*) appear only if the user's selected actions actually demand elevated permissions (e.g. Accessibility only for bottom button/flashlight boost, Secure Settings only for glove/LTE/sideload mode). Basic app launches and Samsung stock actions require zero extra permissions.
 
@@ -86,16 +86,16 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > **Samsung Health Foreground Coexistence**: Button remapping remains active across the system. When Samsung Health is actively on screen, custom actions execute seamlessly alongside native exercise tracking.
 
 > [!WARNING]
-> **Upgrading from upstream versions**: If you previously had Benny's original Ultra Remapper or an older custom package installed, **uninstall it completely before installing this version** (`adb uninstall com.bennybar.ultraremapper`) to prevent package conflict or duplicated services.
+> **Upgrading from older versions**: If you previously had an older custom package installed, **uninstall it completely before installing this version** (`adb uninstall com.aaronhrndz.ultraremapper`) to prevent package conflict or duplicated services.
 
 ### Permissions & Actions Matrix
 
 | Category | Action / Feature | Required Permission | Elevation Method | ADB Command / Setup |
 |---|---|---|---|---|
-| **Hardware** | Quick / Action Button (Orange) | Global Action Hook | Watch Settings or ADB | `adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService` |
-| **Hardware** | Bottom Button (Double, Triple & Long Press) | `ACCESSIBILITY` | Accessibility Settings or ADB | `adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService`<br/>`adb shell settings put secure accessibility_enabled 1` |
+| **Hardware** | Quick / Action Button (Orange) | Global Action Hook | Watch Settings or ADB | `adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService` |
+| **Hardware** | Bottom Button (Double, Triple & Long Press) | `ACCESSIBILITY` | Accessibility Settings or ADB | `adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService`<br/>`adb shell settings put secure accessibility_enabled 1` |
 | **System** | Background App / Activity Launch & Overlays | `SYSTEM_ALERT_WINDOW` | ADB AppOps *(Wear OS hides UI)* | `adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow` |
-| **Media** | Bridged Phone Media Controls (Spotify, YouTube, KDE Connect) | `NotificationListenerService` | ADB *(Wear OS hides UI)* | `adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService` |
+| **Media** | Bridged Phone Media Controls (Spotify, YouTube, KDE Connect) | `NotificationListenerService` | ADB *(Wear OS hides UI)* | `adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService` |
 | **System** | Standalone Background Service | Battery Whitelist | ADB Whitelist | `adb shell cmd deviceidle whitelist +com.aaronhrndz.ultraremapper` |
 | **Utilities** | Wireless Debugging (ADB auto-toggle) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Enables Wi-Fi debugging switch automatically via accessibility node interaction |
 | **Utilities** | Keep Screen Awake (Sideload / ADB) | `WAKE_LOCK` | Auto-granted | No ADB command needed |
@@ -119,7 +119,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > **Why do some permissions require ADB in Wear OS?**
 > Samsung One UI Watch stripped the standard Android settings screens for **Notification Listener Access** and **Draw Over Other Apps (Overlay)**. Tapping them inside Wear OS settings normally redirects to the main settings root because the UI activity simply does not exist on the watch. Granting them via ADB is a 1-time setup.
 
-1. Enable **Settings → Developer options → ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
+1. Enable **Settings â†’ Developer options â†’ ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
    ```bash
    adb pair <WATCH_IP>:<PAIRING_PORT>
    adb connect <WATCH_IP>:<CONNECTION_PORT>
@@ -131,13 +131,13 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 3. **One-Liner: Grant All Permissions at Once**
    Run this single command block in PowerShell or Bash to clear all 4 diagnostic banners instantly:
    ```bash
-   adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
+   adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
    ```
 
 4. Or grant them individually:
    - **Route Quick / Action Button**:
      ```bash
-     adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.ActionButtonService
+     adb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService
      ```
    - **Overlay Permission** (floating UI & max flashlight):
      ```bash
@@ -145,12 +145,12 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
      ```
    - **Accessibility Service** (bottom button remapping):
      ```bash
-     adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.BottomButtonService
+     adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService
      adb shell settings put secure accessibility_enabled 1
      ```
    - **Media Bridge** (phone media controls & volume):
      ```bash
-     adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.bennybar.ultraremapper.MediaControlService
+     adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService
      ```
    - **Secure Settings & Location** (LTE toggle, glove mode, parking GPS):
      ```bash
@@ -164,7 +164,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > ```
 ---
 
-## ☕ Support & Donations
+## â˜• Support & Donations
 
 If Ultra Remapper made your Galaxy Watch experience significantly better, consider supporting future development with a coffee:
 

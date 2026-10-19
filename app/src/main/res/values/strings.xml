@@ -34,9 +34,10 @@
     <string name="diag_secure_settings_sub">Grant permission via ADB</string>
     <string name="diag_dialog_adb_title">ADB Command Required</string>
     <string name="diag_dialog_close">Got it</string>
-    <string name="diag_dialog_overlay_body">To display overlays and maximum brightness flashlight, run in your terminal:\n\nadb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
-    <string name="diag_dialog_secure_body">To toggle LTE, Glove Mode, or Debugging, run in your terminal:\n\nadb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
-    <string name="diag_dialog_route_body">To route the Action button to Ultra Remapper, go to:\n\nWatch Settings › Buttons &amp; Gestures › Action Button › Choose Ultra Remapper\n\nOr via ADB:\nadb shell settings put global setting_action_button_press com.bennybar.ultraremapper/com.bennybar.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_overlay_body">To display overlays and maximum brightness flashlight, run in your terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">To toggle LTE, Glove Mode, or Debugging, run in your terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_route_body">To route the Action button to Ultra Remapper, go to:\n\nWatch Settings › Buttons &amp; Gestures › Action Button › Choose Ultra Remapper\n\nOr via ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
+    <string name="diag_dialog_media_body">To enable Media Controls (Play/Pause/Volume) for music apps, run in your terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Update v%s available</string>
     <string name="update_banner_sub">Tap for changelog &amp; direct install</string>
     <string name="update_available">Update Available</string>
@@ -106,7 +107,7 @@
     <string name="toast_lte_off">LTE &amp; Mobile Data: OFF</string>
     <string name="toast_glove_mode_on">Glove Mode: ON (High Touch Sensitivity)</string>
     <string name="toast_glove_mode_off">Glove Mode: OFF</string>
-    <string name="toast_write_secure_needed">Run: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_write_secure_needed">Run: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="toast_water_eject">Ejecting water from speaker…</string>
     <string name="toast_dnd_on">Do Not Disturb: ON</string>
     <string name="toast_dnd_off">Do Not Disturb: OFF</string>
