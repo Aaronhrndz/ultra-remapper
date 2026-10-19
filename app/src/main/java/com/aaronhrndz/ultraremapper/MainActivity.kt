@@ -12,6 +12,8 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -323,12 +325,23 @@ class MainActivity : ComponentActivity() {
                                 onShowAdbHelp = { helpText ->
                                     nav.navigate("help/${Uri.encode(helpText)}")
                                 },
-                                onPick = { nav.navigate("pick/$it") }
+                                onPick = { nav.navigate("pick/$it") },
+                                onOpenDevOptions = { nav.navigate("dev_options") }
                             )
                         }
                         composable("help/{text}") { entry ->
                             val text = Uri.decode(entry.arguments?.getString("text") ?: "")
                             AdbHelpScreen(text = text, onDone = { nav.popBackStack() })
+                        }
+                        composable("dev_options") {
+                            DevOptionsScreen(
+                                onDone = {
+                                    UpdateChecker.check(context) { info ->
+                                        updateInfo = info
+                                    }
+                                    nav.popBackStack()
+                                }
+                            )
                         }
                         composable("update_details") {
                             val info = updateInfo
@@ -383,6 +396,7 @@ private fun Home(
     onOpenNotifListeners: () -> Unit,
     onShowAdbHelp: (String) -> Unit,
     onPick: (String) -> Unit,
+    onOpenDevOptions: () -> Unit,
 ) {
     val context = LocalContext.current
     val columnState = rememberTransformingLazyColumnState()
@@ -852,19 +866,38 @@ private fun Home(
             item(key = "app_version_footer") {
                 val installedVersion = remember {
                     try {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.1.0"
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.4.0"
                     } catch (e: Exception) {
-                        "1.1.0"
+                        "1.4.0"
                     }
                 }
+                var tapCount by remember { mutableStateOf(0) }
+                val isBeta = remember { UpdateChecker.isBetaChannel(context) }
+                val displayText = if (isBeta) {
+                    context.getString(R.string.app_version, "$installedVersion (Beta)")
+                } else {
+                    context.getString(R.string.app_version, installedVersion)
+                }
+
                 Text(
-                    text = context.getString(R.string.app_version, installedVersion),
-                    color = Color(0xFF6A717E),
+                    text = displayText,
+                    color = if (isBeta) UltraOrange else Color(0xFF6A717E),
                     style = MaterialTheme.typography.bodySmall,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 14.dp, bottom = 4.dp)
+                        .clickable {
+                            tapCount++
+                            if (tapCount >= 7) {
+                                tapCount = 0
+                                Toast.makeText(context, context.getString(R.string.dev_unlocked), Toast.LENGTH_SHORT).show()
+                                onOpenDevOptions()
+                            } else if (tapCount >= 3) {
+                                val remaining = 7 - tapCount
+                                Toast.makeText(context, context.getString(R.string.dev_steps_remaining, remaining), Toast.LENGTH_SHORT).show()
+                            }
+                        }
                 )
             }
         }
@@ -1613,6 +1646,113 @@ private fun AnimatedSplashScreen(onFinished: () -> Unit) {
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )
+        }
+    }
+}
+
+
+@Composable
+private fun DevOptionsScreen(
+    onDone: () -> Unit
+) {
+    val context = LocalContext.current
+    var isBeta by remember { mutableStateOf(UpdateChecker.isBetaChannel(context)) }
+    val columnState = rememberTransformingLazyColumnState()
+    val transformationSpec = rememberTransformationSpec()
+
+    ScreenScaffold(scrollState = columnState) { _ ->
+        TransformingLazyColumn(
+            state = columnState,
+            contentPadding = PaddingValues(top = 36.dp, bottom = 40.dp, start = 14.dp, end = 14.dp)
+        ) {
+            item(key = "dev_header") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        text = context.getString(R.string.dev_options_title),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            item(key = "beta_switch") {
+                Button(
+                    onClick = {
+                        val next = !isBeta
+                        isBeta = next
+                        UpdateChecker.setBetaChannel(context, next)
+                    },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = context.getString(R.string.dev_beta_title),
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .width(36.dp)
+                                    .height(20.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isBeta) UltraOrange else Color(0xFF434954))
+                                    .padding(2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .align(if (isBeta) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                )
+                            }
+                        }
+                    },
+                    secondaryLabel = {
+                        Text(
+                            text = context.getString(R.string.dev_beta_desc),
+                            color = Color(0xFF9EA7B8),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = SlateCard),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "dev_done") {
+                Spacer(modifier = Modifier.height(14.dp))
+                Button(
+                    onClick = onDone,
+                    label = {
+                        Text(
+                            text = context.getString(R.string.diag_dialog_close),
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = UltraOrange),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
         }
     }
 }

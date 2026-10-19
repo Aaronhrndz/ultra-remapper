@@ -26,10 +26,24 @@ object UpdateChecker {
     private val executor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
     private const val LATEST_RELEASE_API = "https://api.github.com/repos/Aaronhrndz/ultra-remapper/releases/latest"
+    private const val ALL_RELEASES_API = "https://api.github.com/repos/Aaronhrndz/ultra-remapper/releases?per_page=1"
     private const val PREFS_NAME = "update_checker"
     private const val KEY_LAST_CHECK = "last_check_time"
     private const val KEY_NOTIFIED_VER = "last_notified_version"
+    private const val KEY_BETA_CHANNEL = "beta_channel_enabled"
     private const val CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000L // 24 hours
+
+    fun isBetaChannel(context: Context): Boolean {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_BETA_CHANNEL, false)
+    }
+
+    fun setBetaChannel(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_BETA_CHANNEL, enabled)
+            .apply()
+    }
 
     fun scheduleDailyCheck(context: Context) {
         try {
@@ -86,7 +100,9 @@ object UpdateChecker {
 
         executor.execute {
             try {
-                val conn = (URL(LATEST_RELEASE_API).openConnection() as HttpURLConnection).apply {
+                val isBeta = isBetaChannel(context)
+                val apiUrl = if (isBeta) ALL_RELEASES_API else LATEST_RELEASE_API
+                val conn = (URL(apiUrl).openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
                     setRequestProperty("Accept", "application/vnd.github+json")
                     setRequestProperty("User-Agent", "UltraRemapper/$currentVersion")
@@ -95,7 +111,16 @@ object UpdateChecker {
                 }
                 if (conn.responseCode == 200) {
                     val body = conn.inputStream.bufferedReader().use { it.readText() }
-                    val json = JSONObject(body)
+                    val json = if (isBeta) {
+                        val arr = org.json.JSONArray(body)
+                        if (arr.length() > 0) arr.getJSONObject(0) else null
+                    } else {
+                        JSONObject(body)
+                    }
+                    if (json == null) {
+                        mainHandler.post { onResult(null) }
+                        return@execute
+                    }
                     val tag = json.optString("tag_name", "").removePrefix("v").trim()
                     val htmlUrl = json.optString("html_url", "https://github.com/Aaronhrndz/ultra-remapper/releases/latest")
                     val notes = json.optString("body", "").trim()

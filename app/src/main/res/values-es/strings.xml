@@ -113,4 +113,9 @@
     <string name="toast_dnd_off">No Molestar: DESACTIVADO</string>
     <string name="toast_ha_not_installed">App Home Assistant Companion no instalada</string>
     <string name="app_version">v%s</string>
+    <string name="dev_options_title">Opciones de Desarrollador</string>
+    <string name="dev_beta_title">Canal Beta</string>
+    <string name="dev_beta_desc">Recibir versiones beta de prueba</string>
+    <string name="dev_unlocked">¡Opciones de desarrollador activadas!</string>
+    <string name="dev_steps_remaining">Quedan %d toques para desarrollador</string>
 </resources>
