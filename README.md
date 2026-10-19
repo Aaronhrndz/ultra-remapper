@@ -32,46 +32,17 @@
 
 ---
 
-## Features
- 
-- **Hardware-Aware Button Remapping**:
-  - **Quick / Action Button (Center Button)**: On models equipped with a third physical key (**Galaxy Watch Ultra, Ultra 2, Watch 8 Classic**), independently remap **Single Press**, **Double Press**, and **Long Press**.
-  - **Dynamic Device Detection**: On standard 2-button watches without a physical center button (e.g. Galaxy Watch 4, 5, 6, 7), the center button configuration dynamically hides to keep the UI clean, while the **Bottom (Back) Button** remains fully customizable.
-  - **Bottom Button (Back Key)**: Remap **Double Press**, **Triple Press**, and **Long Press** across all supported Galaxy Watches. Rapid double and triple taps execute cleanly with zero conflict against Samsung's hardcoded 500ms long-press timer (avoiding unwanted Samsung Wallet launches), while preserving the native *Back* navigation on single press.
-- **Direct In-Watch Updates (Autonomous OTA)**:
-  - Automatic GitHub release detection with a live **download progress bar & percentage indicator**, and one-tap in-watch installer (`PackageInstaller` + `FileProvider`) â€” no phone app or ADB required for future updates.
-- **Categorized Action Picker**:
-  - **Samsung Health**:
-    - **My Workouts (Stock)**: Native Quick Button hook (`ActionButtonService`), jumping straight into your pinned **Favorite Exercises** or starting your default exercise shortcut.
-    - **Route Workout Mode**: Direct shortcut to launch Samsung Health Route & GPX workout view (`shealth_route`).
-    - **Pick Quick Workout**: Native exercise picker selector (`ExerciseActionButtonSelectionActivity`).
-  - **Samsung Functions**:
-    - **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12` on Ultra / supported models), and toggles off cleanly on repeat press. Uses dynamic `serviceInfo` event subscription so idle battery impact is **zero**.
-    - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
-    - **Stopwatch**: Launches Samsung Stopwatch (`com.samsung.android.watch.stopwatch`).
-    - **Water Lock**: Activates Samsung's native Water Lock mode (`StWaterLockSettingActivity`).
-    - **Digital Assistant**: Triggers Google Assistant / Gemini (`ACTION_VOICE_COMMAND`).
-  - **Development (ADB)**:
-    - **Wireless Debugging (ADB)**: Direct shortcut that opens the Wireless Debugging screen and automatically toggles on ADB Wi-Fi via accessibility after a 1.2s settling delay, displaying your connection IP and port immediately on your wrist.
-    - **Keep Screen Awake (Sideload / ADB)**: Keeps the screen awake and prevents Wi-Fi/CPU sleep during wireless ADB package installations, avoiding lock screen PIN re-prompts.
-  - **Smart Utilities**:
-    - **Save Parking Spot & Navigate to Car**: Saves exact GPS coordinates with 1 press and opens Google Maps in walking navigation mode (`google.navigation:q=LAT,LON&mode=w`).
-    - **Touch Sensitivity (Glove Mode)**: Toggles Samsung high-sensitivity screen mode for gloves or wet hands.
-    - **Red Flashlight (Max)**: Full-screen red light at 100% brightness (tactical night vision preserving).
-    - **Do Not Disturb**: Quick toggle for DND with tactile vibration feedback.
-    - **Water Eject Speaker**: High-resonance acoustic wave (145 Hz -> 240 Hz sweep with envelope smoothing) at maximum hardware volume with synchronized vibration bursts to expel water droplets from the speaker grille.
-    - **LTE & Mobile Data**: Toggle cellular connectivity on LTE watch variants.
-  - **Home Assistant Companion**:
-    - **Home Assistant Assist (Voice)**: Launches the native voice assistant of the official Home Assistant Companion app without needing server logins on the watch.
-  - **Media & Volume (with Bridged Phone & KDE Connect Support)**:
-    - **Play / Pause**, **Next Track**, **Previous Track**, **Volume Up**, **Volume Down**, and **Open Media Controller**.
-    - Works with both local watch audio and **bridged phone media sessions** (including **KDE Connect** controlling a tablet or PC, Spotify, YouTube, etc.) via `MediaSessionManager` + `NotificationListenerService`.
-  - **Open Appâ€¦**:
-    - Dedicated app submenu with real circular app icons for every installed launcher app.
-- **Multilingual Support**:
-  - Full UI and action translations in **English**, **EspaÃ±ol**, **Deutsch**, and **FranÃ§ais**.
-- **Smart Contextual Diagnostics**:
-  - Action Required banners (*"Acciones necesarias"*) appear only if the user's selected actions actually demand elevated permissions (e.g. Accessibility only for bottom button/flashlight boost, Secure Settings only for glove/LTE/sideload mode). Basic app launches and Samsung stock actions require zero extra permissions.
+## Capabilities Overview
+
+- **Physical Button Remapping**: Independent single, double, and long press customization for the **Quick / Center Button** (Galaxy Watch Ultra, Watch 8 Classic) and **Bottom (Back) Button** across all Wear OS Samsung watches.
+- **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic Boost to max brightness), Stopwatch, Water Lock, and Digital Assistant.
+- **Smart Utilities**: One-click Wireless ADB toggle, GPS parking saver & walking navigation, water eject speaker sweep, Glove Mode, LTE toggle, and tactical red flashlight.
+- **Phone Media Controls**: Wrist-based media playback and volume control bridging local and phone sessions (Spotify, YouTube, KDE Connect).
+- **Autonomous In-Watch OTA**: Background release checks with in-watch installer and live progress bar — no PC or phone app required for updates.
+- **Smart Diagnostics**: Zero unnecessary banners; warning dialogs only appear when a selected action actually requires elevated permissions.
+
+> [!TIP]
+> For the complete breakdown of every action and tool, explore the [**Full Feature List**](docs/FEATURES.md).
 
 ---
 
