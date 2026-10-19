@@ -2,7 +2,7 @@
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
     <!-- Master Switch -->
-    <string name="master_switch_title">Remappage</string>
+    <string name="master_switch_title">Remapper les boutons</string>
 
     <string name="hdr_center_button">Bouton Central</string>
     <string name="hdr_bottom_button">Bouton Inférieur</string>
@@ -51,7 +51,7 @@
     <string name="gesture_long">Appui long</string>
 
     <string name="action_flashlight">Lampe torche (Boost)</string>
-    <string name="action_shealth_workout">Entraînement / Favoris (Natif)</string>
+    <string name="action_shealth_workout">Mes entraînements</string>
     <string name="action_shealth_route">Mode Itinéraire (Samsung Health)</string>
     <string name="action_shealth_exercises">Tous les exercices (Liste)</string>
     <string name="action_shealth_pick_workout">Choisir un entraînement</string>

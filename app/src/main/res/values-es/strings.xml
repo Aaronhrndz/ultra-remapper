@@ -3,7 +3,7 @@
     <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
     <!-- Master Switch -->
-    <string name="master_switch_title">Remapear</string>
+    <string name="master_switch_title">Remapear botones</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Botón Central</string>
@@ -59,7 +59,7 @@
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Linterna (Boost)</string>
-    <string name="action_shealth_workout">Entreno / Favoritos (Nativo)</string>
+    <string name="action_shealth_workout">Mis entrenamientos</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
     <string name="action_shealth_exercises">Todos los Ejercicios (Lista)</string>
     <string name="action_shealth_pick_workout">Elegir Ejercicio Rápido</string>

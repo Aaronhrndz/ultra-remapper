@@ -14,7 +14,35 @@ import android.view.KeyEvent
  */
 class MediaControlService : NotificationListenerService() {
 
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        instance = this
+    }
+
+    override fun onListenerDisconnected() {
+        if (instance === this) instance = null
+        super.onListenerDisconnected()
+    }
+
     companion object {
+        @Volatile
+        private var instance: MediaControlService? = null
+
+        /** True while Samsung Health posts its ongoing workout (exercise) notification. */
+        fun isShealthWorkoutOngoing(): Boolean {
+            val svc = instance ?: return false
+            return try {
+                svc.activeNotifications.orEmpty().any { sbn ->
+                    if (sbn.packageName != "com.samsung.android.wear.shealth" || !sbn.isOngoing) return@any false
+                    val n = sbn.notification
+                    val tag = listOfNotNull(n.category, n.channelId, sbn.tag).joinToString(" ").lowercase()
+                    n.category == "workout" || tag.contains("exercise") || tag.contains("workout")
+                }
+            } catch (_: Exception) {
+                false
+            }
+        }
+
         fun dispatchMediaAction(context: Context, keyCode: Int): Boolean {
             val msm = context.getSystemService(MediaSessionManager::class.java) ?: return false
             val component = ComponentName(context, MediaControlService::class.java)

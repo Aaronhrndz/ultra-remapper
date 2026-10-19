@@ -2,7 +2,7 @@
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
     <!-- Master Switch -->
-    <string name="master_switch_title">Tastenbelegung</string>
+    <string name="master_switch_title">Tasten neu belegen</string>
 
     <string name="hdr_center_button">Mittlere Taste</string>
     <string name="hdr_bottom_button">Untere Taste</string>
@@ -51,7 +51,7 @@
     <string name="gesture_long">Lange drücken</string>
 
     <string name="action_flashlight">Taschenlampe (Boost)</string>
-    <string name="action_shealth_workout">Training / Favoriten (Nativ)</string>
+    <string name="action_shealth_workout">Meine Trainings</string>
     <string name="action_shealth_route">Routen-Modus (Samsung Health)</string>
     <string name="action_shealth_exercises">Alle Übungen (Gesamtliste)</string>
     <string name="action_shealth_pick_workout">Schnell-Workout wählen</string>

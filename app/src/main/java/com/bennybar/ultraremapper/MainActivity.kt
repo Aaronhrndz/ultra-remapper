@@ -102,9 +102,20 @@ private fun hasHardwareActionButton(context: Context): Boolean {
     return isExplicitUltra || isWatch8Classic
 }
 
+private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+
 private fun isActionButtonRouted(context: Context): Boolean {
     if (!hasHardwareActionButton(context)) return true
-    val expected = "${context.packageName}/${ActionButtonService::class.java.name}"
+    val remapperTarget = "${context.packageName}/${ActionButtonService::class.java.name}"
+    val isMasterOn = Mapping.isEnabled(context)
+    val singleAction = Mapping.get(context, "single")
+    // If master is disabled OR single press is stock/none, expected target is Samsung Health so laps work natively!
+    val expected = if (!isMasterOn || singleAction == "none" || singleAction == "shealth_workout") {
+        SAMSUNG_HEALTH_ACTION_SERVICE
+    } else {
+        remapperTarget
+    }
+
     val current = try {
         Settings.Global.getString(context.contentResolver, "setting_action_button_press")
     } catch (_: Throwable) {
@@ -329,6 +340,7 @@ class MainActivity : ComponentActivity() {
                                 onOpenAppList = { nav.navigate("pick_app/$gesture") },
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
+                                    isActionButtonRouted(context)
                                     nav.popBackStack()
                                 }
                             )
@@ -340,6 +352,7 @@ class MainActivity : ComponentActivity() {
                                 apps = installedApps,
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
+                                    isActionButtonRouted(context)
                                     nav.popBackStack("home", inclusive = false)
                                 }
                             )
@@ -429,6 +442,7 @@ private fun Home(
                         val next = !isMasterEnabled
                         isMasterEnabled = next
                         Mapping.setEnabled(context, next)
+                        isActionButtonRouted(context)
                     },
                     label = {
                         Row(

@@ -143,29 +143,15 @@ class BottomButtonService : AccessibilityService() {
     }
 
     fun isSamsungHealthWorkoutActive(): Boolean {
-        // Fast path: cached active window event
-        if (currentActivePackage == "com.samsung.android.wear.shealth") {
-            val cls = currentActiveClass ?: ""
-            if (cls.contains("During", ignoreCase = true) ||
-                cls.contains("Exercise", ignoreCase = true) ||
-                cls.contains("Workout", ignoreCase = true)) {
-                return true
-            }
-        }
+        // 1. Ongoing Samsung Health workout notification (works even when workout screen not in foreground)
+        if (MediaControlService.isShealthWorkoutOngoing()) return true
 
+        // 2. Strict on-screen check (workout "during" screen only, never exercise list / favorites)
         return try {
             val root = rootInActiveWindow ?: return false
-            val pkg = root.packageName?.toString()
-            if (pkg != "com.samsung.android.wear.shealth") return false
-            // Check if active screen contains workout indicators (Lap, Duration, Pause, Calories)
-            val hasWorkoutNodes = root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/exercise_during_layout").isNotEmpty()
+            if (root.packageName?.toString() != "com.samsung.android.wear.shealth") return false
+            root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/exercise_during_layout").isNotEmpty()
                 || root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/lap_count").isNotEmpty()
-                || root.findAccessibilityNodeInfosByText("Vuelta").isNotEmpty()
-                || root.findAccessibilityNodeInfosByText("Lap").isNotEmpty()
-                || root.findAccessibilityNodeInfosByText("Runde").isNotEmpty()
-                || root.findAccessibilityNodeInfosByText("Tour").isNotEmpty()
-                || root.className?.toString()?.contains("Exercise", ignoreCase = true) == true
-            hasWorkoutNodes
         } catch (_: Exception) {
             false
         }
@@ -249,6 +235,7 @@ class BottomButtonService : AccessibilityService() {
                 pendingBoostFromAction = false
                 pendingWirelessAdbAutoToggle = false
                 tapHandler.removeCallbacksAndMessages(null)
+                setWindowTrackingEnabled(false)
             }
         }
     }
@@ -265,11 +252,24 @@ class BottomButtonService : AccessibilityService() {
         dispatchGesture(gesture, null, null)
     }
 
+    /**
+     * Mirrors Samsung FlashLight `isBoostModeSupportedDevice()`:
+     * Build.DEVICE contains "projectx2" (Ultra) or matches (wise|fresh)N with N >= 8.
+     * Tap cycle: normal → max → boost (supported) | blink strobe (unsupported).
+     */
+    private fun isFlashlightBoostSupported(): Boolean {
+        val device = android.os.Build.DEVICE ?: return false
+        if (device.contains("projectx2")) return true
+        val m = Regex("(?i)(wise|fresh)(\\d+)").find(device) ?: return false
+        return (m.groupValues[2].toIntOrNull() ?: 0) >= 8
+    }
+
     private fun scheduleBoostTaps(firstDelayMs: Long, secondDelayMs: Long) {
         tapHandler.removeCallbacksAndMessages(null)
         tapHandler.postDelayed({
             if (isSamsungFlashlightOnScreen()) tapCenter()
         }, firstDelayMs)
+        if (!isFlashlightBoostSupported()) return
         tapHandler.postDelayed({
             if (isSamsungFlashlightOnScreen()) tapCenter()
         }, secondDelayMs)

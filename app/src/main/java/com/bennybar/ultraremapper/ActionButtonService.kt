@@ -24,8 +24,18 @@ class ActionButtonService : Service() {
         val singleAction = Mapping.get(this, "single")
         val yieldSinglePress = singleAction == "none" || singleAction == "shealth_workout" || workoutActive
 
-        // If master switch disabled, or workout active, or single press is unmapped / shealth:
-        // Always forward raw hardware key events (DOWN=0, UP=1, PRESS=2) to stock Samsung Health service
+        // If workout became active or single press should yield:
+        // Automatically restore setting_action_button_press to stock Samsung Health so system_server dispatches natively
+        if (yieldSinglePress) {
+            try {
+                android.provider.Settings.Global.putString(
+                    contentResolver,
+                    "setting_action_button_press",
+                    "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+                )
+            } catch (_: Throwable) {}
+        }
+
         if (!appEnabled || (yieldSinglePress && (keyEvent in 0..2))) {
             forwardToSamsungHealth(intent)
             stopSelf(startId)

@@ -3,7 +3,7 @@
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
     <!-- Master Switch -->
-    <string name="master_switch_title">Remap</string>
+    <string name="master_switch_title">Remap buttons</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Center Button</string>
@@ -59,7 +59,7 @@
 
     <!-- Samsung Actions -->
     <string name="action_flashlight">Flashlight (Boost)</string>
-    <string name="action_shealth_workout">Workout / Favorites (Stock)</string>
+    <string name="action_shealth_workout">My Workouts</string>
     <string name="action_shealth_route">Route Workout Mode</string>
     <string name="action_shealth_exercises">All Exercises (Full List)</string>
     <string name="action_shealth_pick_workout">Pick Quick Workout</string>
