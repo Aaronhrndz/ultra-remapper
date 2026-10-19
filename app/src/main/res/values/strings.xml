@@ -43,6 +43,7 @@
     <string name="update_banner_sub">Tap for changelog &amp; direct install</string>
     <string name="update_available">Update Available</string>
     <string name="update_details_title">Update v%s</string>
+    <string name="update_details_title_beta">Beta Update v%s</string>
     <string name="update_install_watch">Update on Watch</string>
     <string name="update_install_watch_sub">Direct download &amp; install</string>
     <string name="update_open_phone">Open on Phone</string>

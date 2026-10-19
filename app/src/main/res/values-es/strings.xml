@@ -43,6 +43,7 @@
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
     <string name="update_available">Actualización disponible</string>
     <string name="update_details_title">Actualización v%s</string>
+    <string name="update_details_title_beta">Actualización Beta v%s</string>
     <string name="update_install_watch">Actualizar en el Reloj</string>
     <string name="update_install_watch_sub">Descargar e instalar directamente</string>
     <string name="update_open_phone">Abrir descarga en el teléfono</string>

@@ -1379,8 +1379,13 @@ private fun UpdateDetailsScreen(
                         .transformedHeight(this, transformationSpec),
                     transformation = SurfaceTransformation(transformationSpec)
                 ) {
+                    val titleRes = if (update.isPrerelease) {
+                        R.string.update_details_title_beta
+                    } else {
+                        R.string.update_details_title
+                    }
                     Text(
-                        context.getString(R.string.update_details_title, update.versionName),
+                        context.getString(titleRes, update.versionName),
                         color = UltraOrange,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center
