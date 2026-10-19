@@ -13,6 +13,9 @@
   <a href="https://github.com/Aaronhrndz/ultra-remapper/releases/latest">
     <img src="https://img.shields.io/github/v/release/Aaronhrndz/ultra-remapper?color=FF5500&label=latest%20release&style=flat-square" alt="Latest Release" />
   </a>
+  <a href="https://ko-fi.com/Aaronhrndz">
+    <img src="https://img.shields.io/badge/Ko--fi-Donate%20%E2%98%95-FF5E5B?style=flat-square&logo=kofi&logoColor=white" alt="Support on Ko-fi" />
+  </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square" alt="License: GPL-3.0" />
   </a>
@@ -150,6 +153,18 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > - Third-party apps (like Ultra Remapper) are **not on the club's guest list**. If Ultra Remapper tries to knock on the door or ring Samsung Health's bell, Android security yells: *"Permission Denial: You can't enter!"* and blocks it.
 > - But when the watch system sees you click the orange button, if the click points directly to **Samsung Health ("My Workouts")**, the **watch itself rings the bell from the inside**, which is allowed!
 > - Therefore: **Keep Single Press mapped to "My Workouts" (or unmapped)** if you want native workout Laps and Pause during your runs. Double press and Long press remain 100% free for your custom shortcuts (Flashlight, Assistant, Media, etc.).
+
+---
+
+## ☕ Support & Donations
+
+If Ultra Remapper made your Galaxy Watch experience significantly better, consider supporting future development with a coffee:
+
+<p align="center">
+  <a href="https://ko-fi.com/Aaronhrndz">
+    <img src="https://img.shields.io/badge/Support%20on-Ko--fi-FF5E5B?style=for-the-badge&logo=kofi&logoColor=white" alt="Support on Ko-fi" />
+  </a>
+</p>
 
 ---
 
