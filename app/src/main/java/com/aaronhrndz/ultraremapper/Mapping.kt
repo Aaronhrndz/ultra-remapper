@@ -70,12 +70,7 @@ object Mapping {
 
     val actionDefinitions = (shealthActions + samsungActions + devActions + utilityActions + homeAssistantActions + mediaActions)
 
-    private val defaults = mapOf(
-        "single" to "flashlight",
-        "double" to "next",
-        "long" to "play_pause",
-        "bottom_long" to "app:com.google.android.apps.walletnfcrel",
-    )
+    private val defaults = emptyMap<String, String>()
 
     private const val KEY_APP_ENABLED = "remapper_master_enabled"
 
