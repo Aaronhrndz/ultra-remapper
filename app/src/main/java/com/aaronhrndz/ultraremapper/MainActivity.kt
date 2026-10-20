@@ -91,6 +91,28 @@ private val SlateCard = Color(0xFF1F232A)
 private val SlateHighlight = Color(0xFF2B313B)
 private val WarnAmber = Color(0xFFFF9800)
 
+private fun ensureAccessibilityServiceHealthy(context: Context) {
+    if (!hasSecureSettingsPermission(context)) return
+    try {
+        val expected = ComponentName(context, BottomButtonService::class.java).flattenToString()
+        val current = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        ) ?: ""
+        // If accessibility service binding is alive, do nothing
+        if (BottomButtonService.instance != null) return
+
+        // If enabled in settings but instance is null (zombie after app update), kick IPC binding
+        if (current.contains(expected)) {
+            val listWithout = current.split(':').filter { it != expected && it.isNotBlank() }.joinToString(":")
+            Settings.Secure.putString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, listWithout)
+            val restored = if (listWithout.isBlank()) expected else "$listWithout:$expected"
+            Settings.Secure.putString(context.contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, restored)
+            Settings.Secure.putInt(context.contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED, 1)
+        }
+    } catch (_: Throwable) {}
+}
+
 private fun isAccessibilityServiceEnabled(context: Context): Boolean {
     val a11yGlobal = Settings.Secure.getInt(context.contentResolver, Settings.Secure.ACCESSIBILITY_ENABLED, 0) == 1
     if (!a11yGlobal) return false
@@ -269,6 +291,7 @@ class MainActivity : ComponentActivity() {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
                                 isActionButtonRouted(context)
+                                ensureAccessibilityServiceHealthy(context)
                                 setup = readSetupState(context)
                                 UpdateChecker.check(context) { info ->
                                     updateInfo = info

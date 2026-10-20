@@ -25,34 +25,23 @@ class ActionButtonService : Service() {
         val workoutActive = BottomButtonService.instance?.isSamsungHealthWorkoutActive() == true
         val singleAction = Mapping.get(this, "single")
 
-        // 1. If master switch is OFF, always forward to stock Samsung Health
+        // 1. If master switch is OFF, do nothing
         if (!appEnabled) {
-            forwardToSamsungHealth(intent)
             stopSelf(startId)
             return START_NOT_STICKY
         }
 
-        // 2. If Samsung Health is in foreground or workout is actively ongoing:
-        // ALWAYS forward hardware event directly to Samsung Health so Lap / Pause / Carousel work natively
-        val inSamsungHealth = BottomButtonService.currentActivePackage == "com.samsung.android.wear.shealth" || workoutActive
-        if (inSamsungHealth) {
-            forwardToSamsungHealth(intent)
+        // 2. If workout is actively ongoing, yield to avoid interrupting laps
+        if (workoutActive) {
             stopSelf(startId)
             return START_NOT_STICKY
         }
 
-        // 3. Normal gesture dispatch (each gesture is routed independently)
+        // 3. Normal gesture dispatch
         if (gesture != null) {
             val configuredAction = Mapping.get(this, gesture)
-            when (configuredAction) {
-                "none" -> {
-                    forwardToSamsungHealth(intent)
-                }
-                "shealth_workout" -> {
-                    // Launch workout activity carousel/list reliably
-                    Mapping.perform(this, gesture)
-                }
-                else -> Mapping.perform(this, gesture)
+            if (configuredAction != "none") {
+                Mapping.perform(this, gesture)
             }
             UpdateChecker.checkOpportunistic(applicationContext)
         }
