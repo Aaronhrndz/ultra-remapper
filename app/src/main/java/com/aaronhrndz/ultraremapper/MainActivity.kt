@@ -110,11 +110,16 @@ private fun hasHardwareActionButton(context: Context): Boolean = true
 
 private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
 
-private fun isActionButtonRouted(context: Context): Boolean {
+private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boolean {
     if (!hasHardwareActionButton(context)) return true
+
+    // Do NOT fight with Samsung Health if workout is currently active
+    if (BottomButtonService.instance?.isSamsungHealthWorkoutActive() == true) {
+        return true
+    }
+
     val remapperTarget = "${context.packageName}/${ActionButtonService::class.java.name}"
     val isMasterOn = Mapping.isEnabled(context)
-    // When master switch is enabled, ALWAYS route to Ultra Remapper so multi-gesture (double/long) works!
     val expected = if (!isMasterOn) {
         SAMSUNG_HEALTH_ACTION_SERVICE
     } else {
@@ -128,8 +133,9 @@ private fun isActionButtonRouted(context: Context): Boolean {
     }
     if (current == expected) return true
 
-    // If app already has WRITE_SECURE_SETTINGS, auto-route silently!
-    if (hasSecureSettingsPermission(context)) {
+    // Only auto-route if explicitly requested (e.g. user toggled setting or onResume)
+    // NEVER mutate Settings.Global silently inside periodic background polling!
+    if (autoFix && hasSecureSettingsPermission(context)) {
         try {
             Settings.Global.putString(context.contentResolver, "setting_action_button_press", expected)
             return true
@@ -190,7 +196,7 @@ private data class SetupState(
 
 private fun readSetupState(context: Context): SetupState = SetupState(
     hasActionButton = hasHardwareActionButton(context),
-    actionRouted = isActionButtonRouted(context),
+    actionRouted = isActionButtonRouted(context, autoFix = false),
     overlayAllowed = Settings.canDrawOverlays(context),
     a11yEnabled = isAccessibilityServiceEnabled(context),
     mediaListenerEnabled = isNotificationListenerEnabled(context),
@@ -262,7 +268,7 @@ class MainActivity : ComponentActivity() {
 
                     LaunchedEffect(Unit) {
                         while (true) {
-                            kotlinx.coroutines.delay(1000L)
+                            kotlinx.coroutines.delay(2000L)
                             setup = readSetupState(context)
                         }
                     }
