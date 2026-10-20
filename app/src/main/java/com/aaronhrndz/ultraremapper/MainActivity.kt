@@ -266,13 +266,6 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    LaunchedEffect(Unit) {
-                        while (true) {
-                            kotlinx.coroutines.delay(2000L)
-                            setup = readSetupState(context)
-                        }
-                    }
-
                     DisposableEffect(lifecycleOwner) {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {

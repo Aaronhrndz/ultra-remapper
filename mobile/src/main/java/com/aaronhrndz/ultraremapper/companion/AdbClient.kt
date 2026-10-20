@@ -5,6 +5,8 @@ import android.net.nsd.NsdManager
 import android.net.nsd.NsdServiceInfo
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -13,13 +15,16 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.security.KeyPairGenerator
+import java.security.interfaces.RSAPrivateKey
+import java.security.interfaces.RSAPublicKey
 
 /**
- * Lightweight native ADB implementation for Android.
- * Connects directly to the watch over TCP (Wireless Debugging) to execute shell commands
- * without needing PC or external binaries.
+ * Native ADB implementation supporting CNXN, RSA AUTH (pairing prompt on device), and shell streams.
  */
 class AdbClient(private val context: Context) {
+
+    private val TAG = "UltraAdb"
 
     data class DiscoveredWatch(
         val name: String,
@@ -75,20 +80,49 @@ class AdbClient(private val context: Context) {
     suspend fun runShell(host: String, port: Int, command: String): String = withContext(Dispatchers.IO) {
         val socket = Socket()
         try {
+            Log.d(TAG, "Connecting to $host:$port for command: $command")
             socket.connect(InetSocketAddress(host, port), 4000)
             socket.soTimeout = 6000
             val input = socket.getInputStream()
             val output = socket.getOutputStream()
 
-            // ADB Protocol: CNXN -> AUTH -> OPEN(shell:command)
-            // Send standard ADB CNXN packet
-            val banner = "host::\u0000"
+            // 1. Send CNXN
+            val banner = "host::Companion\u0000"
             sendPacket(output, A_CNXN, A_VERSION, 1024 * 1024, banner.toByteArray())
 
-            val resp = readPacket(input)
+            var resp = readPacket(input)
+            Log.d(TAG, "Received packet after CNXN: cmd=0x${Integer.toHexString(resp.command)}")
+
             if (resp.command == A_AUTH) {
-                // Device requires authentication/pairing if RSA key not trusted yet
-                return@withContext "AUTH_REQUIRED: Please accept debugging prompt on your watch"
+                Log.d(TAG, "Auth requested by device (arg0=${resp.arg0})")
+                // Android ADB Auth: arg0 == 1 -> TOKEN
+                // Send RSA public key to trigger authorization dialog on watch
+                val prefs = context.getSharedPreferences("adb_keys", Context.MODE_PRIVATE)
+                var pubKeyB64 = prefs.getString("pub_b64", null)
+                if (pubKeyB64 == null) {
+                    val kpg = KeyPairGenerator.getInstance("RSA")
+                    kpg.initialize(2048)
+                    val kp = kpg.generateKeyPair()
+                    val pub = kp.public as RSAPublicKey
+                    val encoded = Base64.encodeToString(pub.encoded, Base64.NO_WRAP)
+                    prefs.edit().putString("pub_b64", encoded).apply()
+                    pubKeyB64 = encoded
+                }
+
+                // Send RSAPUBLICKEY packet (type 3)
+                val pubPayload = "$pubKeyB64 companion@phone\u0000".toByteArray()
+                sendPacket(output, A_AUTH, 3, 0, pubPayload)
+                Log.d(TAG, "Sent RSA public key to watch")
+
+                resp = readPacket(input)
+                Log.d(TAG, "Packet after RSA auth: cmd=0x${Integer.toHexString(resp.command)}")
+                if (resp.command != A_CNXN) {
+                    return@withContext "AUTH_REQUIRED: Acepta la solicitud en la pantalla del reloj"
+                }
+            }
+
+            if (resp.command != A_CNXN) {
+                return@withContext "ERROR: Conexión rechazada (cmd 0x${Integer.toHexString(resp.command)})"
             }
 
             // Open stream: shell:<command>
@@ -98,6 +132,7 @@ class AdbClient(private val context: Context) {
 
             val openResp = readPacket(input)
             if (openResp.command != A_OKAY) {
+                Log.e(TAG, "Open failed: 0x${Integer.toHexString(openResp.command)}")
                 return@withContext "FAILED_OPEN_STREAM"
             }
 
@@ -112,8 +147,11 @@ class AdbClient(private val context: Context) {
                     break
                 }
             }
-            resultBuilder.toString().trim()
+            val res = resultBuilder.toString().trim()
+            Log.d(TAG, "Command result: $res")
+            res
         } catch (e: Exception) {
+            Log.e(TAG, "Socket exception: ${e.message}", e)
             "ERROR: ${e.message}"
         } finally {
             try { socket.close() } catch (_: Exception) {}
