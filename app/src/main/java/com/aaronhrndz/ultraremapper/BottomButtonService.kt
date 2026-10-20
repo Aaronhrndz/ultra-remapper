@@ -249,33 +249,7 @@ class BottomButtonService : AccessibilityService() {
             currentActivePackage = pkg
             currentActiveClass = event.className?.toString()
 
-            // Dynamic handover of Orange Action Button to Samsung Health during workout/exercise
-            if (UtilityActions.hasHardwareActionButton(this) &&
-                checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED
-            ) {
-                if (pkg == "com.samsung.android.wear.shealth") {
-                    try {
-                        android.provider.Settings.Global.putString(
-                            contentResolver,
-                            "setting_action_button_press",
-                            "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
-                        )
-                    } catch (_: Throwable) {}
-                } else if (pkg != "android") {
-                    val isMasterOn = Mapping.isEnabled(this)
-                    val target = if (!isMasterOn) {
-                        "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
-                    } else {
-                        "$packageName/${ActionButtonService::class.java.name}"
-                    }
-                    try {
-                        val cur = android.provider.Settings.Global.getString(contentResolver, "setting_action_button_press")
-                        if (cur != target) {
-                            android.provider.Settings.Global.putString(contentResolver, "setting_action_button_press", target)
-                        }
-                    } catch (_: Throwable) {}
-                }
-            }
+            // Action button routing is maintained cleanly in ActionButtonService and UpdateReceiver
 
             // Clean interception: When Samsung Wallet opens upon bottom button hold,
             // dismiss Wallet and immediately bring our mapped action to the top!

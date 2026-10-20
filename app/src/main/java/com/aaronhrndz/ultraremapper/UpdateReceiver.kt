@@ -111,7 +111,25 @@ class UpdateReceiver : BroadcastReceiver() {
             ACTION_CHECK_UPDATE, Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 UpdateChecker.scheduleDailyCheck(appContext)
                 UpdateChecker.checkOpportunistic(appContext)
+                ensureActionButtonRouting(appContext)
             }
         }
+    }
+
+    private fun ensureActionButtonRouting(context: Context) {
+        if (context.checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") != android.content.pm.PackageManager.PERMISSION_GRANTED) return
+        try {
+            val isMasterOn = Mapping.isEnabled(context)
+            val singleAction = Mapping.get(context, "single")
+            val target = if (!isMasterOn || singleAction == "none" || singleAction == "shealth_workout") {
+                "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+            } else {
+                "${context.packageName}/${ActionButtonService::class.java.name}"
+            }
+            val current = android.provider.Settings.Global.getString(context.contentResolver, "setting_action_button_press")
+            if (current != target) {
+                android.provider.Settings.Global.putString(context.contentResolver, "setting_action_button_press", target)
+            }
+        } catch (_: Throwable) {}
     }
 }
