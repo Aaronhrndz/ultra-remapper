@@ -3,6 +3,10 @@ package com.aaronhrndz.ultraremapper
 import com.aaronhrndz.ultraremapper.R
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.content.Intent
 import android.net.Uri
 import android.os.Handler
@@ -151,8 +155,12 @@ object UpdateChecker {
     }
 
     private fun isNewerVersion(remote: String, local: String): Boolean {
-        val rParts = remote.split(".").map { it.toIntOrNull() ?: 0 }
-        val lParts = local.split(".").map { it.toIntOrNull() ?: 0 }
+        fun parseParts(v: String): List<Int> {
+            val base = v.substringBefore('-')
+            return Regex("\\d+").findAll(base).map { it.value.toIntOrNull() ?: 0 }.toList()
+        }
+        val rParts = parseParts(remote)
+        val lParts = parseParts(local)
         val maxLen = maxOf(rParts.size, lParts.size)
         for (i in 0 until maxLen) {
             val r = rParts.getOrElse(i) { 0 }
@@ -189,10 +197,44 @@ object UpdateChecker {
         }
 
         executor.execute {
+            val connectivityManager = appCtx.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+            var activeNetwork: Network? = null
+            var networkCallback: ConnectivityManager.NetworkCallback? = null
+            val networkWaitLatch = java.util.concurrent.CountDownLatch(1)
+
+            if (connectivityManager != null) {
+                try {
+                    val request = NetworkRequest.Builder()
+                        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+                        .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                        .build()
+
+                    val callback = object : ConnectivityManager.NetworkCallback() {
+                        override fun onAvailable(network: Network) {
+                            activeNetwork = network
+                            networkWaitLatch.countDown()
+                        }
+                        override fun onUnavailable() {
+                            networkWaitLatch.countDown()
+                        }
+                    }
+                    networkCallback = callback
+                    connectivityManager.requestNetwork(request, callback, 5000)
+                    networkWaitLatch.await(5, java.util.concurrent.TimeUnit.SECONDS)
+                } catch (_: Throwable) {
+                    // Fallback to default network route if Wi-Fi request fails
+                }
+            }
+
             try {
                 mainHandler.post { onProgress(0f, appCtx.getString(R.string.update_downloading)) }
                 val url = URL(apkUrl)
-                val conn = (url.openConnection() as HttpURLConnection).apply {
+                val rawConn = if (activeNetwork != null) {
+                    activeNetwork?.openConnection(url)
+                } else {
+                    url.openConnection()
+                }
+                val conn = (rawConn as HttpURLConnection).apply {
                     instanceFollowRedirects = true
                     connectTimeout = 15000
                     readTimeout = 30000
@@ -200,7 +242,11 @@ object UpdateChecker {
                 if (conn.responseCode in 300..399) {
                     val redirectUrl = conn.getHeaderField("Location")
                     if (!redirectUrl.isNullOrEmpty()) {
-                        val redirConn = URL(redirectUrl).openConnection() as HttpURLConnection
+                        val redirConn = (if (activeNetwork != null) {
+                            activeNetwork?.openConnection(URL(redirectUrl))
+                        } else {
+                            URL(redirectUrl).openConnection()
+                        }) as HttpURLConnection
                         redirConn.connectTimeout = 15000
                         redirConn.readTimeout = 30000
                         installFromConnection(appCtx, redirConn, update.versionName, onProgress)
@@ -212,6 +258,12 @@ object UpdateChecker {
                 mainHandler.post {
                     Toast.makeText(appCtx, "Download error: ${e.message}", Toast.LENGTH_LONG).show()
                     onProgress(0f, "")
+                }
+            } finally {
+                if (networkCallback != null && connectivityManager != null) {
+                    try {
+                        connectivityManager.unregisterNetworkCallback(networkCallback)
+                    } catch (_: Throwable) {}
                 }
             }
         }
