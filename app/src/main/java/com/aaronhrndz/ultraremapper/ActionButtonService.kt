@@ -30,9 +30,8 @@ class ActionButtonService : Service() {
             return START_NOT_STICKY
         }
 
-        // 2. In active workout, yield Action button to Samsung Health for laps
+        // 2. In active workout, yield to Samsung Health
         if (workoutActive) {
-            forwardToSamsungHealth(intent)
             stopSelf(startId)
             return START_NOT_STICKY
         }

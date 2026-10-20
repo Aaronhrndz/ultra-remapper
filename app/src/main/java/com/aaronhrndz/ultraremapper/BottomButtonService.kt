@@ -241,9 +241,28 @@ class BottomButtonService : AccessibilityService() {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             val pkg = event.packageName?.toString() ?: return
             currentActivePackage = pkg
-            currentActiveClass = event.className?.toString()
+            val cls = event.className?.toString()
+            currentActiveClass = cls
 
-            // Action button routing is maintained cleanly in ActionButtonService and UpdateReceiver
+            // Dynamic Action Button handover ONLY during active ExerciseActivity
+            if (UtilityActions.hasHardwareActionButton(this) &&
+                checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED &&
+                Mapping.isEnabled(this)
+            ) {
+                val isLiveWorkout = pkg == "com.samsung.android.wear.shealth" &&
+                        (cls?.endsWith("ExerciseActivity") == true || cls?.contains("during", ignoreCase = true) == true)
+                val target = if (isLiveWorkout) {
+                    "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+                } else {
+                    "$packageName/${ActionButtonService::class.java.name}"
+                }
+                try {
+                    val current = android.provider.Settings.Global.getString(contentResolver, "setting_action_button_press")
+                    if (current != target) {
+                        android.provider.Settings.Global.putString(contentResolver, "setting_action_button_press", target)
+                    }
+                } catch (_: Throwable) {}
+            }
 
             // Clean interception: When Samsung Wallet opens upon bottom button hold,
             // dismiss Wallet and immediately bring our mapped action to the top!
