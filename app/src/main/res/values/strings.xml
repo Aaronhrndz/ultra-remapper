@@ -121,5 +121,5 @@
     <string name="dev_unlocked">Developer options unlocked!</string>
     <string name="dev_steps_remaining">%d taps to developer options</string>
     <string name="reboot_required_title">Reboot Watch Required</string>
-    <string name="reboot_required_desc">Hold both physical buttons for 7s until the watch restarts to reconnect buttons after an update.</string>
+    <string name="reboot_required_desc">Restart your watch from the quick settings panel to restore hardware button mapping after this update.</string>
 </resources>
