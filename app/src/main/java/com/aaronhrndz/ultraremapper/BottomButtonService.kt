@@ -156,15 +156,12 @@ class BottomButtonService : AccessibilityService() {
     }
 
     fun isSamsungHealthWorkoutActive(): Boolean {
-        // Strict on-screen check: ONLY yield bottom button when actively inside workout execution screen
-        return try {
-            val root = rootInActiveWindow ?: return false
-            if (root.packageName?.toString() != "com.samsung.android.wear.shealth") return false
-            root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/exercise_during_layout").isNotEmpty()
-                || root.findAccessibilityNodeInfosByViewId("com.samsung.android.wear.shealth:id/lap_count").isNotEmpty()
-        } catch (_: Exception) {
-            false
-        }
+        val pkg = currentActivePackage ?: try { rootInActiveWindow?.packageName?.toString() } catch (_: Exception) { null }
+        if (pkg != "com.samsung.android.wear.shealth") return false
+
+        val cls = currentActiveClass ?: try { rootInActiveWindow?.className?.toString() } catch (_: Exception) { null }
+        // ExerciseActivity is exclusively the active workout screen (exercise list is ExerciseListActivity)
+        return cls?.endsWith("ExerciseActivity") == true || cls?.contains("during", ignoreCase = true) == true
     }
 
     override fun onKeyEvent(event: KeyEvent): Boolean {

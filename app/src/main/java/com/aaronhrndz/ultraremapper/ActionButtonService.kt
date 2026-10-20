@@ -22,6 +22,7 @@ class ActionButtonService : Service() {
         }
 
         val appEnabled = Mapping.isEnabled(this)
+        val workoutActive = BottomButtonService.instance?.isSamsungHealthWorkoutActive() == true
 
         // 1. If master switch is OFF, do nothing
         if (!appEnabled) {
@@ -29,7 +30,14 @@ class ActionButtonService : Service() {
             return START_NOT_STICKY
         }
 
-        // 2. Normal gesture dispatch
+        // 2. In active workout, yield Action button to Samsung Health for laps
+        if (workoutActive) {
+            forwardToSamsungHealth(intent)
+            stopSelf(startId)
+            return START_NOT_STICKY
+        }
+
+        // 3. Normal gesture dispatch
         if (gesture != null) {
             val configuredAction = Mapping.get(this, gesture)
             if (configuredAction != "none") {
