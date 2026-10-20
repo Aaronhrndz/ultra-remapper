@@ -120,4 +120,6 @@
     <string name="dev_beta_desc">Receive private beta pre-releases</string>
     <string name="dev_unlocked">Developer options unlocked!</string>
     <string name="dev_steps_remaining">%d taps to developer options</string>
+    <string name="reboot_required_title">Reboot Watch Required</string>
+    <string name="reboot_required_desc">Hold both physical buttons for 7s until the watch restarts to reconnect buttons after an update.</string>
 </resources>

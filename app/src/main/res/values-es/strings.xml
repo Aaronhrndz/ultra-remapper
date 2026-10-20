@@ -120,4 +120,6 @@
     <string name="dev_beta_desc">Recibir versiones beta de prueba</string>
     <string name="dev_unlocked">¡Opciones de desarrollador activadas!</string>
     <string name="dev_steps_remaining">Quedan %d toques para desarrollador</string>
+    <string name="reboot_required_title">Reinicio de reloj necesario</string>
+    <string name="reboot_required_desc">Mantén pulsados ambos botones físicos 7s hasta que se reinicie para reactivar los botones tras actualizar.</string>
 </resources>
