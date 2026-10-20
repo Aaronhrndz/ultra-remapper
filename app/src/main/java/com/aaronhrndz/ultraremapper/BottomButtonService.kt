@@ -156,10 +156,7 @@ class BottomButtonService : AccessibilityService() {
     }
 
     fun isSamsungHealthWorkoutActive(): Boolean {
-        // 1. Ongoing Samsung Health workout notification (works even when workout screen not in foreground)
-        if (MediaControlService.isShealthWorkoutOngoing()) return true
-
-        // 2. Strict on-screen check (workout "during" screen only, never exercise list / favorites)
+        // Strict on-screen check: ONLY yield bottom button when actively inside workout execution screen
         return try {
             val root = rootInActiveWindow ?: return false
             if (root.packageName?.toString() != "com.samsung.android.wear.shealth") return false
