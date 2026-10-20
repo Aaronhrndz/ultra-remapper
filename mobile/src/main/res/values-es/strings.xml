@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Ultra Remapper Companion</string>
+    <string name="title_companion">Ultra Remapper</string>
+    <string name="subtitle_companion">App Compañera y Gestor del Reloj</string>
+    <string name="status_watch">Estado del Reloj</string>
+    <string name="watch_connected">Conectado vía Wearable DataLayer</string>
+    <string name="watch_disconnected">Buscando Reloj…</string>
+    <string name="btn_grant_permissions">Conceder Permisos al Reloj (1 Toque)</string>
+    <string name="desc_grant_permissions">Habilita Secure Settings, enrutado de botón de acción y superposición en tu Galaxy Watch Ultra.</string>
+</resources>

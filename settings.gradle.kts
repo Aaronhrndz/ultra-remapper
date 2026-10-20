@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Ultra Remapper"
 include(":app")
- 
+include(":mobile")
