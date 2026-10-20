@@ -1755,26 +1755,6 @@ private fun DevOptionsScreen(
                         .transformedHeight(this, transformationSpec)
                 )
             }
-
-            item(key = "dev_done") {
-                Spacer(modifier = Modifier.height(14.dp))
-                Button(
-                    onClick = onDone,
-                    label = {
-                        Text(
-                            text = context.getString(R.string.diag_dialog_close),
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(containerColor = UltraOrange),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
         }
     }
 }
