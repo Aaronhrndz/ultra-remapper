@@ -28,19 +28,7 @@ class UpdateReceiver : BroadcastReceiver() {
         const val NOTIFICATION_ID = 2026
 
         private val executor = Executors.newSingleThreadExecutor()
-        const val PREFS_MAINT = "remapper_maintenance"
-        const val KEY_REBOOT_REQUIRED = "reboot_required"
 
-        fun isRebootRequired(context: Context): Boolean =
-            context.getSharedPreferences(PREFS_MAINT, Context.MODE_PRIVATE)
-                .getBoolean(KEY_REBOOT_REQUIRED, false)
-
-        fun setRebootRequired(context: Context, required: Boolean) {
-            context.getSharedPreferences(PREFS_MAINT, Context.MODE_PRIVATE)
-                .edit()
-                .putBoolean(KEY_REBOOT_REQUIRED, required)
-                .apply()
-        }
 
         fun showUpdateNotification(context: Context, update: ReleaseUpdate) {
             val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
@@ -121,20 +109,7 @@ class UpdateReceiver : BroadcastReceiver() {
                 )
                 UpdateChecker.downloadAndInstallOnWatch(appContext, update)
             }
-            ACTION_CHECK_UPDATE -> {
-                UpdateChecker.scheduleDailyCheck(appContext)
-                UpdateChecker.checkOpportunistic(appContext)
-            }
-            Intent.ACTION_BOOT_COMPLETED -> {
-                // Device finished full reboot, clear reboot required flag
-                setRebootRequired(appContext, false)
-                UpdateChecker.scheduleDailyCheck(appContext)
-                UpdateChecker.checkOpportunistic(appContext)
-                ensureActionButtonRouting(appContext)
-            }
-            Intent.ACTION_MY_PACKAGE_REPLACED -> {
-                // App just got updated OTA! In One UI / Wear OS, input key filters require a reboot.
-                setRebootRequired(appContext, true)
+            ACTION_CHECK_UPDATE, Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 UpdateChecker.scheduleDailyCheck(appContext)
                 UpdateChecker.checkOpportunistic(appContext)
                 ensureActionButtonRouting(appContext)

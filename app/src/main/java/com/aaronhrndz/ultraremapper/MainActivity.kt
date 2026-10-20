@@ -461,7 +461,6 @@ private fun Home(
 
     ScreenScaffold(scrollState = columnState) { _ ->
         var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
-        val rebootRequired = remember { UpdateReceiver.isRebootRequired(context) }
 
         TransformingLazyColumn(
             state = columnState,
@@ -517,35 +516,7 @@ private fun Home(
                 )
             }
 
-            if (rebootRequired) {
-                item(key = "reboot_banner") {
-                    Button(
-                        onClick = { /* Informational */ },
-                        label = {
-                            Text(
-                                context.getString(R.string.reboot_required_title),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        },
-                        secondaryLabel = {
-                            Text(
-                                context.getString(R.string.reboot_required_desc),
-                                maxLines = 3,
-                                overflow = TextOverflow.Ellipsis,
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        },
-                        colors = ButtonDefaults.buttonColors(containerColor = WarnAmber),
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-            }
+
 
             if (updateInfo != null) {
                 item(key = "update_banner") {
