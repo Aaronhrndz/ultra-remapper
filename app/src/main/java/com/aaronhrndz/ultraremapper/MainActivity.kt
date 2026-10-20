@@ -112,9 +112,8 @@ private fun isActionButtonRouted(context: Context): Boolean {
     if (!hasHardwareActionButton(context)) return true
     val remapperTarget = "${context.packageName}/${ActionButtonService::class.java.name}"
     val isMasterOn = Mapping.isEnabled(context)
-    val singleAction = Mapping.get(context, "single")
-    // If master is disabled OR single press is stock/none, expected target is Samsung Health so laps work natively!
-    val expected = if (!isMasterOn || singleAction == "none" || singleAction == "shealth_workout") {
+    // When master switch is enabled, ALWAYS route to Ultra Remapper so multi-gesture (double/long) works!
+    val expected = if (!isMasterOn) {
         SAMSUNG_HEALTH_ACTION_SERVICE
     } else {
         remapperTarget

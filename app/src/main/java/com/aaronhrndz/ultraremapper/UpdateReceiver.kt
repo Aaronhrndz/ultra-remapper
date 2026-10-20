@@ -120,8 +120,7 @@ class UpdateReceiver : BroadcastReceiver() {
         if (context.checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") != android.content.pm.PackageManager.PERMISSION_GRANTED) return
         try {
             val isMasterOn = Mapping.isEnabled(context)
-            val singleAction = Mapping.get(context, "single")
-            val target = if (!isMasterOn || singleAction == "none" || singleAction == "shealth_workout") {
+            val target = if (!isMasterOn) {
                 "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
             } else {
                 "${context.packageName}/${ActionButtonService::class.java.name}"
