@@ -261,7 +261,7 @@ class BottomButtonService : AccessibilityService() {
                             "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
                         )
                     } catch (_: Throwable) {}
-                } else if (pkg != "android" && pkg != packageName) {
+                } else if (pkg != "android") {
                     val isMasterOn = Mapping.isEnabled(this)
                     val target = if (!isMasterOn) {
                         "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
@@ -309,7 +309,7 @@ class BottomButtonService : AccessibilityService() {
                         performWirelessAdbClick()
                     }
                 }, 1200L)
-            } else if (pkg != "android" && pkg != packageName) {
+            } else if (pkg != "android") {
                 isFlashlightWindowActive = false
                 pendingBoostFromAction = false
                 pendingWirelessAdbAutoToggle = false

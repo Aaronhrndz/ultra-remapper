@@ -13,16 +13,6 @@ import android.os.IBinder
 class ActionButtonService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val eventTime = intent?.getLongExtra("ACTION_KEY_EVENT_TIME", 0L) ?: 0L
-        if (eventTime > 0L) {
-            val nowUptime = android.os.SystemClock.uptimeMillis()
-            if (nowUptime - eventTime > 1200L) {
-                // Drop queued / delayed hardware intent
-                stopSelf(startId)
-                return START_NOT_STICKY
-            }
-        }
-
         val keyEvent = intent?.getIntExtra("ACTION_KEY_EVENT", -1) ?: -1
         val gesture = when (keyEvent) {
             2 -> "single"
