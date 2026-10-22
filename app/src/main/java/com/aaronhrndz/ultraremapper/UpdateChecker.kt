@@ -155,12 +155,12 @@ object UpdateChecker {
     }
 
     private fun isNewerVersion(remote: String, local: String): Boolean {
-        fun parseParts(v: String): List<Int> {
-            val base = v.substringBefore('-')
-            return Regex("\\d+").findAll(base).map { it.value.toIntOrNull() ?: 0 }.toList()
+        if (remote == local) return false
+        fun parseAll(v: String): List<Int> {
+            return Regex("\\d+").findAll(v).map { it.value.toIntOrNull() ?: 0 }.toList()
         }
-        val rParts = parseParts(remote)
-        val lParts = parseParts(local)
+        val rParts = parseAll(remote)
+        val lParts = parseAll(local)
         val maxLen = maxOf(rParts.size, lParts.size)
         for (i in 0 until maxLen) {
             val r = rParts.getOrElse(i) { 0 }
