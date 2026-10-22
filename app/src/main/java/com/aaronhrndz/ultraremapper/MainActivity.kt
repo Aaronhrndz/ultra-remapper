@@ -1507,49 +1507,7 @@ private fun UpdateDetailsScreen(
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-
-            item(key = "upd_open_phone") {
-                Button(
-                    onClick = onOpenOnPhone,
-                    label = {
-                        Text(context.getString(R.string.update_open_phone), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text(context.getString(R.string.update_open_phone_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White,
-                        secondaryContentColor = Color(0xFF9EA7B8)
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            item(key = "upd_adb_hint") {
-                Button(
-                    onClick = {},
-                    label = {
-                        Text(context.getString(R.string.update_adb_hint_title), fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text("adb install -r ultra-remapper-v${update.versionName}.apk", maxLines = 2, overflow = TextOverflow.Ellipsis)
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White,
-                        secondaryContentColor = Color(0xFF9EA7B8)
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                        .padding(top = 10.dp, bottom = 14.dp)
                         .transformedHeight(this, transformationSpec)
                 )
             }
