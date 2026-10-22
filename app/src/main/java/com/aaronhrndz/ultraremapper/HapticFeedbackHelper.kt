@@ -7,94 +7,61 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import android.util.Log
-import java.lang.reflect.Method
 
 object HapticFeedbackHelper {
-    private const val TAG = "HapticFeedbackHelper"
+    private const val TAG = "HapticFeedback"
 
-    // Samsung One UI Spring pattern constants (captured from Galaxy Watch Ultra)
-    // Hardware motor mType=50080 (sepIndex=56)
-    private const val SAMSUNG_SPRING_VIB_TYPE = 50080
-    private const val SAMSUNG_SPRING_SEP_INDEX = 56
+    // Elastic physical spring bounce simulation for Linear Resonant Actuators
+    private val SPRING_TIMINGS = longArrayOf(0, 18, 22, 18, 22, 16)
+    private val SPRING_AMPLITUDES = intArrayOf(0, 255, 45, 170, 30, 80)
 
-    private var semCreateWaveformMethod: Method? = null
-    private var semMagnitudeTypeNotification: Any? = null
-    private var reflectionChecked = false
-
-    private fun initReflection() {
-        if (reflectionChecked) return
-        reflectionChecked = true
-        try {
-            val semMagnitudeTypeClass = Class.forName("android.os.VibrationEffect\$SemMagnitudeType")
-            val fieldNotification = semMagnitudeTypeClass.getField("TYPE_NOTIFICATION")
-            semMagnitudeTypeNotification = fieldNotification.get(null)
-
-            semCreateWaveformMethod = VibrationEffect::class.java.getMethod(
-                "semCreateWaveform",
-                Int::class.javaPrimitiveType,
-                Int::class.javaPrimitiveType,
-                semMagnitudeTypeClass
-            )
-        } catch (_: Throwable) {
-            // Non-Samsung or method signature variation; fallback to standard haptics
-        }
-    }
-
-    /**
-     * Executes the exact Samsung One UI Spring haptic effect on Galaxy Watch devices.
-     * Falls back to standard tactile feedback on non-Samsung or unsupported devices.
-     */
     fun playButtonHaptic(context: Context) {
         if (!Mapping.isHapticFeedbackEnabled(context)) return
 
-        val vibrator = getVibrator(context) ?: return
-        if (!vibrator.hasVibrator()) return
-
-        initReflection()
-
-        // 1. Try Samsung OEM SemHaptic (Spring: 50080)
-        if (semCreateWaveformMethod != null && semMagnitudeTypeNotification != null) {
-            try {
-                val effect = semCreateWaveformMethod!!.invoke(
-                    null,
-                    SAMSUNG_SPRING_VIB_TYPE,
-                    -1,
-                    semMagnitudeTypeNotification
-                ) as? VibrationEffect
-
-                if (effect != null) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        val attrs = VibrationAttributes.Builder()
-                            .setUsage(VibrationAttributes.USAGE_NOTIFICATION)
-                            .build()
-                        vibrator.vibrate(effect, attrs)
-                    } else {
-                        vibrator.vibrate(effect)
-                    }
-                    return
-                }
-            } catch (t: Throwable) {
-                Log.d(TAG, "Samsung SemHaptic invocation fallback: ${t.message}")
-            }
-        }
-
-        // 2. Standard Android fallback for non-Samsung devices or standard actuators
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
-            } else {
-                @Suppress("DEPRECATION")
-                vibrator.vibrate(25L)
+            val vibrator = getVibrator(context) ?: return
+            if (!vibrator.hasVibrator()) return
+
+            val attrs = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                VibrationAttributes.Builder()
+                    .setUsage(VibrationAttributes.USAGE_TOUCH)
+                    .build()
+            } else null
+
+            // 1. If amplitude control supported (Galaxy Watch Ultra / Watch 6 / etc.), play sharp physical bounce
+            if (vibrator.hasAmplitudeControl()) {
+                val wave = VibrationEffect.createWaveform(SPRING_TIMINGS, SPRING_AMPLITUDES, -1)
+                if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    vibrator.vibrate(wave, attrs)
+                } else {
+                    vibrator.vibrate(wave)
+                }
+                return
             }
+
+            // 2. Prebaked system click
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val click = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    vibrator.vibrate(click, attrs)
+                } else {
+                    vibrator.vibrate(click)
+                }
+                return
+            }
+
+            // 3. Raw pulse fallback
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(25L)
         } catch (t: Throwable) {
-            Log.e(TAG, "Standard vibration fallback failed", t)
+            Log.e(TAG, "Haptic pulse failed: ${t.message}")
         }
     }
 
     private fun getVibrator(context: Context): Vibrator? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
-            manager?.defaultVibrator
+            manager?.defaultVibrator ?: context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
         } else {
             @Suppress("DEPRECATION")
             context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator

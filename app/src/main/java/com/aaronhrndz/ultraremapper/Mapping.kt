@@ -380,23 +380,9 @@ object Mapping {
 
     private fun triggerWaterLock(context: Context, backToHome: Boolean) {
         val appCtx = context.applicationContext
-        // 1. Direct activation via Samsung StWaterLockStarterService
-        try {
-            val starterServiceIntent = Intent("com.samsung.android.clockwork.settings.ACTION_MSG_ID_ENABLE_WATER_LOCK")
-                .setClassName("com.google.android.apps.wearable.settings", "com.samsung.android.clockwork.settings.service.StWaterLockStarterService")
-            appCtx.startService(starterServiceIntent)
-            return
-        } catch (_: Exception) {}
+        // Arm accessibility auto-clicker before opening
+        BottomButtonService.instance?.autoToggleWaterLock()
 
-        // 2. Direct activation via StWaterLockService
-        try {
-            val directServiceIntent = Intent()
-                .setClassName("com.google.android.apps.wearable.settings", "com.samsung.android.clockwork.settings.advanced.waterlock.StWaterLockService")
-            appCtx.startService(directServiceIntent)
-            return
-        } catch (_: Exception) {}
-
-        // 3. Fallback: Settings activity
         try {
             val waterLockIntent = Intent("com.samsung.android.clockwork.settings.action.WATER_LOCK_SETTING")
                 .setClassName(
@@ -406,6 +392,14 @@ object Mapping {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
             context.startActivity(waterLockIntent)
+            return
+        } catch (_: Exception) {}
+
+        // Component fallback
+        try {
+            val intent = Intent().setClassName("com.google.android.apps.wearable.settings", "com.samsung.android.clockwork.settings.advanced.waterlock.StWaterLockSettingActivity")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            appCtx.startActivity(intent)
         } catch (_: Exception) {}
     }
 
