@@ -9,12 +9,12 @@ import android.os.VibratorManager
 import android.util.Log
 
 /**
- * Motor háptico optimizado para el actuador LRA (Cirrus Logic CS40L27) del Galaxy Watch Ultra.
+ * Motor háptico de impacto seco y agresivo calibrado para el actuador LRA (Cirrus Logic CS40L27R)
+ * del Samsung Galaxy Watch Ultra / Ultra 2.
  *
- * Simula el retroceso mecánico de un resorte (Spring) con extrema precisión:
- * - Pulso inicial nítido y enérgico (impacto/tensión).
- * - 3 oscilaciones de amortiguación física decreciente rápida con tiempos de ciclo de resonancia LRA (~210 Hz).
- * - Cero latencia (disparo síncrono directo sin pasar por NotificationManager ni colas de sistema).
+ * Perfil mecánico:
+ * - Ataque contundente a máxima potencia (1.0f / 255) para excitar la masa del LRA al instante.
+ * - Freno activo y rebotes secos ultra-cortos de alta amortiguación (sensación elástica agresiva y directa).
  */
 object HapticFeedbackHelper {
     private const val TAG = "HapticFeedback"
@@ -32,40 +32,40 @@ object HapticFeedbackHelper {
                     .build()
             } else null
 
-            // 1. Alta fidelidad mediante Primitivas de Composición de Hardware (LRA DSP)
+            // 1. Composición de Primitivas agresiva y potente con THUD y CLICK de hardware
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val neededPrimitives = intArrayOf(
-                    VibrationEffect.Composition.PRIMITIVE_CLICK,
-                    VibrationEffect.Composition.PRIMITIVE_LOW_TICK,
-                    VibrationEffect.Composition.PRIMITIVE_TICK
-                )
+                val hasClick = vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_CLICK)
+                val hasThud = vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_THUD)
 
-                if (vibrator.areAllPrimitivesSupported(*neededPrimitives)) {
-                    // Simulación física de rebote de muelle:
-                    // Click fuerte (1.0) -> Rebound 1 (0.45 a los 16ms) -> Rebound 2 (0.22 a los 22ms) -> Micro-tick final (0.10 a los 26ms)
-                    val composition = VibrationEffect.startComposition()
+                if (hasClick) {
+                    val comp = VibrationEffect.startComposition()
+                        // Golpe seco inicial contundente al 100% de fuerza
                         .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 1.0f)
-                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, 0.45f, 16)
-                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, 0.22f, 22)
-                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, 0.10f, 26)
-                        .compose()
 
+                    if (hasThud) {
+                        // Impacto de tope mecánico inmediato a los 12ms para dar sensación de cuerpo pesado
+                        comp.addPrimitive(VibrationEffect.Composition.PRIMITIVE_THUD, 0.9f, 12)
+                    }
+
+                    // Rebote elástico seco secundario a los 20ms
+                    comp.addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 0.65f, 20)
+
+                    val effect = comp.compose()
                     vibrator.cancel()
                     if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        vibrator.vibrate(composition, attrs)
+                        vibrator.vibrate(effect, attrs)
                     } else {
-                        vibrator.vibrate(composition)
+                        vibrator.vibrate(effect)
                     }
                     return
                 }
             }
 
-            // 2. Simulación analógica con Waveform y Modulación de Amplitud PWM (LRA tuned)
+            // 2. Waveform PWM de alta potencia a 255 con pulsos secos (Full Power LRA)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl()) {
-                // Tiempos ajustados al período de resonancia (~4.7ms por semiciclo a 210Hz)
-                // Patrón alterno de oscilación y amortiguación elástica:
-                val timings = longArrayOf(0, 18, 12, 12, 16, 8, 22, 5)
-                val amplitudes = intArrayOf(0, 255, 0, 150, 0, 75, 0, 30)
+                // Secuencia muy agresiva: Golpe máximo de 35ms -> Pausa 14ms -> Rebote tenso 22ms -> Pausa 14ms -> Micro impacto final 12ms
+                val timings = longArrayOf(0, 35, 14, 22, 14, 12)
+                val amplitudes = intArrayOf(0, 255, 0, 210, 0, 140)
 
                 val waveform = VibrationEffect.createWaveform(timings, amplitudes, -1)
                 vibrator.cancel()
@@ -77,22 +77,22 @@ object HapticFeedbackHelper {
                 return
             }
 
-            // 3. Fallback inmediato predefinido
+            // 3. Fallback: Predefinido pesado
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                val click = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
+                val heavyClick = VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK)
                 vibrator.cancel()
                 if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    vibrator.vibrate(click, attrs)
+                    vibrator.vibrate(heavyClick, attrs)
                 } else {
-                    vibrator.vibrate(click)
+                    vibrator.vibrate(heavyClick)
                 }
                 return
             }
 
             @Suppress("DEPRECATION")
-            vibrator.vibrate(18L)
+            vibrator.vibrate(40L)
         } catch (t: Throwable) {
-            Log.e(TAG, "Spring haptic failure: ${t.message}")
+            Log.e(TAG, "Aggressive spring haptic failure: ${t.message}")
         }
     }
 
