@@ -11,10 +11,6 @@ import android.util.Log
 object HapticFeedbackHelper {
     private const val TAG = "HapticFeedback"
 
-    // Elastic physical spring bounce simulation for Linear Resonant Actuators
-    private val SPRING_TIMINGS = longArrayOf(0, 18, 22, 18, 22, 16)
-    private val SPRING_AMPLITUDES = intArrayOf(0, 255, 45, 170, 30, 80)
-
     fun playButtonHaptic(context: Context) {
         if (!Mapping.isHapticFeedbackEnabled(context)) return
 
@@ -28,18 +24,41 @@ object HapticFeedbackHelper {
                     .build()
             } else null
 
-            // 1. If amplitude control supported (Galaxy Watch Ultra / Watch 6 / etc.), play sharp physical bounce
-            if (vibrator.hasAmplitudeControl()) {
-                val wave = VibrationEffect.createWaveform(SPRING_TIMINGS, SPRING_AMPLITUDES, -1)
-                if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    vibrator.vibrate(wave, attrs)
-                } else {
-                    vibrator.vibrate(wave)
+            // 1. Android 11+ / Wear OS: Composition primitives for genuine hardware LRA haptics
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (vibrator.areAllPrimitivesSupported(
+                        VibrationEffect.Composition.PRIMITIVE_CLICK,
+                        VibrationEffect.Composition.PRIMITIVE_LOW_TICK
+                    )
+                ) {
+                    val composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 1.0f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, 0.45f, 25)
+                        .compose()
+
+                    if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        vibrator.vibrate(composition, attrs)
+                    } else {
+                        vibrator.vibrate(composition)
+                    }
+                    return
                 }
-                return
+
+                if (vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_CLICK)) {
+                    val composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 1.0f)
+                        .compose()
+
+                    if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        vibrator.vibrate(composition, attrs)
+                    } else {
+                        vibrator.vibrate(composition)
+                    }
+                    return
+                }
             }
 
-            // 2. Prebaked system click
+            // 2. Predefined native system click
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val click = VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
                 if (attrs != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -50,9 +69,15 @@ object HapticFeedbackHelper {
                 return
             }
 
-            // 3. Raw pulse fallback
+            // 3. Fallback: single sharp 12ms pulse
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val oneShot = VibrationEffect.createOneShot(12L, VibrationEffect.DEFAULT_AMPLITUDE)
+                vibrator.vibrate(oneShot)
+                return
+            }
+
             @Suppress("DEPRECATION")
-            vibrator.vibrate(25L)
+            vibrator.vibrate(12L)
         } catch (t: Throwable) {
             Log.e(TAG, "Haptic pulse failed: ${t.message}")
         }

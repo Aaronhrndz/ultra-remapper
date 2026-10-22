@@ -73,7 +73,6 @@
     <string name="action_stopwatch">Cronómetro</string>
     <string name="action_water_lock">Bloqueo de Agua</string>
     <string name="action_assistant">Asistente Digital</string>
-    <string name="action_find_phone">Hacer Sonar Teléfono</string>
 
     <!-- Utility Actions -->
     <string name="action_red_flashlight">Linterna Roja (Máx)</string>

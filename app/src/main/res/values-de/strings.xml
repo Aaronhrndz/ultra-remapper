@@ -60,7 +60,6 @@
     <string name="action_stopwatch">Stoppuhr</string>
     <string name="action_water_lock">Wassersperre</string>
     <string name="action_assistant">Sprachassistent</string>
-    <string name="action_find_phone">Mein Telefon suchen</string>
 
     <string name="action_red_flashlight">Rote Taschenlampe (Max)</string>
     <string name="action_dnd_toggle">Nicht stören</string>

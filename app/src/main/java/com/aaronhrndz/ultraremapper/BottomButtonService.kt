@@ -39,8 +39,6 @@ class BottomButtonService : AccessibilityService() {
         var pendingWalletDismissAction: Boolean = false
         @Volatile
         var pendingWaterLockAutoToggle: Boolean = false
-        @Volatile
-        var pendingFindPhoneAutoRing: Boolean = false
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -305,13 +303,7 @@ class BottomButtonService : AccessibilityService() {
                         performWaterLockClick()
                     }
                 }, 200L)
-            } else if (pendingFindPhoneAutoRing && (pkg.contains("find", ignoreCase = true) || cls?.contains("find", ignoreCase = true) == true)) {
-                tapHandler.removeCallbacksAndMessages(null)
-                tapHandler.postDelayed({
-                    if (pendingFindPhoneAutoRing) {
-                        performFindPhoneClick()
-                    }
-                }, 250L)
+
             } else if (pkg != "android") {
                 isFlashlightWindowActive = false
                 pendingBoostFromAction = false
@@ -383,16 +375,6 @@ class BottomButtonService : AccessibilityService() {
         }, 800L)
     }
 
-    fun autoRingFindPhone() {
-        setWindowTrackingEnabled(true)
-        pendingFindPhoneAutoRing = true
-        tapHandler.postDelayed({
-            if (pendingFindPhoneAutoRing) {
-                performFindPhoneClick()
-            }
-        }, 800L)
-    }
-
     private fun performWaterLockClick() {
         try {
             val root = rootInActiveWindow ?: return
@@ -421,36 +403,6 @@ class BottomButtonService : AccessibilityService() {
             }
         } catch (_: Exception) {}
         pendingWaterLockAutoToggle = false
-    }
-
-    private fun performFindPhoneClick() {
-        try {
-            val root = rootInActiveWindow ?: return
-            // Click any prominent action button (e.g. Ring / Start / Play)
-            val buttons = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
-            findClickableButtons(root, buttons)
-            for (btn in buttons) {
-                val txt = btn.text?.toString() ?: btn.contentDescription?.toString() ?: ""
-                if (txt.contains("start", ignoreCase = true) ||
-                    txt.contains("iniciar", ignoreCase = true) ||
-                    txt.contains("ring", ignoreCase = true) ||
-                    txt.contains("sonar", ignoreCase = true) ||
-                    txt.contains("localizar", ignoreCase = true) ||
-                    txt.contains("find", ignoreCase = true)
-                ) {
-                    btn.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
-                    HapticFeedbackHelper.playButtonHaptic(this)
-                    pendingFindPhoneAutoRing = false
-                    return
-                }
-            }
-            // If button list empty, click the first clickable button
-            buttons.firstOrNull()?.let {
-                it.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
-                HapticFeedbackHelper.playButtonHaptic(this)
-            }
-        } catch (_: Exception) {}
-        pendingFindPhoneAutoRing = false
     }
 
     private fun findClickableButtons(node: android.view.accessibility.AccessibilityNodeInfo?, outList: MutableList<android.view.accessibility.AccessibilityNodeInfo>) {

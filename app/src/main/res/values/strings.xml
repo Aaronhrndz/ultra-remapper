@@ -73,7 +73,6 @@
     <string name="action_stopwatch">Stopwatch</string>
     <string name="action_water_lock">Water Lock</string>
     <string name="action_assistant">Digital Assistant</string>
-    <string name="action_find_phone">Find My Phone (Ring)</string>
 
     <!-- Utility Actions -->
     <string name="action_red_flashlight">Red Flashlight (Max)</string>

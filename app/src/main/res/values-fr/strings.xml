@@ -60,7 +60,6 @@
     <string name="action_stopwatch">Chronomètre</string>
     <string name="action_water_lock">Mode Eau</string>
     <string name="action_assistant">Assistant vocal</string>
-    <string name="action_find_phone">Localiser mon téléphone</string>
 
     <string name="action_red_flashlight">Lampe Rouge (Max)</string>
     <string name="action_dnd_toggle">Ne pas déranger</string>
