@@ -1,0 +1,20 @@
+<lint-module
+    format="1"
+    dir="C:\temp\ultra-remapper\mobile"
+    name=":mobile"
+    type="APP"
+    maven="Ultra Remapper:mobile:unspecified"
+    agpVersion="9.4.1"
+    buildFolder="build"
+    bootClassPath="C:\Users\aaron\tools\android-sdk\platforms\android-37.0\android.jar;C:\Users\aaron\tools\android-sdk\build-tools\36.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="11"
+    compileTarget="android-37.0"
+    neverShrinking="true"
+    highlightGradualR8Api="false">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>

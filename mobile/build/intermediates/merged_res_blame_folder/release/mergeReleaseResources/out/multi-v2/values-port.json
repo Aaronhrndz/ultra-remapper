@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.aaronhrndz.ultraremapper.companion.mobile-mergeReleaseResources-55:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\aaron\\.gradle\\caches\\9.6.0\\transforms\\5c55769104d03036f434b9a9d82fac43\\transformed\\appcompat-1.8.0\\res\\values-port\\values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}

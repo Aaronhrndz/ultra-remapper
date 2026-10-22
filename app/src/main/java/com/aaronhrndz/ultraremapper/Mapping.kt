@@ -181,9 +181,36 @@ object Mapping {
     private fun triggerFindPhone(context: Context, backToHome: Boolean) {
         val appCtx = context.applicationContext
 
-        // 1. Exact Samsung Quick Settings Tile intent: com.samsung.android.watch.findmyphone with START_FIND action
+        // 1. Samsung Find direct ring URI scheme
         try {
-            val fmpIntent = Intent("com.samsung.android.watch.findmyphone.INTENT_ACTION_MSG_ID_FMP_START_FIND").apply {
+            val ringUri = android.net.Uri.parse("samsungfind://fmp?action=ring")
+            val ringIntent = Intent(Intent.ACTION_VIEW, ringUri).apply {
+                setPackage("com.samsung.android.app.find")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            }
+            appCtx.startActivity(ringIntent)
+            return
+        } catch (_: Exception) {}
+
+        // 2. Broadcast START_FIND to findmyphone
+        try {
+            val bcast = Intent("com.samsung.android.watch.findmyphone.action.START_FIND").apply {
+                setPackage("com.samsung.android.watch.findmyphone")
+            }
+            appCtx.sendBroadcast(bcast)
+        } catch (_: Exception) {}
+
+        try {
+            val bcast2 = Intent("START_FIND").apply {
+                setPackage("com.samsung.android.watch.findmyphone")
+            }
+            appCtx.sendBroadcast(bcast2)
+        } catch (_: Exception) {}
+
+        // 3. Activity with START_FIND action
+        try {
+            val fmpIntent = Intent("com.samsung.android.watch.findmyphone.action.START_FIND").apply {
                 component = ComponentName(
                     "com.samsung.android.watch.findmyphone",
                     "com.samsung.android.watch.findmyphone.ui.main.MainActivity"
@@ -195,7 +222,18 @@ object Mapping {
             return
         } catch (_: Exception) {}
 
-        // 2. Direct component launch of com.samsung.android.watch.findmyphone
+        // 4. Intent START_FIND generic
+        try {
+            val fmpIntent2 = Intent("START_FIND").apply {
+                setPackage("com.samsung.android.watch.findmyphone")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+            }
+            appCtx.startActivity(fmpIntent2)
+            return
+        } catch (_: Exception) {}
+
+        // 5. Direct launch of com.samsung.android.watch.findmyphone
         try {
             val fmpDirect = Intent(Intent.ACTION_MAIN).apply {
                 component = ComponentName(
@@ -209,7 +247,7 @@ object Mapping {
             return
         } catch (_: Exception) {}
 
-        // 3. Fallback: package launch intent for findmyphone
+        // 6. Fallback: package launch intent for findmyphone
         val launchFmp = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.watch.findmyphone")
         if (launchFmp != null) {
             launchFmp.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -220,7 +258,7 @@ object Mapping {
             } catch (_: Exception) {}
         }
 
-        // 4. Fallback: Samsung Find app
+        // 7. Fallback: Samsung Find app
         val launchFind = appCtx.packageManager.getLaunchIntentForPackage("com.samsung.android.app.find")
         if (launchFind != null) {
             launchFind.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)

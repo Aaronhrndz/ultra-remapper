@@ -1,0 +1,8 @@
+com.aaronhrndz.ultraremapper.companion.mobile-pngs-0 C:\temp\ultra-remapper\mobile\build\generated\res\pngs\release
+com.aaronhrndz.ultraremapper.companion.mobile-updated_navigation_xml-1 C:\temp\ultra-remapper\mobile\build\generated\updated_navigation_xml\release
+com.aaronhrndz.ultraremapper.companion.mobile-packageReleaseResources-2 C:\temp\ultra-remapper\mobile\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.aaronhrndz.ultraremapper.companion.mobile-packageReleaseResources-3 C:\temp\ultra-remapper\mobile\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.aaronhrndz.ultraremapper.companion.mobile-release-4 C:\temp\ultra-remapper\mobile\build\intermediates\merged_res\release\mergeReleaseResources
+com.aaronhrndz.ultraremapper.companion.mobile-main-5 C:\temp\ultra-remapper\mobile\src\main\res
+com.aaronhrndz.ultraremapper.companion.mobile-release-6 C:\temp\ultra-remapper\mobile\src\release\res
+gradleHome-0 C:\Users\aaron\.gradle

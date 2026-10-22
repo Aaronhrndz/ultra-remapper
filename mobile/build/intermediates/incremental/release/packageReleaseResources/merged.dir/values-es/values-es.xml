@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ultra Remapper Companion</string>
+    <string name="beta_channel_desc">Recibir releases Beta en la app móvil.</string>
+    <string name="beta_channel_title">Canal Beta (Companion)</string>
+    <string name="btn_already_enabled">Ya la activé</string>
+    <string name="btn_back">Atrás</string>
+    <string name="btn_grant">Conceder</string>
+    <string name="btn_grant_all">Conceder Todos</string>
+    <string name="btn_next">Siguiente</string>
+    <string name="btn_pair_watch">Emparejar Reloj</string>
+    <string name="btn_revoke">Revocar</string>
+    <string name="btn_revoke_all">Revoke All</string>
+    <string name="btn_scan_status">Escanear Estado</string>
+    <string name="dev_options_title">Opciones de Desarrollador</string>
+    <string name="individual_permissions_subtitle">Verificar estado y conceder o revocar uno a uno</string>
+    <string name="individual_permissions_title">Permisos Individuales y Diagnóstico</string>
+    <string name="label_main_port">Puerto General</string>
+    <string name="label_pair_port">Puerto Vinculación</string>
+    <string name="label_pairing_code">Código de Vinculación (6 dígitos)</string>
+    <string name="label_watch_ip">IP Reloj</string>
+    <string name="skip_to_step_4">¿Ya emparejaste este reloj anteriormente? Pulsa para saltar al Paso 4.</string>
+    <string name="status_granted">Concedido</string>
+    <string name="status_missing">Falta</string>
+    <string name="status_watch">Estado del Reloj</string>
+    <string name="step_1_desc">Asegúrate de que tanto tu reloj Galaxy Watch como este teléfono están conectados a la misma red Wi-Fi.</string>
+    <string name="step_1_tip">💡 Consejo: Si estás fuera de casa, puedes encender la Zona Wi-Fi / Compartir conexión de este móvil y conectar el reloj a ella.</string>
+    <string name="step_1_title">Paso 1: Conexión Wi-Fi</string>
+    <string name="step_2_desc">En tu Galaxy Watch abre Ajustes > Opciones de desarrollador > Depuración inalámbrica y actívala.</string>
+    <string name="step_2_dev_tip">¿No ves Opciones de desarrollador?\nVe a Ajustes > Información del reloj > Software > y pulsa 7 veces seguidas sobre \'Versión de software\'.</string>
+    <string name="step_2_title">Paso 2: Depuración en el Reloj</string>
+    <string name="step_3_desc">En la pantalla de Depuración Inalámbrica de tu reloj, toca en \'Vincular dispositivo\'. Introduce aquí la IP, el puerto de vinculación y el código de 6 dígitos que aparezca.</string>
+    <string name="step_3_title">Paso 3: Emparejar Reloj</string>
+    <string name="step_4_desc">Sal de la pantalla de vincular. Introduce ahora el puerto general que aparece directamente bajo \'Dirección IP y puerto\' en el reloj.</string>
+    <string name="step_4_title">Paso 4: Conectar y Conceder</string>
+    <string name="subtitle_companion">Asistente de configuración paso a paso</string>
+    <string name="title_companion">Ultra Remapper</string>
+    <string name="watch_connected">Emparejado por Bluetooth / DataLayer</string>
+    <string name="watch_disconnected">Buscando reloj conectado…</string>
+</resources>

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.aaronhrndz.ultraremapper.companion.mobile-mergeReleaseResources-55:/values-watch-v21/values-watch-v21.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\aaron\\.gradle\\caches\\9.6.0\\transforms\\5c55769104d03036f434b9a9d82fac43\\transformed\\appcompat-1.8.0\\res\\values-watch-v21\\values-watch-v21.xml",
+                    "from": {
+                        "startLines": "2,6,10",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,271,499",
+                        "endLines": "5,9,13",
+                        "endColumns": "12,12,12",
+                        "endOffsets": "266,494,724"
+                    }
+                }
+            ]
+        }
+    ]
+}

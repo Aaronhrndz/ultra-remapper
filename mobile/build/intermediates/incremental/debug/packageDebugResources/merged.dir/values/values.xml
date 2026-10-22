@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ultra Remapper Companion</string>
+    <string name="beta_channel_desc">Receive early beta releases of the mobile app.</string>
+    <string name="beta_channel_title">Beta Channel (Companion)</string>
+    <string name="btn_already_enabled">I already turned it on</string>
+    <string name="btn_back">Back</string>
+    <string name="btn_grant">Grant</string>
+    <string name="btn_grant_all">Grant All</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_pair_watch">Pair Watch</string>
+    <string name="btn_revoke">Revoke</string>
+    <string name="btn_revoke_all">Revoke All</string>
+    <string name="btn_scan_status">Scan Status</string>
+    <string name="dev_options_title">Developer Options</string>
+    <string name="individual_permissions_subtitle">Verify status and grant or revoke one by one</string>
+    <string name="individual_permissions_title">Individual Permissions &amp; Diagnostics</string>
+    <string name="label_main_port">Main Port</string>
+    <string name="label_pair_port">Pairing Port</string>
+    <string name="label_pairing_code">Pairing Code (6 digits)</string>
+    <string name="label_watch_ip">Watch IP</string>
+    <string name="skip_to_step_4">Already paired this watch previously? Tap to skip to Step 4.</string>
+    <string name="status_granted">Granted</string>
+    <string name="status_missing">Missing</string>
+    <string name="status_watch">Watch Status</string>
+    <string name="step_1_desc">Make sure both your Galaxy Watch and this phone are connected to the same Wi-Fi network.</string>
+    <string name="step_1_tip">💡 Tip: If you are away from home, you can turn on Mobile Hotspot / Tethering on this phone and connect the watch to it.</string>
+    <string name="step_1_title">Step 1: Wi-Fi Connection</string>
+    <string name="step_2_desc">On your Galaxy Watch, go to Settings > Developer options > Wireless debugging and turn it ON.</string>
+    <string name="step_2_dev_tip">Don\'t see Developer options?\nGo to Settings > About watch > Software info > and tap \'Software version\' 7 times consecutively.</string>
+    <string name="step_2_title">Step 2: Wireless Debugging on Watch</string>
+    <string name="step_3_desc">On the Wireless Debugging screen on your watch, tap \'Pair device with pairing code\'. Enter the IP, pairing port, and 6-digit code shown.</string>
+    <string name="step_3_title">Step 3: Pair Watch</string>
+    <string name="step_4_desc">Exit the pairing screen. Now enter the main port shown directly under \'IP address &amp; port\' on your watch.</string>
+    <string name="step_4_title">Step 4: Connect &amp; Grant</string>
+    <string name="subtitle_companion">Step-by-step setup wizard</string>
+    <string name="title_companion">Ultra Remapper</string>
+    <string name="watch_connected">Paired via Bluetooth / DataLayer</string>
+    <string name="watch_disconnected">Searching for connected watch…</string>
+</resources>

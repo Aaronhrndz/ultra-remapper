@@ -1,0 +1,66 @@
+[
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xxxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-debug-57:/drawable_ic_watch_bottom_button.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-59:/drawable/ic_watch_bottom_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-mdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xxhdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-debug-57:/drawable_ic_watch_quick_button.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-59:/drawable/ic_watch_quick_button.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xxxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-mdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-hdpi\\ic_launcher.webp"
+    },
+    {
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-debug-57:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-59:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xxhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-debug-57:/drawable_ic_launcher_background.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-59:/drawable/ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-hdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xhdpi\\ic_launcher_round.webp"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-anydpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-anydpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-debug-57:\\mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-59:\\mipmap-xhdpi\\ic_launcher.webp"
+    }
+]
