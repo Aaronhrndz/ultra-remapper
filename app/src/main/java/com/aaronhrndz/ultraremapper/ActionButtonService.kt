@@ -14,10 +14,15 @@ class ActionButtonService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val keyEvent = intent?.getIntExtra("ACTION_KEY_EVENT", -1) ?: -1
+        val keyCount = intent?.getIntExtra("ACTION_KEY_COUNT", 0) ?: 0
         val gesture = when (keyEvent) {
             2 -> "single"
             3 -> "long"
-            5 -> if (intent?.getIntExtra("ACTION_KEY_COUNT", 0) == 2) "double" else null
+            5 -> when (keyCount) {
+                2 -> "double"
+                3 -> "triple"
+                else -> if (keyCount > 3) "triple" else "double"
+            }
             else -> null
         }
 
