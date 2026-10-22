@@ -73,6 +73,13 @@ object Mapping {
     private val defaults = emptyMap<String, String>()
 
     private const val KEY_APP_ENABLED = "remapper_master_enabled"
+    private const val KEY_HAPTIC_ENABLED = "remapper_haptic_feedback_enabled"
+
+    fun isHapticFeedbackEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_HAPTIC_ENABLED, true)
+
+    fun setHapticFeedbackEnabled(context: Context, enabled: Boolean) =
+        prefs(context).edit().putBoolean(KEY_HAPTIC_ENABLED, enabled).apply()
 
     private fun prefs(context: Context) = context.getSharedPreferences("mapping", Context.MODE_PRIVATE)
 
@@ -128,6 +135,7 @@ object Mapping {
 
     /** [backToHome]: Back from a launched app returns to the watch face instead of the previous task. */
     fun perform(context: Context, gesture: String, backToHome: Boolean = false) {
+        HapticFeedbackHelper.playSpringHaptic(context)
         val action = get(context, gesture)
         val audio = context.getSystemService(AudioManager::class.java)
         when (action) {

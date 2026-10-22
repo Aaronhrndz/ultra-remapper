@@ -4,6 +4,8 @@
 
     <!-- Master Switch -->
     <string name="master_switch_title">Remapear botones</string>
+    <string name="haptic_switch_title">Vibración háptica</string>
+    <string name="haptic_switch_subtitle">Patrón Spring al pulsar</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Botón Central</string>

@@ -59,7 +59,6 @@ class BottomButtonService : AccessibilityService() {
         when (count) {
             2 -> {
                 if (Mapping.get(this, "bottom_double_tap") != "none") {
-                    vibrateTick(35)
                     Mapping.perform(this, "bottom_double_tap", backToHome = true)
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
@@ -68,7 +67,6 @@ class BottomButtonService : AccessibilityService() {
             }
             3 -> {
                 if (Mapping.get(this, "bottom_triple_tap") != "none") {
-                    vibrateTick(45)
                     Mapping.perform(this, "bottom_triple_tap", backToHome = true)
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
@@ -92,7 +90,7 @@ class BottomButtonService : AccessibilityService() {
     private val onHoldTimeout = Runnable {
         actionFired = true
         android.util.Log.d("BottomButton", "onHoldTimeout: arming for Samsung Wallet launch")
-        vibrateTick(45)
+        HapticFeedbackHelper.playSpringHaptic(this)
         // Set flag to wait for Samsung Wallet/Pay window to appear
         pendingWalletDismissAction = true
         handler.removeCallbacks(walletFallbackAction)
