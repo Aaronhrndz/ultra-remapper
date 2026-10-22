@@ -523,7 +523,7 @@ private fun Home(
                         isHapticEnabled = next
                         Mapping.setHapticFeedbackEnabled(context, next)
                         if (next) {
-                            HapticFeedbackHelper.playSpringHaptic(context)
+                            HapticFeedbackHelper.playButtonHaptic(context)
                         }
                     },
                     label = {

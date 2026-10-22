@@ -5,7 +5,7 @@
     <!-- Master Switch -->
     <string name="master_switch_title">Remap buttons</string>
     <string name="haptic_switch_title">Haptic vibration</string>
-    <string name="haptic_switch_subtitle">Spring feedback on button press</string>
+    <string name="haptic_switch_subtitle">Feedback on button press</string>
 
     <!-- Sections & Headers -->
     <string name="hdr_center_button">Center Button</string>

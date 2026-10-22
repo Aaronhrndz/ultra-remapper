@@ -90,7 +90,7 @@ class BottomButtonService : AccessibilityService() {
     private val onHoldTimeout = Runnable {
         actionFired = true
         android.util.Log.d("BottomButton", "onHoldTimeout: arming for Samsung Wallet launch")
-        HapticFeedbackHelper.playSpringHaptic(this)
+        HapticFeedbackHelper.playButtonHaptic(this)
         // Set flag to wait for Samsung Wallet/Pay window to appear
         pendingWalletDismissAction = true
         handler.removeCallbacks(walletFallbackAction)
