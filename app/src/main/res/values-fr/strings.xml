@@ -97,7 +97,7 @@
     <string name="toast_ha_not_installed">Application Home Assistant Companion non installée</string>
     <string name="app_version">v%s</string>
     <string name="flashlight_hud_title">Lampe RGBW</string>
-    <string name="flashlight_hud_sub">Tournez lunette ou touchez l'écran</string>
+    <string name="flashlight_hud_sub">Tournez lunette ou touchez l\'écran</string>
     <string name="hdr_top_button">Bouton Supérieur (Accueil)</string>
     <string name="gesture_top_long">Appui prolongé</string>
 </resources>

@@ -1,0 +1,14 @@
+### Novedades en v1.5.0-beta.1:
+- **Nueva Linterna RGBW Pro interactiva**:
+  - Banner HUD translucido al abrir con aviso de controles; fade-out a los 2.5s.
+  - Circulo de color RGBW radial (HSV): al tocar/deslizar dedo cambia tono y mezcla con blanco (centro blanco, borde saturado al 100%).
+  - Al soltar el dedo, la rueda realiza un fade-out suave de 1s hacia la luz seleccionada.
+  - Bisel rotatorio (Rotary encoder): gira el tono (Hue) con haptica seca en cada escalon.
+  - Persistencia: recuerda ultimo color y saturacion configurados.
+  - Doble toque en pantalla para salir.
+- **Boton Superior (Inicio) configurable**:
+  - Nueva seccion 'Boton Superior (Inicio)' en la interfaz.
+  - Remapeo de 'Mantener pulsado' usando Ultra Remapper como Asistente Digital Predeterminado (si no se mapea, abre Google Assistant o Bixby).
+- **Limpieza Boton Central (Accion)**:
+  - Eliminada opcion fantasma de 'Triple pulsacion' del boton central.
+  - Sirena original de fabrica y pulsacion prolongada 100% preservadas.
