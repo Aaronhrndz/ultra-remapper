@@ -97,7 +97,8 @@
     <string name="toast_ha_not_installed">Home Assistant Companion nicht installiert</string>
     <string name="app_version">v%s</string>
     <string name="flashlight_hud_title">RGBW Taschenlampe</string>
-    <string name="flashlight_hud_sub">Lünette drehen oder tippen</string>
+    <string name="flashlight_hud_sub"><string name="flashlight_hud_sub">Tippen &amp; ziehen für Farbrad
+Lünette drehen für Farbton</string></string>
     <string name="hdr_top_button">Obere Taste (Home)</string>
     <string name="gesture_top_long">Gedrückt halten</string>
 </resources>

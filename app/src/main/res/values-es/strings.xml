@@ -124,7 +124,8 @@
     <string name="reboot_required_title">Reinicio de reloj necesario</string>
     <string name="reboot_required_desc">Reinicia el reloj desde el panel de ajustes rápidos para reactivar los botones tras actualizar.</string>
     <string name="flashlight_hud_title">Linterna RGBW</string>
-    <string name="flashlight_hud_sub">Gira bisel o toca para selector</string>
+    <string name="flashlight_hud_sub"><string name="flashlight_hud_sub">Toca y desliza para rueda de color
+Gira el bisel para ajustar tono</string></string>
     <string name="hdr_top_button">Botón Superior (Inicio)</string>
     <string name="gesture_top_long">Mantener pulsado</string>
 </resources>

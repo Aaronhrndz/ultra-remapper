@@ -833,10 +833,12 @@ private fun Home(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 isTopExpanded = !isTopExpanded
                                 HapticFeedbackHelper.playButtonHaptic(context)
                             }
+                            .padding(vertical = 4.dp, horizontal = 6.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_top_button),
@@ -850,6 +852,8 @@ private fun Home(
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        CollapseChevron(isExpanded = isTopExpanded)
                     }
                 }
             }
@@ -894,10 +898,12 @@ private fun Home(
                             horizontalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
                                 .clickable {
                                     isActionExpanded = !isActionExpanded
                                     HapticFeedbackHelper.playButtonHaptic(context)
                                 }
+                                .padding(vertical = 4.dp, horizontal = 6.dp)
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_watch_quick_button),
@@ -911,6 +917,8 @@ private fun Home(
                                 style = MaterialTheme.typography.titleSmall,
                                 fontWeight = FontWeight.Bold
                             )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            CollapseChevron(isExpanded = isActionExpanded)
                         }
                     }
                 }
@@ -971,10 +979,12 @@ private fun Home(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 isBottomExpanded = !isBottomExpanded
                                 HapticFeedbackHelper.playButtonHaptic(context)
                             }
+                            .padding(vertical = 4.dp, horizontal = 6.dp)
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_bottom_button),
@@ -988,6 +998,8 @@ private fun Home(
                             style = MaterialTheme.typography.titleSmall,
                             fontWeight = FontWeight.Bold
                         )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        CollapseChevron(isExpanded = isBottomExpanded)
                     }
                 }
             }
