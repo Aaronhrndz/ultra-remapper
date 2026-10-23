@@ -79,7 +79,7 @@
     <string name="action_dnd_toggle">No Molestar</string>
     <string name="action_save_parking">Guardar Parking</string>
     <string name="action_nav_parking">Volver al Coche (Maps a pie)</string>
-    <string name="action_adb_mode">Mantener Pantalla Activa (Sideload / ADB)</string>
+    <string name="action_adb_mode">Mantener Pantalla Activa (Reloj despierto)</string>
     <string name="action_wireless_debugging">Depuración Inalámbrica (ADB)</string>
     <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
     <string name="action_lte_toggle">LTE y Datos Móviles</string>
@@ -104,8 +104,8 @@
     <string name="toast_parking_no_gps">GPS no disponible</string>
     <string name="toast_parking_perm_needed">Se necesita permiso de ubicación</string>
     <string name="toast_maps_not_found">No se encontró app de mapas</string>
-    <string name="toast_adb_mode_on">Pantalla Activa: ON (Pantalla y WiFi despiertos)</string>
-    <string name="toast_adb_mode_off">Pantalla Activa: OFF</string>
+    <string name="toast_adb_mode_on">Mantener despierto: ACTIVADO</string>
+    <string name="toast_adb_mode_off">Mantener despierto: DESACTIVADO</string>
     <string name="toast_lte_on">LTE y Datos Móviles: ON</string>
     <string name="toast_lte_off">LTE y Datos Móviles: OFF</string>
     <string name="toast_glove_mode_on">Modo Guantes: ACTIVADO (Alta sensibilidad)</string>

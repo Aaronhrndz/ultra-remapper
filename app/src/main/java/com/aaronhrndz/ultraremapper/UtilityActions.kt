@@ -169,7 +169,9 @@ object UtilityActions {
         val pm = appCtx.getSystemService(PowerManager::class.java)
         val wm = appCtx.applicationContext.getSystemService(WifiManager::class.java)
 
-        if (!adbEasyModeActive) {
+        val isPersistedActive = prefs.getBoolean("keep_awake_active", false)
+        if (!isPersistedActive) {
+            prefs.edit().putBoolean("keep_awake_active", true).apply()
             adbEasyModeActive = true
             // 1. Acquire Screen Bright WakeLock so watch stays unlocked (no PIN re-prompt) & awake for 30 min
             try {
@@ -215,6 +217,7 @@ object UtilityActions {
             vibrateDouble(appCtx)
             Toast.makeText(appCtx, appCtx.getString(R.string.toast_adb_mode_on), Toast.LENGTH_SHORT).show()
         } else {
+            prefs.edit().putBoolean("keep_awake_active", false).apply()
             adbEasyModeActive = false
             try {
                 screenWakeLock?.let { if (it.isHeld) it.release() }

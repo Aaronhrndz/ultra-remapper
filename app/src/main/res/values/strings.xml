@@ -79,7 +79,7 @@
     <string name="action_dnd_toggle">Do Not Disturb</string>
     <string name="action_save_parking">Save Parking Spot</string>
     <string name="action_nav_parking">Navigate to Car (Maps)</string>
-    <string name="action_adb_mode">Keep Screen Awake (Sideload / ADB)</string>
+    <string name="action_adb_mode">Keep Screen Awake</string>
     <string name="action_wireless_debugging">Wireless Debugging (ADB)</string>
     <string name="action_water_eject">Water Eject Speaker</string>
     <string name="action_lte_toggle">LTE &amp; Mobile Data</string>
@@ -104,7 +104,7 @@
     <string name="toast_parking_no_gps">GPS not available</string>
     <string name="toast_parking_perm_needed">Location permission required</string>
     <string name="toast_maps_not_found">Maps app not found</string>
-    <string name="toast_adb_mode_on">Keep Awake: ON (Screen &amp; WiFi kept alive)</string>
+    <string name="toast_adb_mode_on">Keep Awake: ON</string>
     <string name="toast_adb_mode_off">Keep Awake: OFF</string>
     <string name="toast_lte_on">LTE &amp; Mobile Data: ON</string>
     <string name="toast_lte_off">LTE &amp; Mobile Data: OFF</string>
