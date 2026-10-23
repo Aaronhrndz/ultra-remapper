@@ -18,15 +18,17 @@ object Mapping {
     val actionGestures = listOf(
         "single" to R.string.gesture_single,
         "double" to R.string.gesture_double,
-        "triple" to R.string.gesture_triple,
         "long" to R.string.gesture_long,
+    )
+    val topGestures = listOf(
+        "top_long" to R.string.gesture_top_long,
     )
     val bottomGestures = listOf(
         "bottom_double_tap" to R.string.gesture_double,
         "bottom_triple_tap" to R.string.gesture_triple,
         "bottom_long" to R.string.gesture_long,
     )
-    val gestures = actionGestures + bottomGestures
+    val gestures = actionGestures + bottomGestures + topGestures
 
     val shealthActions = listOf(
         "shealth_workout" to R.string.action_shealth_workout,

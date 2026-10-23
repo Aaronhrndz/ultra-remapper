@@ -75,7 +75,7 @@
     <string name="action_assistant">Digital Assistant</string>
 
     <!-- Utility Actions -->
-    <string name="action_red_flashlight">Red Flashlight (Max)</string>
+    <string name="action_red_flashlight">RGBW Flashlight</string>
     <string name="action_dnd_toggle">Do Not Disturb</string>
     <string name="action_save_parking">Save Parking Spot</string>
     <string name="action_nav_parking">Navigate to Car (Maps)</string>
@@ -123,4 +123,8 @@
     <string name="dev_steps_remaining">%d taps to developer options</string>
     <string name="reboot_required_title">Reboot Watch Required</string>
     <string name="reboot_required_desc">Restart your watch from the quick settings panel to restore hardware button mapping after this update.</string>
+    <string name="flashlight_hud_title">RGBW Flashlight</string>
+    <string name="flashlight_hud_sub">Rotate bezel or touch for color wheel</string>
+    <string name="hdr_top_button">Top Button (Home)</string>
+    <string name="gesture_top_long">Long press (Hold)</string>
 </resources>

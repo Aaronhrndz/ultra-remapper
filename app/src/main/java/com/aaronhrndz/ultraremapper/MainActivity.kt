@@ -427,6 +427,12 @@ private fun Home(
             Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
         }
     }
+    val topRows = remember {
+        Mapping.topGestures.map { (gesture, nameRes) ->
+            val act = Mapping.get(context, gesture)
+            Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
+        }
+    }
     val bottomRows = remember {
         Mapping.bottomGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
@@ -434,8 +440,8 @@ private fun Home(
         }
     }
 
-    val allConfiguredActions = remember(actionRows, bottomRows) {
-        (actionRows.map { it.third.first } + bottomRows.map { it.third.first }).toSet()
+    val allConfiguredActions = remember(actionRows, bottomRows, topRows) {
+        (actionRows.map { it.third.first } + bottomRows.map { it.third.first } + topRows.map { it.third.first }).toSet()
     }
 
     val needsA11y = remember(allConfiguredActions, bottomRows) {
@@ -883,6 +889,61 @@ private fun Home(
                 item(key = "section_spacer") {
                     Spacer(modifier = Modifier.height(18.dp))
                 }
+            }
+
+            item(key = "hdr_top") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_watch_top_button),
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = context.getString(R.string.hdr_top_button),
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            items(topRows, key = { it.first }) { (gesture, name, actPair) ->
+                val (currentAction, currentLabel) = actPair
+                val isConfigured = currentAction != "none"
+                Button(
+                    onClick = { onPick(gesture) },
+                    label = {
+                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    secondaryLabel = {
+                        Text(
+                            currentLabel,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "top_section_spacer") {
+                Spacer(modifier = Modifier.height(18.dp))
             }
 
             item(key = "hdr_bottom") {

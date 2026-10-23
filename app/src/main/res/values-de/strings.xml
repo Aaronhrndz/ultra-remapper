@@ -61,7 +61,7 @@
     <string name="action_water_lock">Wassersperre</string>
     <string name="action_assistant">Sprachassistent</string>
 
-    <string name="action_red_flashlight">Rote Taschenlampe (Max)</string>
+    <string name="action_red_flashlight">RGBW Taschenlampe</string>
     <string name="action_dnd_toggle">Nicht stören</string>
     <string name="action_save_parking">Parkplatz speichern</string>
     <string name="action_nav_parking">Zum Auto navigieren (zu Fuß)</string>
@@ -96,4 +96,8 @@
     <string name="toast_dnd_off">Nicht stören: AUS</string>
     <string name="toast_ha_not_installed">Home Assistant Companion nicht installiert</string>
     <string name="app_version">v%s</string>
+    <string name="flashlight_hud_title">RGBW Taschenlampe</string>
+    <string name="flashlight_hud_sub">Lünette drehen oder tippen</string>
+    <string name="hdr_top_button">Obere Taste (Home)</string>
+    <string name="gesture_top_long">Gedrückt halten</string>
 </resources>

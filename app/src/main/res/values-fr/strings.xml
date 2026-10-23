@@ -61,7 +61,7 @@
     <string name="action_water_lock">Mode Eau</string>
     <string name="action_assistant">Assistant vocal</string>
 
-    <string name="action_red_flashlight">Lampe Rouge (Max)</string>
+    <string name="action_red_flashlight">Lampe RGBW</string>
     <string name="action_dnd_toggle">Ne pas déranger</string>
     <string name="action_save_parking">Enregistrer le stationnement</string>
     <string name="action_nav_parking">Retourner à la voiture (à pied)</string>
@@ -96,4 +96,8 @@
     <string name="toast_dnd_off">Ne pas déranger : DÉSACTIVÉ</string>
     <string name="toast_ha_not_installed">Application Home Assistant Companion non installée</string>
     <string name="app_version">v%s</string>
+    <string name="flashlight_hud_title">Lampe RGBW</string>
+    <string name="flashlight_hud_sub">Tournez lunette ou touchez l'écran</string>
+    <string name="hdr_top_button">Bouton Supérieur (Accueil)</string>
+    <string name="gesture_top_long">Appui prolongé</string>
 </resources>

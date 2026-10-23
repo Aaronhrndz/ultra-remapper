@@ -75,7 +75,7 @@
     <string name="action_assistant">Asistente Digital</string>
 
     <!-- Utility Actions -->
-    <string name="action_red_flashlight">Linterna Roja (Máx)</string>
+    <string name="action_red_flashlight">Linterna RGBW</string>
     <string name="action_dnd_toggle">No Molestar</string>
     <string name="action_save_parking">Guardar Parking</string>
     <string name="action_nav_parking">Volver al Coche (Maps a pie)</string>
@@ -123,4 +123,8 @@
     <string name="dev_steps_remaining">Quedan %d toques para desarrollador</string>
     <string name="reboot_required_title">Reinicio de reloj necesario</string>
     <string name="reboot_required_desc">Reinicia el reloj desde el panel de ajustes rápidos para reactivar los botones tras actualizar.</string>
+    <string name="flashlight_hud_title">Linterna RGBW</string>
+    <string name="flashlight_hud_sub">Gira bisel o toca para selector</string>
+    <string name="hdr_top_button">Botón Superior (Inicio)</string>
+    <string name="gesture_top_long">Mantener pulsado</string>
 </resources>
