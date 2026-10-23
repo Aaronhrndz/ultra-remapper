@@ -467,6 +467,9 @@ private fun Home(
     ScreenScaffold(scrollState = columnState) { _ ->
         var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
         var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
+        var isTopExpanded by remember { mutableStateOf(true) }
+        var isActionExpanded by remember { mutableStateOf(true) }
+        var isBottomExpanded by remember { mutableStateOf(true) }
 
         TransformingLazyColumn(
             state = columnState,
@@ -818,6 +821,66 @@ private fun Home(
                 }
             }
 
+            item(key = "hdr_top") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                isTopExpanded = !isTopExpanded
+                                HapticFeedbackHelper.playButtonHaptic(context)
+                            }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_watch_top_button),
+                            contentDescription = null,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = context.getString(R.string.hdr_top_button),
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+
+            items(if (isTopExpanded) topRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
+                val (currentAction, currentLabel) = actPair
+                val isConfigured = currentAction != "none"
+                Button(
+                    onClick = { onPick(gesture) },
+                    label = {
+                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
+                    secondaryLabel = {
+                        Text(
+                            currentLabel,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    },
+                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "top_section_spacer") {
+                Spacer(modifier = Modifier.height(18.dp))
+            }
+
             if (setup.hasActionButton) {
                 item(key = "hdr_action") {
                     ListHeader(
@@ -829,7 +892,12 @@ private fun Home(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    isActionExpanded = !isActionExpanded
+                                    HapticFeedbackHelper.playButtonHaptic(context)
+                                }
                         ) {
                             Image(
                                 painter = painterResource(id = R.drawable.ic_watch_quick_button),
@@ -863,7 +931,7 @@ private fun Home(
                     }
                 }
 
-                items(actionRows, key = { it.first }) { (gesture, name, actPair) ->
+                items(if (isActionExpanded) actionRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
                     val (currentAction, currentLabel) = actPair
                     val isConfigured = currentAction != "none"
                     Button(
@@ -891,61 +959,6 @@ private fun Home(
                 }
             }
 
-            item(key = "hdr_top") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_watch_top_button),
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = context.getString(R.string.hdr_top_button),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-
-            items(topRows, key = { it.first }) { (gesture, name, actPair) ->
-                val (currentAction, currentLabel) = actPair
-                val isConfigured = currentAction != "none"
-                Button(
-                    onClick = { onPick(gesture) },
-                    label = {
-                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text(
-                            currentLabel,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            item(key = "top_section_spacer") {
-                Spacer(modifier = Modifier.height(18.dp))
-            }
-
             item(key = "hdr_bottom") {
                 ListHeader(
                     modifier = Modifier
@@ -956,7 +969,12 @@ private fun Home(
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                isBottomExpanded = !isBottomExpanded
+                                HapticFeedbackHelper.playButtonHaptic(context)
+                            }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_watch_bottom_button),
@@ -974,7 +992,7 @@ private fun Home(
                 }
             }
 
-            items(bottomRows, key = { it.first }) { (gesture, name, actPair) ->
+            items(if (isBottomExpanded) bottomRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
                 val (currentAction, currentLabel) = actPair
                 val isConfigured = currentAction != "none"
                 Button(
