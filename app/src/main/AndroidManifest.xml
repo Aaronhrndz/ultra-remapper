@@ -64,13 +64,14 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.ASSIST" />
+                <action android:name="android.intent.action.VOICE_COMMAND" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
         <activity
             android:name=".RedFlashlightActivity"
-            android:exported="false"
+            android:exported="true"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity="com.aaronhrndz.ultraremapper.flashlight"
@@ -94,7 +95,7 @@
         <service
             android:name=".AppVoiceInteractionSessionService"
             android:permission="android.permission.BIND_VOICE_INTERACTION"
-            android:process=":assistant_session"
+            
             android:exported="true" />
 
         <service

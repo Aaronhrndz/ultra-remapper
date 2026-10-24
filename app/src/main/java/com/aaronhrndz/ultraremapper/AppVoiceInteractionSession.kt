@@ -4,8 +4,21 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.service.voice.VoiceInteractionSession
+import android.view.View
+import android.widget.FrameLayout
 
 class AppVoiceInteractionSession(context: Context) : VoiceInteractionSession(context) {
+
+    override fun onCreateContentView(): View {
+        return FrameLayout(context).apply {
+            visibility = View.GONE
+        }
+    }
+
+    override fun onPrepareShow(args: Bundle?, showFlags: Int) {
+        super.onPrepareShow(args, showFlags)
+        setUiEnabled(false)
+    }
 
     override fun onShow(args: Bundle?, showFlags: Int) {
         super.onShow(args, showFlags)
@@ -14,7 +27,18 @@ class AppVoiceInteractionSession(context: Context) : VoiceInteractionSession(con
             val action = Mapping.get(context, "top_long")
 
             if (appEnabled && action != "none") {
-                Mapping.perform(context, "top_long", backToHome = false)
+                if (action == "red_flashlight") {
+                    val intent = Intent(context, RedFlashlightActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    }
+                    try {
+                        startAssistantActivity(intent)
+                    } catch (_: Exception) {
+                        Mapping.perform(context, "top_long", backToHome = false)
+                    }
+                } else {
+                    Mapping.perform(context, "top_long", backToHome = false)
+                }
             } else {
                 forwardToDefaultAssistant()
             }
@@ -33,9 +57,14 @@ class AppVoiceInteractionSession(context: Context) : VoiceInteractionSession(con
         for (intent in targets) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
-                context.startActivity(intent)
+                startAssistantActivity(intent)
                 return
-            } catch (_: Exception) {}
+            } catch (_: Exception) {
+                try {
+                    context.startActivity(intent)
+                    return
+                } catch (_: Exception) {}
+            }
         }
     }
 }
