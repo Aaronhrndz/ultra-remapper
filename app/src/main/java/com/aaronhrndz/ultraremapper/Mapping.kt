@@ -40,6 +40,7 @@ object Mapping {
     )
 
     val samsungActions = listOf(
+        "recents" to R.string.action_recents,
         "stopwatch" to R.string.action_stopwatch,
         "water_lock" to R.string.action_water_lock,
         "assistant" to R.string.action_assistant,
@@ -162,6 +163,7 @@ object Mapping {
             "stopwatch" -> triggerStopwatch(context, backToHome)
             "water_lock" -> triggerWaterLock(context, backToHome)
             "assistant" -> triggerAssistant(context, backToHome)
+            "recents" -> triggerRecents(context)
             "play_pause" -> sendMediaCommand(context, audio, KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE)
             "next" -> sendMediaCommand(context, audio, KeyEvent.KEYCODE_MEDIA_NEXT)
             "previous" -> sendMediaCommand(context, audio, KeyEvent.KEYCODE_MEDIA_PREVIOUS)
@@ -229,6 +231,24 @@ object Mapping {
         } catch (_: Exception) {
             Toast.makeText(appCtx, appCtx.getString(R.string.toast_ha_not_installed), Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun triggerRecents(context: Context) {
+        val svc = BottomButtonService.instance
+        if (svc != null) {
+            svc.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
+            return
+        }
+        try {
+            val intent = Intent().apply {
+                setClassName(
+                    "com.samsung.android.apps.wearable.recent",
+                    "com.samsung.android.apps.wearable.recent.RecentActivityAlias"
+                )
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (_: Throwable) {}
     }
 
     private fun toggleRedFlashlight(context: Context) {

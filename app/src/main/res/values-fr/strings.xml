@@ -111,4 +111,8 @@ Tournez la lunette pour la teinte</string></string>
     <string name="diag_dialog_assistant_body">Pour réassigner le bouton supérieur, choisissez Ultra Remapper comme assistant par défaut dans :
 
 Paramètres de la montre › Applications › Applications par défaut › Assistant numérique › Choisir Ultra Remapper</string>
+    <string name="action_recents">Multitâche (Applications récentes)</string>
+    <string name="diag_toctoc_title">Configurer geste Toc toc</string>
+    <string name="diag_toctoc_sub">Choisir Ultra Remapper dans réglages Toc toc</string>
+    <string name="toast_select_toctoc">Sélectionner Ultra Remapper sous Applications</string>
 </resources>

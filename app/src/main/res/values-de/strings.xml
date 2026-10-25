@@ -102,7 +102,7 @@ Lünette drehen für Farbton</string></string>
     <string name="hdr_top_button">Obere Taste</string>
     <string name="gesture_top_double">Doppelt drücken</string>
     <string name="gesture_top_long">Gedrückt halten</string>
-    <string name="hdr_gestures">Samsung-Gesten</string>
+    <string name="hdr_gestures">Gesten</string>
     <string name="gesture_toctoc">Anklopfen (Toc toc)</string>
 
     <string name="diag_assistant_title">Als Assistent festlegen</string>
@@ -111,4 +111,8 @@ Lünette drehen für Farbton</string></string>
     <string name="diag_dialog_assistant_body">Um die obere Taste neu zu belegen, lege Ultra Remapper als Standard-Assistent fest unter:
 
 Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra Remapper wählen</string>
+    <string name="action_recents">Zuletzt geöffnete Apps (Multitasking)</string>
+    <string name="diag_toctoc_title">Anklopfen konfigurieren</string>
+    <string name="diag_toctoc_sub">Ultra Remapper in Anklopfen-Einstellungen wählen</string>
+    <string name="toast_select_toctoc">Ultra Remapper unter Apps auswählen</string>
 </resources>

@@ -197,6 +197,34 @@ private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boo
     return false
 }
 
+private fun isTocTocConfigured(context: Context): Boolean {
+    return try {
+        val launchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
+        val launchOn = Settings.Global.getInt(context.contentResolver, "setting_gesture_launch_on", 0)
+        launchOn == 1 && launchApp?.contains(context.packageName) == true
+    } catch (_: Throwable) {
+        false
+    }
+}
+
+private fun openTocTocSettings(context: Context) {
+    try {
+        val intent = Intent("android.settings.BUTTONS_GESTURES_SETTINGS").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+        Toast.makeText(context, context.getString(R.string.toast_select_toctoc), Toast.LENGTH_LONG).show()
+    } catch (_: Throwable) {
+        try {
+            val fallback = Intent(Settings.ACTION_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(fallback)
+            Toast.makeText(context, context.getString(R.string.toast_select_toctoc), Toast.LENGTH_LONG).show()
+        } catch (_: Throwable) {}
+    }
+}
+
 private fun isNotificationListenerEnabled(context: Context): Boolean {
     val expected = ComponentName(context, MediaControlService::class.java)
     val enabledListeners = Settings.Secure.getString(
@@ -271,6 +299,7 @@ private data class SetupState(
     val secureSettingsGranted: Boolean,
     val haInstalled: Boolean,
     val isAssistant: Boolean,
+    val isTocTocConfigured: Boolean,
 ) {
     val allReady: Boolean
         get() = (!hasActionButton || actionRouted) && overlayAllowed && a11yEnabled && mediaListenerEnabled && secureSettingsGranted
@@ -285,6 +314,7 @@ private fun readSetupState(context: Context): SetupState = SetupState(
     secureSettingsGranted = hasSecureSettingsPermission(context),
     haInstalled = isPackageInstalled(context, "io.homeassistant.companion.android"),
     isAssistant = isDefaultAssistant(context),
+    isTocTocConfigured = isTocTocConfigured(context),
 )
 
 private data class AppEntry(
@@ -562,12 +592,17 @@ private fun Home(
         isMasterEnabled && Mapping.get(context, "top_long") != "none"
     }
 
+    val needsTocToc = remember(allConfiguredActions, isMasterEnabled) {
+        isMasterEnabled && Mapping.get(context, "toctoc") != "none"
+    }
+
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
             (setup.hasActionButton && !setup.actionRouted) ||
             (!setup.overlayAllowed && needsOverlay) ||
             (!setup.mediaListenerEnabled && needsMediaBridge) ||
             (!setup.secureSettingsGranted && needsSecureSettings) ||
-            (!setup.isAssistant && needsAssistant)
+            (!setup.isAssistant && needsAssistant) ||
+            (!setup.isTocTocConfigured && needsTocToc)
 
     ScreenScaffold(scrollState = columnState) { _ ->
         var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
@@ -690,6 +725,30 @@ private fun Home(
                             },
                             secondaryLabel = {
                                 Text(context.getString(R.string.diag_assistant_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            },
+                            colors = orangeColors,
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                        )
+                    }
+                }
+                if (!setup.isTocTocConfigured && needsTocToc) {
+                    item(key = "diag_toctoc") {
+                        Button(
+                            onClick = {
+                                openTocTocSettings(context)
+                            },
+                            label = {
+                                Text(
+                                    context.getString(R.string.diag_toctoc_title),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            secondaryLabel = {
+                                Text(context.getString(R.string.diag_toctoc_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
                             },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
@@ -1125,7 +1184,7 @@ private fun Home(
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Image(
-                                painter = painterResource(id = R.drawable.ic_watch_quick_button),
+                                painter = painterResource(id = R.drawable.ic_wrist_gesture),
                                 contentDescription = null,
                                 modifier = Modifier.size(38.dp)
                             )

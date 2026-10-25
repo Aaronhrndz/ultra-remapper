@@ -128,7 +128,7 @@
     <string name="hdr_top_button">Top Button</string>
     <string name="gesture_top_double">Double press</string>
     <string name="gesture_top_long">Long press (Hold)</string>
-    <string name="hdr_gestures">Samsung Gestures</string>
+    <string name="hdr_gestures">Gestures</string>
     <string name="gesture_toctoc">Knock knock</string>
 
     <string name="diag_assistant_title">Set as Digital Assistant</string>
@@ -137,4 +137,8 @@
     <string name="diag_dialog_assistant_body">To remap the Top (Home) button, set Ultra Remapper as your default Digital Assistant in:
 
 Watch Settings › Apps › Choose default apps › Digital assistant app › Choose Ultra Remapper</string>
+    <string name="action_recents">Recent apps (Multitask)</string>
+    <string name="diag_toctoc_title">Configure Toc toc gesture</string>
+    <string name="diag_toctoc_sub">Select Ultra Remapper in Toc toc settings</string>
+    <string name="toast_select_toctoc">Select Ultra Remapper under Applications</string>
 </resources>

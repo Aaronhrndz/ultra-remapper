@@ -128,7 +128,7 @@
     <string name="hdr_top_button">Botón Superior</string>
     <string name="gesture_top_double">Doble pulsación</string>
     <string name="gesture_top_long">Mantener pulsado</string>
-    <string name="hdr_gestures">Gestos Samsung</string>
+    <string name="hdr_gestures">Gestos</string>
     <string name="gesture_toctoc">Toc toc</string>
 
     <string name="diag_assistant_title">Elegir como Asistente</string>
@@ -137,4 +137,8 @@
     <string name="diag_dialog_assistant_body">Para usar el botón superior, elige Ultra Remapper como asistente digital predeterminado en:
 
 Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › Aplicación de asistente digital › Elige Ultra Remapper</string>
+    <string name="action_recents">Abrir multitarea (Recientes)</string>
+    <string name="diag_toctoc_title">Configurar gesto Toc toc</string>
+    <string name="diag_toctoc_sub">Selecciona Ultra Remapper en ajustes de Toc toc</string>
+    <string name="toast_select_toctoc">Selecciona Ultra Remapper en Aplicaciones</string>
 </resources>
