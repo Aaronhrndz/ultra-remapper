@@ -340,6 +340,14 @@ class MainActivity : ComponentActivity() {
             }
         }
         val targetDestination = intent?.getStringExtra("open_destination") ?: "home"
+        if (intent?.getBooleanExtra("from_toctoc", false) == true) {
+            val toctocAct = Mapping.get(this, "toctoc")
+            if (Mapping.isEnabled(this) && toctocAct != "none") {
+                Mapping.perform(this, "toctoc", backToHome = true)
+                finish()
+                return
+            }
+        }
 
         setContent {
             MaterialTheme {
