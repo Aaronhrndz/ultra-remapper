@@ -110,17 +110,16 @@ private fun hasHardwareActionButton(context: Context): Boolean = true
 
 private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
 
-private fun syncTopButtonRoute(context: Context) {
+private const val DEFAULT_RECENT_APPS_ALIAS = "com.samsung.android.apps.wearable.recent/com.samsung.android.apps.wearable.recent.RecentActivityAlias"
+
+private fun syncSamsungRoutes(context: Context) {
     if (!hasSecureSettingsPermission(context)) return
     try {
-        val topAction = Mapping.get(context, "top_long")
         val isMasterOn = Mapping.isEnabled(context)
-        val assistantComponent = "${context.packageName}/${AppVoiceInteractionService::class.java.name}"
 
-        if (isMasterOn && topAction != "none") {
-            // Only force setting_home_key_long_press if Ultra Remapper is already the active assistant,
-            // or if the assistant wasn't explicitly changed to another provider by the user.
-            // If the user deliberately changed assistant in system settings, do not overwrite it silently.
+        // 1. Top button long press (Assistant route)
+        val topLongAction = Mapping.get(context, "top_long")
+        if (isMasterOn && topLongAction != "none") {
             val currentAssistant = Settings.Secure.getString(context.contentResolver, "voice_interaction_service")
                 ?: Settings.Secure.getString(context.contentResolver, "assistant")
             val isOurs = currentAssistant?.contains(context.packageName) == true
@@ -128,8 +127,41 @@ private fun syncTopButtonRoute(context: Context) {
                 Settings.Global.putString(context.contentResolver, "setting_home_key_long_press", "googlevoiceassistant/googlevoiceassistant")
             }
         }
+
+        // 2. Top button double press
+        val topDoubleAction = Mapping.get(context, "top_double")
+        val expectedTopDouble = if (isMasterOn && topDoubleAction != "none") {
+            "${context.packageName}/${TopDoubleTrampolineActivity::class.java.name}"
+        } else {
+            DEFAULT_RECENT_APPS_ALIAS
+        }
+        val currentTopDouble = Settings.Global.getString(context.contentResolver, "setting_home_key_double_press")
+        if (currentTopDouble != expectedTopDouble) {
+            Settings.Global.putString(context.contentResolver, "setting_home_key_double_press", expectedTopDouble)
+        }
+
+        // 3. Toc-toc (Wrist Knock gesture)
+        val toctocAction = Mapping.get(context, "toctoc")
+        if (isMasterOn && toctocAction != "none") {
+            Settings.Global.putString(context.contentResolver, "setting_gesture_launch_on", "1")
+            Settings.Global.putString(context.contentResolver, "setting_gesture_launch_app", "app/${context.packageName}")
+            Settings.Global.putString(
+                context.contentResolver,
+                "setting_gesture_launch_selected_app",
+                "${context.packageName}/${TocTocTrampolineActivity::class.java.name}"
+            )
+        } else if (!isMasterOn || toctocAction == "none") {
+            val currentLaunchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
+            if (currentLaunchApp?.contains(context.packageName) == true) {
+                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_on", "0")
+                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_app", "fixed/turn_on_flashlight")
+                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_selected_app", "")
+            }
+        }
     } catch (_: Throwable) {}
 }
+
+private fun syncTopButtonRoute(context: Context) = syncSamsungRoutes(context)
 
 private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boolean {
     if (!hasHardwareActionButton(context)) return true
@@ -498,8 +530,15 @@ private fun Home(
         }
     }
 
-    val allConfiguredActions = remember(actionRows, bottomRows, topRows) {
-        (actionRows.map { it.third.first } + bottomRows.map { it.third.first } + topRows.map { it.third.first }).toSet()
+    val gestureRows = remember(mappingVersion) {
+        Mapping.gestureList.map { (gesture, nameRes) ->
+            val act = Mapping.get(context, gesture)
+            Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
+        }
+    }
+
+    val allConfiguredActions = remember(actionRows, bottomRows, topRows, gestureRows) {
+        (actionRows.map { it.third.first } + bottomRows.map { it.third.first } + topRows.map { it.third.first } + gestureRows.map { it.third.first }).toSet()
     }
 
     var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
@@ -507,8 +546,10 @@ private fun Home(
     val needsA11y = remember(allConfiguredActions, bottomRows) {
         bottomRows.any { it.third.first != "none" } || allConfiguredActions.contains("flashlight")
     }
-    val needsSecureSettings = remember(allConfiguredActions) {
-        allConfiguredActions.any { it in setOf("glove_mode", "lte_toggle", "adb_mode") }
+    val needsSecureSettings = remember(allConfiguredActions, gestureRows, topRows) {
+        allConfiguredActions.any { it in setOf("glove_mode", "lte_toggle", "adb_mode") } ||
+                gestureRows.any { it.third.first != "none" } ||
+                Mapping.get(context, "top_double") != "none"
     }
     val needsMediaBridge = remember(allConfiguredActions, setup.a11yEnabled) {
         setup.a11yEnabled || allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
@@ -517,8 +558,8 @@ private fun Home(
     val needsOverlay = remember(allConfiguredActions) {
         allConfiguredActions.contains("red_flashlight")
     }
-    val needsAssistant = remember(allConfiguredActions, topRows, isMasterEnabled) {
-        isMasterEnabled && topRows.any { it.third.first != "none" }
+    val needsAssistant = remember(allConfiguredActions, isMasterEnabled) {
+        isMasterEnabled && Mapping.get(context, "top_long") != "none"
     }
 
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
@@ -533,6 +574,7 @@ private fun Home(
         var isTopExpanded by remember { mutableStateOf(true) }
         var isActionExpanded by remember { mutableStateOf(true) }
         var isBottomExpanded by remember { mutableStateOf(true) }
+        var isGesturesExpanded by remember { mutableStateOf(true) }
 
         TransformingLazyColumn(
             state = columnState,
@@ -1037,6 +1079,70 @@ private fun Home(
                     if (isBottomExpanded) {
                         Spacer(modifier = Modifier.height(6.dp))
                         bottomRows.forEachIndexed { idx, (gesture, name, actPair) ->
+                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                            val (currentAction, currentLabel) = actPair
+                            val isConfigured = currentAction != "none"
+                            Button(
+                                onClick = { onPick(gesture) },
+                                label = {
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                secondaryLabel = {
+                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Samsung Gestures Collapsible Section Card
+            item(key = "card_gestures_spacer") {
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+
+            item(key = "card_gestures_section") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                isGesturesExpanded = !isGesturesExpanded
+                                HapticFeedbackHelper.playButtonHaptic(context)
+                            }
+                            .padding(horizontal = 6.dp, vertical = 6.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_watch_quick_button),
+                                contentDescription = null,
+                                modifier = Modifier.size(38.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = context.getString(R.string.hdr_gestures),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                        CollapseChevron(isExpanded = isGesturesExpanded)
+                    }
+
+                    if (isGesturesExpanded) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        gestureRows.forEachIndexed { idx, (gesture, name, actPair) ->
                             if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
                             val (currentAction, currentLabel) = actPair
                             val isConfigured = currentAction != "none"

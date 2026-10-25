@@ -1,4 +1,4 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
@@ -21,14 +21,18 @@ object Mapping {
         "long" to R.string.gesture_long,
     )
     val topGestures = listOf(
+        "top_double" to R.string.gesture_top_double,
         "top_long" to R.string.gesture_top_long,
+    )
+    val gestureList = listOf(
+        "toctoc" to R.string.gesture_toctoc,
     )
     val bottomGestures = listOf(
         "bottom_double_tap" to R.string.gesture_double,
         "bottom_triple_tap" to R.string.gesture_triple,
         "bottom_long" to R.string.gesture_long,
     )
-    val gestures = actionGestures + bottomGestures + topGestures
+    val gestures = actionGestures + bottomGestures + topGestures + gestureList
 
     val shealthActions = listOf(
         "shealth_workout" to R.string.action_shealth_workout,

@@ -100,7 +100,10 @@
     <string name="flashlight_hud_sub"><string name="flashlight_hud_sub">Touchez et glissez pour la roue
 Tournez la lunette pour la teinte</string></string>
     <string name="hdr_top_button">Bouton Supérieur</string>
+    <string name="gesture_top_double">Double appui</string>
     <string name="gesture_top_long">Appui prolongé</string>
+    <string name="hdr_gestures">Gestes Samsung</string>
+    <string name="gesture_toctoc">Toc toc</string>
 
     <string name="diag_assistant_title">Définir comme Assistant</string>
     <string name="diag_assistant_sub">Requis pour le bouton supérieur</string>

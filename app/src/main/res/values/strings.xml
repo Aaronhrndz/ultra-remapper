@@ -126,7 +126,10 @@
     <string name="flashlight_hud_title">RGBW Flashlight</string>
     <string name="flashlight_hud_sub">Touch for color • Bezel tunes hue</string>
     <string name="hdr_top_button">Top Button</string>
+    <string name="gesture_top_double">Double press</string>
     <string name="gesture_top_long">Long press (Hold)</string>
+    <string name="hdr_gestures">Samsung Gestures</string>
+    <string name="gesture_toctoc">Knock knock</string>
 
     <string name="diag_assistant_title">Set as Digital Assistant</string>
     <string name="diag_assistant_sub">Required for Top Button remapping</string>
