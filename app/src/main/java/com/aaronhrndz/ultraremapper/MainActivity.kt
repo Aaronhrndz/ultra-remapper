@@ -426,14 +426,14 @@ private fun Home(
     )
     val highlightColors = ButtonDefaults.buttonColors(containerColor = SlateHighlight)
     val cardConfiguredColors = ButtonDefaults.buttonColors(
-        containerColor = SlateCard,
+        containerColor = Color(0xFF282E38),
         contentColor = Color.White,
         secondaryContentColor = UltraOrange
     )
     val cardUnconfiguredColors = ButtonDefaults.buttonColors(
-        containerColor = SlateCard,
+        containerColor = Color(0xFF282E38),
         contentColor = Color.White,
-        secondaryContentColor = Color(0xFF8A93A2)
+        secondaryContentColor = Color(0xFF9EA7B8)
     )
 
     val actionRows = remember {
@@ -541,68 +541,7 @@ private fun Home(
                 )
             }
 
-            item(key = "haptic_switch") {
-                Button(
-                    onClick = {
-                        val next = !isHapticEnabled
-                        isHapticEnabled = next
-                        Mapping.setHapticFeedbackEnabled(context, next)
-                        if (next) {
-                            HapticFeedbackHelper.playButtonHaptic(context)
-                        }
-                    },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    context.getString(R.string.haptic_switch_title),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    context.getString(R.string.haptic_switch_subtitle),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = Color(0xFF9EA7B8),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(32.dp)
-                                    .height(18.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isHapticEnabled) UltraOrange.copy(alpha = 0.85f) else Color(0xFF383D47))
-                                    .padding(2.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
-                                        .clip(CircleShape)
-                                        .background(Color.White)
-                                )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF171A20),
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
+
 
 
 
@@ -838,6 +777,10 @@ private fun Home(
             }
 
             // Top Button Collapsible Section Card
+            item(key = "master_bottom_spacer") {
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+
             item(key = "card_top_section") {
                 Column(
                     modifier = Modifier
@@ -1039,6 +982,77 @@ private fun Home(
                         }
                     }
                 }
+            }
+
+            item(key = "haptic_top_spacer") {
+                Spacer(modifier = Modifier.height(14.dp))
+            }
+
+            item(key = "haptic_switch") {
+                Button(
+                    onClick = {
+                        val next = !isHapticEnabled
+                        isHapticEnabled = next
+                        Mapping.setHapticFeedbackEnabled(context, next)
+                        if (next) {
+                            HapticFeedbackHelper.playButtonHaptic(context)
+                        }
+                    },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    context.getString(R.string.haptic_switch_title),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White.copy(alpha = 0.9f),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    context.getString(R.string.haptic_switch_subtitle),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(32.dp)
+                                    .height(18.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isHapticEnabled) UltraOrange.copy(alpha = 0.85f) else Color(0xFF383D47))
+                                    .padding(2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(14.dp)
+                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                )
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "haptic_bottom_spacer") {
+                Spacer(modifier = Modifier.height(14.dp))
             }
 
             item(key = "app_version_footer") {
