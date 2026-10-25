@@ -234,21 +234,24 @@ object Mapping {
     }
 
     fun triggerRecents(context: Context) {
-        val svc = BottomButtonService.instance
-        if (svc != null) {
-            svc.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
-            return
-        }
+        val appCtx = context.applicationContext
         try {
-            val intent = Intent().apply {
-                setClassName(
+            val intent = Intent(Intent.ACTION_MAIN).apply {
+                component = ComponentName(
                     "com.samsung.android.apps.wearable.recent",
                     "com.samsung.android.apps.wearable.recent.RecentActivityAlias"
                 )
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addCategory(Intent.CATEGORY_LAUNCHER)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
-            context.startActivity(intent)
+            appCtx.startActivity(intent)
+            return
         } catch (_: Throwable) {}
+
+        val svc = BottomButtonService.instance
+        if (svc != null) {
+            svc.performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_RECENTS)
+        }
     }
 
     private fun toggleRedFlashlight(context: Context) {

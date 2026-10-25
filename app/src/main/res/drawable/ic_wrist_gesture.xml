@@ -1,0 +1,29 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="38dp"
+    android:height="38dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <!-- Dynamic wave trails (wrist motion) -->
+  <path
+      android:strokeColor="#FFFC5C00"
+      android:strokeWidth="1.8"
+      android:strokeLineCap="round"
+      android:pathData="M 18.5,5 C 21.5,8 21.5,13 18.5,16" />
+  <path
+      android:strokeColor="#FFFC5C00"
+      android:strokeWidth="1.8"
+      android:strokeLineCap="round"
+      android:pathData="M 21.5,3 C 25.5,7.5 25.5,14.5 21.5,19" />
+
+  <!-- Hand shaking motion / palm outline -->
+  <path
+      android:fillColor="#FFFFFFFF"
+      android:pathData="M13.5,9.5 C13.5,8.12 12.38,7 11,7 C10.6,7 10.23,7.09 9.9,7.26 C9.66,6.52 8.98,6 8.16,6 C7.55,6 7.02,6.3 6.72,6.77 C6.46,6.6 6.15,6.5 5.81,6.5 C4.71,6.5 3.81,7.4 3.81,8.5 L3.81,13.5 C3.81,16.54 6.27,19 9.31,19 C12.35,19 14.81,16.54 14.81,13.5 L14.81,10.81 C14.42,10.62 13.98,10.5 13.5,10.5 Z" />
+  
+  <!-- Motion swipe accent arc -->
+  <path
+      android:strokeColor="#FFFC5C00"
+      android:strokeWidth="1.5"
+      android:strokeLineCap="round"
+      android:pathData="M 2,12 C 2,16 5,20 9,21" />
+</vector>
