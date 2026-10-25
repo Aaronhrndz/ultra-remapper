@@ -837,16 +837,18 @@ private fun Home(
                 }
             }
 
-            item(key = "hdr_top") {
-                ListHeader(
+            // Top Button Collapsible Section Card
+            item(key = "card_top_section") {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
@@ -854,64 +856,64 @@ private fun Home(
                                 isTopExpanded = !isTopExpanded
                                 HapticFeedbackHelper.playButtonHaptic(context)
                             }
-                            .padding(vertical = 4.dp, horizontal = 6.dp)
+                            .padding(horizontal = 6.dp, vertical = 6.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_watch_top_button),
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = context.getString(R.string.hdr_top_button),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_watch_top_button),
+                                contentDescription = null,
+                                modifier = Modifier.size(38.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = context.getString(R.string.hdr_top_button),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                         CollapseChevron(isExpanded = isTopExpanded)
+                    }
+
+                    if (isTopExpanded) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        topRows.forEachIndexed { idx, (gesture, name, actPair) ->
+                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                            val (currentAction, currentLabel) = actPair
+                            val isConfigured = currentAction != "none"
+                            Button(
+                                onClick = { onPick(gesture) },
+                                label = {
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                secondaryLabel = {
+                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
 
-            items(if (isTopExpanded) topRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
-                val (currentAction, currentLabel) = actPair
-                val isConfigured = currentAction != "none"
-                Button(
-                    onClick = { onPick(gesture) },
-                    label = {
-                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text(
-                            currentLabel,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
             item(key = "top_section_spacer") {
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(14.dp))
             }
 
             if (setup.hasActionButton) {
-                item(key = "hdr_action") {
-                    ListHeader(
+                // Action Button Collapsible Section Card
+                item(key = "card_action_section") {
+                    Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .transformedHeight(this, transformationSpec),
-                        transformation = SurfaceTransformation(transformationSpec)
+                            .clip(RoundedCornerShape(18.dp))
+                            .background(Color(0xFF181B22))
+                            .padding(horizontal = 10.dp, vertical = 8.dp)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(12.dp))
@@ -919,80 +921,78 @@ private fun Home(
                                     isActionExpanded = !isActionExpanded
                                     HapticFeedbackHelper.playButtonHaptic(context)
                                 }
-                                .padding(vertical = 4.dp, horizontal = 6.dp)
+                                .padding(horizontal = 6.dp, vertical = 6.dp)
                         ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_watch_quick_button),
-                                contentDescription = null,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = context.getString(R.string.hdr_center_button),
-                                color = Color.White,
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_watch_quick_button),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(38.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = context.getString(R.string.hdr_center_button),
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
                             CollapseChevron(isExpanded = isActionExpanded)
+                        }
+
+                        val hasShealthMapped = allConfiguredActions.contains("shealth_workout")
+                        if (hasShealthMapped && isActionExpanded) {
+                            Text(
+                                text = context.getString(R.string.hdr_center_button_note),
+                                color = Color(0xFF9EA7B8),
+                                fontSize = 11.sp,
+                                lineHeight = 15.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 6.dp, vertical = 4.dp)
+                            )
+                        }
+
+                        if (isActionExpanded) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            actionRows.forEachIndexed { idx, (gesture, name, actPair) ->
+                                if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                                val (currentAction, currentLabel) = actPair
+                                val isConfigured = currentAction != "none"
+                                Button(
+                                    onClick = { onPick(gesture) },
+                                    label = {
+                                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    },
+                                    secondaryLabel = {
+                                        Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    },
+                                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
 
-                val hasShealthMapped = allConfiguredActions.contains("shealth_workout")
-                if (hasShealthMapped) {
-                    item(key = "hdr_action_note") {
-                        Text(
-                            text = context.getString(R.string.hdr_center_button_note),
-                            color = Color(0xFF9EA7B8),
-                            fontSize = 11.sp,
-                            lineHeight = 15.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 4.dp)
-                        )
-                    }
-                }
-
-                items(if (isActionExpanded) actionRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
-                    val (currentAction, currentLabel) = actPair
-                    val isConfigured = currentAction != "none"
-                    Button(
-                        onClick = { onPick(gesture) },
-                        label = {
-                            Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        },
-                        secondaryLabel = {
-                            Text(
-                                currentLabel,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-
                 item(key = "section_spacer") {
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(14.dp))
                 }
             }
 
-            item(key = "hdr_bottom") {
-                ListHeader(
+            // Bottom Button Collapsible Section Card
+            item(key = "card_bottom_section") {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
                             .clip(RoundedCornerShape(12.dp))
@@ -1000,47 +1000,45 @@ private fun Home(
                                 isBottomExpanded = !isBottomExpanded
                                 HapticFeedbackHelper.playButtonHaptic(context)
                             }
-                            .padding(vertical = 4.dp, horizontal = 6.dp)
+                            .padding(horizontal = 6.dp, vertical = 6.dp)
                     ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_watch_bottom_button),
-                            contentDescription = null,
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = context.getString(R.string.hdr_bottom_button),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Image(
+                                painter = painterResource(id = R.drawable.ic_watch_bottom_button),
+                                contentDescription = null,
+                                modifier = Modifier.size(38.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = context.getString(R.string.hdr_bottom_button),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                         CollapseChevron(isExpanded = isBottomExpanded)
                     }
-                }
-            }
 
-            items(if (isBottomExpanded) bottomRows else emptyList(), key = { it.first }) { (gesture, name, actPair) ->
-                val (currentAction, currentLabel) = actPair
-                val isConfigured = currentAction != "none"
-                Button(
-                    onClick = { onPick(gesture) },
-                    label = {
-                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                    },
-                    secondaryLabel = {
-                        Text(
-                            currentLabel,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
+                    if (isBottomExpanded) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        bottomRows.forEachIndexed { idx, (gesture, name, actPair) ->
+                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                            val (currentAction, currentLabel) = actPair
+                            val isConfigured = currentAction != "none"
+                            Button(
+                                onClick = { onPick(gesture) },
+                                label = {
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                secondaryLabel = {
+                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                },
+                                colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
             }
 
             item(key = "app_version_footer") {
