@@ -34,7 +34,7 @@
 
 ## Capabilities Overview
 
-- **Physical Button Remapping**: Independent single, double, and long press customization for the **Quick / Center Button** (Galaxy Watch Ultra, Watch 8 Classic) and **Bottom (Back) Button** across all Wear OS Samsung watches.
+- **Physical Button Remapping**: Independent single, double, and long press customization for the **Quick / Center Button** (Galaxy Watch Ultra, Watch 8 Classic), **Bottom (Back) Button**, and **Top (Home) Button** (Hold) across Wear OS Samsung watches.
 - **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic Boost to max brightness), Stopwatch, Water Lock, and Digital Assistant.
 - **Smart Utilities**: One-click Wireless ADB toggle, GPS parking saver & walking navigation, water eject speaker sweep, Glove Mode, LTE toggle, and tactical red flashlight.
 - **Phone Media Controls**: Wrist-based media playback and volume control bridging local and phone sessions (Spotify, YouTube, KDE Connect).
@@ -81,7 +81,7 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 > Run this single command block in your terminal (PowerShell, CMD or Bash) to **automatically grant all 4 elevated permissions and configure hardware buttons in one second**:
 >
 > ```bash
-> adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
+> adb shell "settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService && settings put global setting_home_key_long_press googlevoiceassistant/googlevoiceassistant && settings put secure assistant com.aaronhrndz.ultraremapper/.AppVoiceInteractionService && settings put secure voice_interaction_service com.aaronhrndz.ultraremapper/.AppVoiceInteractionService && settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService && settings put secure accessibility_enabled 1 && appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow && cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService && pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS && pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION && cmd deviceidle whitelist +com.aaronhrndz.ultraremapper"
 > ```
 > *This automatically enroutes the Action Button, enables Accessibility for the Back key, unlocks Overlays and Media Listener, and grants Secure Settings with zero manual steps.*
 
@@ -99,20 +99,20 @@ If you prefer to grant permissions manually one by one instead of using the mega
   adb shell settings put secure enabled_accessibility_services com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.BottomButtonService
   adb shell settings put secure accessibility_enabled 1
   ```
-- **3. Allow Overlay Permission** (floating UI & full-screen red flashlight):
+- **4. Allow Overlay Permission** (floating UI & full-screen red flashlight):
   ```bash
   adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow
   ```
-- **4. Enable Media Bridge** (phone media controls & volume sync):
+- **5. Enable Media Bridge** (phone media controls & volume sync):
   ```bash
   adb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService
   ```
-- **5. Grant Secure Settings & GPS Location** (LTE toggle, glove mode, parking GPS):
+- **6. Grant Secure Settings & GPS Location** (LTE toggle, glove mode, parking GPS):
   ```bash
   adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS
   adb shell pm grant com.aaronhrndz.ultraremapper android.permission.ACCESS_FINE_LOCATION
   ```
-- **6. Battery Whitelist** (prevent service sleep):
+- **7. Battery Whitelist** (prevent service sleep):
   ```bash
   adb shell cmd deviceidle whitelist +com.aaronhrndz.ultraremapper
   ```

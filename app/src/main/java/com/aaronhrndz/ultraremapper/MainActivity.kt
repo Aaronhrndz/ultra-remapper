@@ -188,6 +188,34 @@ private fun drawableToImageBitmap(drawable: Drawable, sizePx: Int = 56): ImageBi
 private fun hasSecureSettingsPermission(context: Context): Boolean =
     context.checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED
 
+private fun isDefaultAssistant(context: Context): Boolean {
+    return try {
+        val cur = Settings.Secure.getString(context.contentResolver, "voice_interaction_service")
+            ?: Settings.Secure.getString(context.contentResolver, "assistant")
+        cur?.contains(context.packageName) == true
+    } catch (_: Throwable) {
+        false
+    }
+}
+
+private fun openAssistantSettings(context: Context) {
+    try {
+        val intent = Intent("android.settings.VOICE_INPUT_SETTINGS").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        context.startActivity(intent)
+        Toast.makeText(context, context.getString(R.string.toast_select_assistant), Toast.LENGTH_LONG).show()
+    } catch (_: Throwable) {
+        try {
+            val fallback = Intent(Settings.ACTION_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(fallback)
+            Toast.makeText(context, context.getString(R.string.toast_select_assistant), Toast.LENGTH_LONG).show()
+        } catch (_: Throwable) {}
+    }
+}
+
 private fun isPackageInstalled(context: Context, pkg: String): Boolean =
     try {
         context.packageManager.getPackageInfo(pkg, 0)
@@ -204,6 +232,7 @@ private data class SetupState(
     val mediaListenerEnabled: Boolean,
     val secureSettingsGranted: Boolean,
     val haInstalled: Boolean,
+    val isAssistant: Boolean,
 ) {
     val allReady: Boolean
         get() = (!hasActionButton || actionRouted) && overlayAllowed && a11yEnabled && mediaListenerEnabled && secureSettingsGranted
@@ -217,6 +246,7 @@ private fun readSetupState(context: Context): SetupState = SetupState(
     mediaListenerEnabled = isNotificationListenerEnabled(context),
     secureSettingsGranted = hasSecureSettingsPermission(context),
     haInstalled = isPackageInstalled(context, "io.homeassistant.companion.android"),
+    isAssistant = isDefaultAssistant(context),
 )
 
 private data class AppEntry(
@@ -472,12 +502,16 @@ private fun Home(
     val needsOverlay = remember(allConfiguredActions) {
         allConfiguredActions.contains("red_flashlight")
     }
+    val needsAssistant = remember(allConfiguredActions, topRows) {
+        topRows.any { it.third.first != "none" }
+    }
 
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
             (setup.hasActionButton && !setup.actionRouted) ||
             (!setup.overlayAllowed && needsOverlay) ||
             (!setup.mediaListenerEnabled && needsMediaBridge) ||
-            (!setup.secureSettingsGranted && needsSecureSettings)
+            (!setup.secureSettingsGranted && needsSecureSettings) ||
+            (!setup.isAssistant && needsAssistant)
 
     ScreenScaffold(scrollState = columnState) { _ ->
         var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
@@ -583,6 +617,30 @@ private fun Home(
                         transformation = SurfaceTransformation(transformationSpec)
                     ) {
                         Text(context.getString(R.string.diag_header_status), color = UltraOrange, fontWeight = FontWeight.Bold)
+                    }
+                }
+                if (!setup.isAssistant && needsAssistant) {
+                    item(key = "diag_assistant") {
+                        Button(
+                            onClick = {
+                                openAssistantSettings(context)
+                            },
+                            label = {
+                                Text(
+                                    context.getString(R.string.diag_assistant_title),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            secondaryLabel = {
+                                Text(context.getString(R.string.diag_assistant_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            },
+                            colors = orangeColors,
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                        )
                     }
                 }
                 if (setup.hasActionButton && !setup.actionRouted) {

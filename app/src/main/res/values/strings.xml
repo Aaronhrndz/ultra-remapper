@@ -127,4 +127,11 @@
     <string name="flashlight_hud_sub">Touch for color • Bezel tunes hue</string>
     <string name="hdr_top_button">Top Button</string>
     <string name="gesture_top_long">Long press (Hold)</string>
+
+    <string name="diag_assistant_title">Set as Digital Assistant</string>
+    <string name="diag_assistant_sub">Required for Top Button remapping</string>
+    <string name="toast_select_assistant">Select Ultra Remapper as Digital Assistant</string>
+    <string name="diag_dialog_assistant_body">To remap the Top (Home) button, set Ultra Remapper as your default Digital Assistant in:
+
+Watch Settings › Apps › Choose default apps › Digital assistant app › Choose Ultra Remapper</string>
 </resources>

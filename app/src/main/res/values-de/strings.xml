@@ -101,4 +101,11 @@
 Lünette drehen für Farbton</string></string>
     <string name="hdr_top_button">Obere Taste</string>
     <string name="gesture_top_long">Gedrückt halten</string>
+
+    <string name="diag_assistant_title">Als Assistent festlegen</string>
+    <string name="diag_assistant_sub">Erforderlich für obere Taste</string>
+    <string name="toast_select_assistant">Ultra Remapper als Assistent wählen</string>
+    <string name="diag_dialog_assistant_body">Um die obere Taste neu zu belegen, lege Ultra Remapper als Standard-Assistent fest unter:
+
+Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra Remapper wählen</string>
 </resources>

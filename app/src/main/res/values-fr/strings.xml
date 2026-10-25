@@ -101,4 +101,11 @@
 Tournez la lunette pour la teinte</string></string>
     <string name="hdr_top_button">Bouton Supérieur</string>
     <string name="gesture_top_long">Appui prolongé</string>
+
+    <string name="diag_assistant_title">Définir comme Assistant</string>
+    <string name="diag_assistant_sub">Requis pour le bouton supérieur</string>
+    <string name="toast_select_assistant">Sélectionnez Ultra Remapper comme Assistant</string>
+    <string name="diag_dialog_assistant_body">Pour réassigner le bouton supérieur, choisissez Ultra Remapper comme assistant par défaut dans :
+
+Paramètres de la montre › Applications › Applications par défaut › Assistant numérique › Choisir Ultra Remapper</string>
 </resources>

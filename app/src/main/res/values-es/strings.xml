@@ -127,4 +127,11 @@
     <string name="flashlight_hud_sub">Toca para color • Bisel ajusta tono</string>
     <string name="hdr_top_button">Botón Superior</string>
     <string name="gesture_top_long">Mantener pulsado</string>
+
+    <string name="diag_assistant_title">Elegir como Asistente</string>
+    <string name="diag_assistant_sub">Necesario para remapear botón superior</string>
+    <string name="toast_select_assistant">Selecciona Ultra Remapper como Asistente</string>
+    <string name="diag_dialog_assistant_body">Para usar el botón superior, elige Ultra Remapper como asistente digital predeterminado en:
+
+Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › Aplicación de asistente digital › Elige Ultra Remapper</string>
 </resources>
