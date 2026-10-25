@@ -110,6 +110,21 @@ private fun hasHardwareActionButton(context: Context): Boolean = true
 
 private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
 
+private fun syncTopButtonRoute(context: Context) {
+    if (!hasSecureSettingsPermission(context)) return
+    try {
+        val topAction = Mapping.get(context, "top_long")
+        val isMasterOn = Mapping.isEnabled(context)
+        val assistantComponent = "${context.packageName}/${AppVoiceInteractionService::class.java.name}"
+
+        if (isMasterOn && topAction != "none") {
+            Settings.Global.putString(context.contentResolver, "setting_home_key_long_press", "googlevoiceassistant/googlevoiceassistant")
+            Settings.Secure.putString(context.contentResolver, "assistant", assistantComponent)
+            Settings.Secure.putString(context.contentResolver, "voice_interaction_service", assistantComponent)
+        }
+    } catch (_: Throwable) {}
+}
+
 private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boolean {
     if (!hasHardwareActionButton(context)) return true
 
@@ -270,7 +285,7 @@ class MainActivity : ComponentActivity() {
                         val observer = LifecycleEventObserver { _, event ->
                             if (event == Lifecycle.Event.ON_RESUME) {
                                 isActionButtonRouted(context)
-
+                                syncTopButtonRoute(context)
                                 setup = readSetupState(context)
                                 UpdateChecker.check(context) { info ->
                                     updateInfo = info
@@ -482,6 +497,7 @@ private fun Home(
                         isMasterEnabled = next
                         Mapping.setEnabled(context, next)
                         isActionButtonRouted(context)
+                        syncTopButtonRoute(context)
                     },
                     label = {
                         Row(

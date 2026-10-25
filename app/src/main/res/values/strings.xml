@@ -124,8 +124,7 @@
     <string name="reboot_required_title">Reboot Watch Required</string>
     <string name="reboot_required_desc">Restart your watch from the quick settings panel to restore hardware button mapping after this update.</string>
     <string name="flashlight_hud_title">RGBW Flashlight</string>
-    <string name="flashlight_hud_sub"><string name="flashlight_hud_sub">Touch &amp; slide for color wheel
-Rotate bezel for fine hue</string></string>
+    <string name="flashlight_hud_sub">Touch for color • Bezel tunes hue</string>
     <string name="hdr_top_button">Top Button (Home)</string>
     <string name="gesture_top_long">Long press (Hold)</string>
 </resources>

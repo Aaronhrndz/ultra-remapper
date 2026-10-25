@@ -114,11 +114,6 @@ class RgbwFlashlightView(
         color = Color.argb(195, 24, 26, 32)
         style = Paint.Style.FILL
     }
-    private val bannerBorderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.argb(80, 255, 255, 255)
-        style = Paint.Style.STROKE
-        strokeWidth = 2.5f
-    }
     private val bannerTextPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.WHITE
         textSize = 21f
@@ -127,7 +122,7 @@ class RgbwFlashlightView(
     }
     private val bannerSubPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.argb(220, 200, 205, 215)
-        textSize = 17f
+        textSize = 14f
         textAlign = Paint.Align.CENTER
     }
 
@@ -261,35 +256,28 @@ class RgbwFlashlightView(
 
         // 3. Introductory banner HUD (centered on watch screen)
         if (bannerAlpha > 0f) {
-            val bWidth = width * 0.82f
-            val bHeight = 110f
+            val bWidth = width * 0.90f
+            val bHeight = 88f
             val bLeft = (width - bWidth) / 2f
             val bTop = centerY - bHeight / 2f
             val rect = RectF(bLeft, bTop, bLeft + bWidth, bTop + bHeight)
 
             bannerPaint.alpha = (bannerAlpha * 210).toInt().coerceIn(0, 255)
-            bannerBorderPaint.alpha = (bannerAlpha * 90).toInt().coerceIn(0, 255)
             bannerTextPaint.alpha = (bannerAlpha * 255).toInt().coerceIn(0, 255)
             bannerSubPaint.alpha = (bannerAlpha * 230).toInt().coerceIn(0, 255)
 
-            canvas.drawRoundRect(rect, 26f, 26f, bannerPaint)
-            canvas.drawRoundRect(rect, 26f, 26f, bannerBorderPaint)
+            // Flat pill shape with no border
+            canvas.drawRoundRect(rect, 44f, 44f, bannerPaint)
 
             canvas.drawText(
                 context.getString(R.string.flashlight_hud_title),
                 centerX,
-                bTop + 32f,
+                bTop + 35f,
                 bannerTextPaint
             )
 
             val subText = context.getString(R.string.flashlight_hud_sub)
-            val lines = subText.split("\n")
-            if (lines.size > 1) {
-                canvas.drawText(lines[0], centerX, bTop + 62f, bannerSubPaint)
-                canvas.drawText(lines[1], centerX, bTop + 88f, bannerSubPaint)
-            } else {
-                canvas.drawText(subText, centerX, bTop + 68f, bannerSubPaint)
-            }
+            canvas.drawText(subText, centerX, bTop + 65f, bannerSubPaint)
         }
     }
 
