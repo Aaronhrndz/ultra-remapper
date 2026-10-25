@@ -118,9 +118,15 @@ private fun syncTopButtonRoute(context: Context) {
         val assistantComponent = "${context.packageName}/${AppVoiceInteractionService::class.java.name}"
 
         if (isMasterOn && topAction != "none") {
-            Settings.Global.putString(context.contentResolver, "setting_home_key_long_press", "googlevoiceassistant/googlevoiceassistant")
-            Settings.Secure.putString(context.contentResolver, "assistant", assistantComponent)
-            Settings.Secure.putString(context.contentResolver, "voice_interaction_service", assistantComponent)
+            // Only force setting_home_key_long_press if Ultra Remapper is already the active assistant,
+            // or if the assistant wasn't explicitly changed to another provider by the user.
+            // If the user deliberately changed assistant in system settings, do not overwrite it silently.
+            val currentAssistant = Settings.Secure.getString(context.contentResolver, "voice_interaction_service")
+                ?: Settings.Secure.getString(context.contentResolver, "assistant")
+            val isOurs = currentAssistant?.contains(context.packageName) == true
+            if (isOurs) {
+                Settings.Global.putString(context.contentResolver, "setting_home_key_long_press", "googlevoiceassistant/googlevoiceassistant")
+            }
         }
     } catch (_: Throwable) {}
 }
@@ -281,6 +287,7 @@ class MainActivity : ComponentActivity() {
                     var setup by remember { mutableStateOf(readSetupState(context)) }
                     var updateInfo by remember { mutableStateOf<ReleaseUpdate?>(null) }
                     var installedApps by remember { mutableStateOf<List<AppEntry>>(emptyList()) }
+                    var mappingVersion by remember { mutableStateOf(0) }
 
                     LaunchedEffect(Unit) {
                         UpdateChecker.check(context) { info ->
@@ -343,6 +350,7 @@ class MainActivity : ComponentActivity() {
                             Home(
                                 setup = setup,
                                 updateInfo = updateInfo,
+                                mappingVersion = mappingVersion,
                                 onOpenUpdateDetails = {
                                     nav.navigate("update_details")
                                 },
@@ -409,6 +417,8 @@ class MainActivity : ComponentActivity() {
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
                                     isActionButtonRouted(context)
+                                    syncTopButtonRoute(context)
+                                    mappingVersion++
                                     nav.popBackStack()
                                 }
                             )
@@ -421,6 +431,8 @@ class MainActivity : ComponentActivity() {
                                 onSelect = { action ->
                                     Mapping.set(context, gesture, action)
                                     isActionButtonRouted(context)
+                                    syncTopButtonRoute(context)
+                                    mappingVersion++
                                     nav.popBackStack("home", inclusive = false)
                                 }
                             )
@@ -437,6 +449,7 @@ class MainActivity : ComponentActivity() {
 private fun Home(
     setup: SetupState,
     updateInfo: ReleaseUpdate?,
+    mappingVersion: Int,
     onOpenUpdateDetails: () -> Unit,
     onOpenA11ySettings: () -> Unit,
     onOpenAppInfo: () -> Unit,
@@ -466,19 +479,19 @@ private fun Home(
         secondaryContentColor = Color(0xFF9EA7B8)
     )
 
-    val actionRows = remember {
+    val actionRows = remember(mappingVersion) {
         Mapping.actionGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
             Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
         }
     }
-    val topRows = remember {
+    val topRows = remember(mappingVersion) {
         Mapping.topGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
             Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
         }
     }
-    val bottomRows = remember {
+    val bottomRows = remember(mappingVersion) {
         Mapping.bottomGestures.map { (gesture, nameRes) ->
             val act = Mapping.get(context, gesture)
             Triple(gesture, context.getString(nameRes), act to Mapping.label(context, act))
@@ -488,6 +501,8 @@ private fun Home(
     val allConfiguredActions = remember(actionRows, bottomRows, topRows) {
         (actionRows.map { it.third.first } + bottomRows.map { it.third.first } + topRows.map { it.third.first }).toSet()
     }
+
+    var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
 
     val needsA11y = remember(allConfiguredActions, bottomRows) {
         bottomRows.any { it.third.first != "none" } || allConfiguredActions.contains("flashlight")
@@ -502,8 +517,8 @@ private fun Home(
     val needsOverlay = remember(allConfiguredActions) {
         allConfiguredActions.contains("red_flashlight")
     }
-    val needsAssistant = remember(allConfiguredActions, topRows) {
-        topRows.any { it.third.first != "none" }
+    val needsAssistant = remember(allConfiguredActions, topRows, isMasterEnabled) {
+        isMasterEnabled && topRows.any { it.third.first != "none" }
     }
 
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
@@ -514,7 +529,6 @@ private fun Home(
             (!setup.isAssistant && needsAssistant)
 
     ScreenScaffold(scrollState = columnState) { _ ->
-        var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
         var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
         var isTopExpanded by remember { mutableStateOf(true) }
         var isActionExpanded by remember { mutableStateOf(true) }
