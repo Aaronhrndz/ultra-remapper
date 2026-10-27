@@ -96,6 +96,35 @@ object HapticFeedbackHelper {
         }
     }
 
+    /**
+     * Vibración suave, discreta y simple (un solo tick ligero) para eventos de UI
+     * como colapsar/descolapsar tarjetas sin la fuerza del muelle mecánico de los botones.
+     */
+    fun playUiTap(context: Context) {
+        if (!Mapping.isHapticFeedbackEnabled(context)) return
+        try {
+            val vibrator = getVibrator(context) ?: return
+            if (!vibrator.hasVibrator()) return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator.areAllPrimitivesSupported(VibrationEffect.Composition.PRIMITIVE_CLICK)) {
+                val comp = VibrationEffect.startComposition()
+                    .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 0.4f)
+                vibrator.vibrate(comp.compose())
+                return
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                vibrator.vibrate(VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK))
+                return
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(12, 80))
+                return
+            }
+            @Suppress("DEPRECATION")
+            vibrator.vibrate(12L)
+        } catch (_: Throwable) {}
+    }
+
     private fun getVibrator(context: Context): Vibrator? {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager

@@ -142,7 +142,7 @@ private fun syncSamsungRoutes(context: Context) {
 
         // 3. Toc-toc (Wrist Knock gesture)
         val toctocAction = Mapping.get(context, "toctoc")
-        val toctocTarget = "${context.packageName}/${MainActivity::class.java.name}"
+        val toctocTarget = "${context.packageName}/${TocTocTrampolineActivity::class.java.name}"
         if (isMasterOn && toctocAction != "none") {
             Settings.Global.putString(context.contentResolver, "setting_gesture_launch_on", "1")
             Settings.Global.putString(context.contentResolver, "setting_gesture_launch_app", toctocTarget)
@@ -199,7 +199,7 @@ private fun isTocTocConfigured(context: Context): Boolean {
         val launchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
         val selectedApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_selected_app")
         val launchOn = Settings.Global.getInt(context.contentResolver, "setting_gesture_launch_on", 0)
-        val expected = "${context.packageName}/${MainActivity::class.java.name}"
+        val expected = "${context.packageName}/${TocTocTrampolineActivity::class.java.name}"
         launchOn == 1 && (launchApp == expected || selectedApp == expected || launchApp?.contains(context.packageName) == true)
     } catch (_: Throwable) {
         false
@@ -339,18 +339,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         val targetDestination = intent?.getStringExtra("open_destination") ?: "home"
-        val isExplicitTocToc = intent?.getBooleanExtra("from_toctoc", false) == true ||
-                intent?.action == "com.samsung.android.motion.GESTURE_ACTION" ||
-                intent?.categories?.contains("com.samsung.android.category.GESTURE") == true
-        // Samsung SysUI QuickLauncher launches apps via getLaunchIntentForPackage + setComponent:
-        // Action: ACTION_MAIN, Category: LAUNCHER, sourceBounds: null, flags: NEW_TASK (no history flag)
-        val isQuickLauncherGesture = (intent?.flags?.and(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 &&
-                intent?.action == Intent.ACTION_MAIN &&
-                intent?.categories?.contains(Intent.CATEGORY_LAUNCHER) == true &&
-                intent?.sourceBounds == null &&
-                (intent?.extras == null || intent?.extras?.isEmpty == true))
-        val fromTocToc = isExplicitTocToc || isQuickLauncherGesture
-        if (fromTocToc) {
+        if (intent?.getBooleanExtra("from_toctoc", false) == true) {
             val toctocAct = Mapping.get(this, "toctoc")
             if (Mapping.isEnabled(this) && toctocAct != "none") {
                 Mapping.perform(this, "toctoc", backToHome = true)
@@ -993,7 +982,7 @@ private fun Home(
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 isTopExpanded = !isTopExpanded
-                                HapticFeedbackHelper.playButtonHaptic(context)
+                                HapticFeedbackHelper.playUiTap(context)
                             }
                             .padding(horizontal = 6.dp, vertical = 6.dp)
                     ) {
@@ -1058,7 +1047,7 @@ private fun Home(
                                 .clip(RoundedCornerShape(12.dp))
                                 .clickable {
                                     isActionExpanded = !isActionExpanded
-                                    HapticFeedbackHelper.playButtonHaptic(context)
+                                    HapticFeedbackHelper.playUiTap(context)
                                 }
                                 .padding(horizontal = 6.dp, vertical = 6.dp)
                         ) {
@@ -1137,7 +1126,7 @@ private fun Home(
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 isBottomExpanded = !isBottomExpanded
-                                HapticFeedbackHelper.playButtonHaptic(context)
+                                HapticFeedbackHelper.playUiTap(context)
                             }
                             .padding(horizontal = 6.dp, vertical = 6.dp)
                     ) {
@@ -1201,7 +1190,7 @@ private fun Home(
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 isGesturesExpanded = !isGesturesExpanded
-                                HapticFeedbackHelper.playButtonHaptic(context)
+                                HapticFeedbackHelper.playUiTap(context)
                             }
                             .padding(horizontal = 6.dp, vertical = 6.dp)
                     ) {
