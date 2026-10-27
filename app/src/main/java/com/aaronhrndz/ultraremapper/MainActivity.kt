@@ -148,7 +148,7 @@ private fun syncSamsungRoutes(context: Context) {
             Settings.Global.putString(
                 context.contentResolver,
                 "setting_gesture_launch_selected_app",
-                "${context.packageName}/${TocTocTrampolineActivity::class.java.name}"
+                "${context.packageName}/${MainActivity::class.java.name}"
             )
         } else if (!isMasterOn || toctocAction == "none") {
             val currentLaunchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
@@ -341,9 +341,15 @@ class MainActivity : ComponentActivity() {
             }
         }
         val targetDestination = intent?.getStringExtra("open_destination") ?: "home"
-        val fromTocToc = intent?.getBooleanExtra("from_toctoc", false) == true ||
+        val isExplicitTocToc = intent?.getBooleanExtra("from_toctoc", false) == true ||
                 intent?.action == "com.samsung.android.motion.GESTURE_ACTION" ||
                 intent?.categories?.contains("com.samsung.android.category.GESTURE") == true
+        val isQuickLauncherGesture = (intent?.flags?.and(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0 &&
+                intent?.action == Intent.ACTION_MAIN &&
+                intent?.categories?.contains(Intent.CATEGORY_LAUNCHER) == true &&
+                intent?.sourceBounds == null &&
+                intent?.extras == null)
+        val fromTocToc = isExplicitTocToc || isQuickLauncherGesture
         if (fromTocToc) {
             val toctocAct = Mapping.get(this, "toctoc")
             if (Mapping.isEnabled(this) && toctocAct != "none") {
