@@ -1068,8 +1068,7 @@ private fun Home(
                             CollapseChevron(isExpanded = isActionExpanded)
                         }
 
-                        val hasShealthMapped = allConfiguredActions.contains("shealth_workout")
-                        if (hasShealthMapped && isActionExpanded) {
+                        if (isActionExpanded) {
                             Text(
                                 text = context.getString(R.string.hdr_center_button_note),
                                 color = Color(0xFF9EA7B8),
@@ -1148,6 +1147,16 @@ private fun Home(
                     }
 
                     if (isBottomExpanded) {
+                        Text(
+                            text = context.getString(R.string.hdr_center_button_note),
+                            color = Color(0xFF9EA7B8),
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 6.dp, vertical = 4.dp)
+                        )
                         Spacer(modifier = Modifier.height(6.dp))
                         bottomRows.forEachIndexed { idx, (gesture, name, actPair) ->
                             if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
