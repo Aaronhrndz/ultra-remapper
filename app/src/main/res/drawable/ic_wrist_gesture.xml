@@ -1,29 +1,40 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="38dp"
-    android:height="38dp"
-    android:viewportWidth="24"
-    android:viewportHeight="24">
-  <!-- Dynamic wave trails (wrist motion) -->
-  <path
-      android:strokeColor="#FFFC5C00"
-      android:strokeWidth="1.8"
-      android:strokeLineCap="round"
-      android:pathData="M 18.5,5 C 21.5,8 21.5,13 18.5,16" />
-  <path
-      android:strokeColor="#FFFC5C00"
-      android:strokeWidth="1.8"
-      android:strokeLineCap="round"
-      android:pathData="M 21.5,3 C 25.5,7.5 25.5,14.5 21.5,19" />
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
 
-  <!-- Hand shaking motion / palm outline -->
-  <path
-      android:fillColor="#FFFFFFFF"
-      android:pathData="M13.5,9.5 C13.5,8.12 12.38,7 11,7 C10.6,7 10.23,7.09 9.9,7.26 C9.66,6.52 8.98,6 8.16,6 C7.55,6 7.02,6.3 6.72,6.77 C6.46,6.6 6.15,6.5 5.81,6.5 C4.71,6.5 3.81,7.4 3.81,8.5 L3.81,13.5 C3.81,16.54 6.27,19 9.31,19 C12.35,19 14.81,16.54 14.81,13.5 L14.81,10.81 C14.42,10.62 13.98,10.5 13.5,10.5 Z" />
-  
-  <!-- Motion swipe accent arc -->
-  <path
-      android:strokeColor="#FFFC5C00"
-      android:strokeWidth="1.5"
-      android:strokeLineCap="round"
-      android:pathData="M 2,12 C 2,16 5,20 9,21" />
+    <!-- Watch body on wrist -->
+    <path
+        android:fillColor="#3A404C"
+        android:pathData="M 19,34 L 31,34 C 32,34 33,35 33,36 L 33,42 C 33,43 32,44 31,44 L 19,44 C 18,44 17,43 17,42 L 17,36 C 17,35 18,34 19,34 Z" />
+    <path
+        android:fillColor="#FF5500"
+        android:pathData="M 21,36 L 29,36 C 29.5,36 30,36.5 30,37 L 30,41 C 30,41.5 29.5,42 29,42 L 21,42 C 20.5,42 20,41.5 20,41 L 20,37 C 20,36.5 20.5,36 21,36 Z" />
+
+    <!-- Open Hand / Wrist gesture tilted silhouette -->
+    <!-- Wrist leading up into hand -->
+    <path
+        android:fillColor="#E1E4EA"
+        android:pathData="M 18,34 L 18,25 C 16.5,24 15,22 15,20 L 15,14 C 15,12.9 15.9,12 17,12 C 18.1,12 19,12.9 19,14 L 19,18 L 20,18 L 20,9 C 20,7.9 20.9,7 22,7 C 23.1,7 24,7.9 24,9 L 24,18 L 25,18 L 25,10 C 25,8.9 25.9,8 27,8 C 28.1,8 29,8.9 29,10 L 29,19 L 30,19 L 30,13 C 30,11.9 30.9,11 32,11 C 33.1,11 34,11.9 34,13 L 34,23 C 34,28 30,34 25,34 Z" />
+
+    <!-- Motion wave arcs indicating wrist knock / shake vibration -->
+    <path
+        android:strokeColor="#FF5500"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 37,12 C 40,16 40,24 37,28" />
+
+    <path
+        android:strokeColor="#FF5500"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 42,9 C 46,15 46,26 42,32" />
+
+    <path
+        android:strokeColor="#FF5500"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M 11,14 C 9,18 9,23 11,26" />
+
 </vector>

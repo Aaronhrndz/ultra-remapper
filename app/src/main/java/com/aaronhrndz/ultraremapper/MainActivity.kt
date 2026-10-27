@@ -200,8 +200,9 @@ private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boo
 private fun isTocTocConfigured(context: Context): Boolean {
     return try {
         val launchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
+        val selectedApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_selected_app")
         val launchOn = Settings.Global.getInt(context.contentResolver, "setting_gesture_launch_on", 0)
-        launchOn == 1 && launchApp?.contains(context.packageName) == true
+        launchOn == 1 && (launchApp?.contains(context.packageName) == true || selectedApp?.contains(context.packageName) == true)
     } catch (_: Throwable) {
         false
     }
@@ -340,7 +341,10 @@ class MainActivity : ComponentActivity() {
             }
         }
         val targetDestination = intent?.getStringExtra("open_destination") ?: "home"
-        if (intent?.getBooleanExtra("from_toctoc", false) == true) {
+        val fromTocToc = intent?.getBooleanExtra("from_toctoc", false) == true ||
+                intent?.action == "com.samsung.android.motion.GESTURE_ACTION" ||
+                intent?.categories?.contains("com.samsung.android.category.GESTURE") == true
+        if (fromTocToc) {
             val toctocAct = Mapping.get(this, "toctoc")
             if (Mapping.isEnabled(this) && toctocAct != "none") {
                 Mapping.perform(this, "toctoc", backToHome = true)

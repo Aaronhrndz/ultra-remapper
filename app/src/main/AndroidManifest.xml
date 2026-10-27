@@ -95,12 +95,7 @@
             android:launchMode="singleInstance"
             android:taskAffinity="com.aaronhrndz.ultraremapper.toctoc"
             android:noHistory="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <service
             android:name=".AppVoiceInteractionService"
