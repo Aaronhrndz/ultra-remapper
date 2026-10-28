@@ -331,8 +331,18 @@ class BottomButtonService : AccessibilityService() {
      * Tap cycle: normal â†’ max â†’ boost (supported) | blink strobe (unsupported).
      */
     private fun isFlashlightBoostSupported(): Boolean {
-        val device = android.os.Build.DEVICE ?: return false
-        if (device.contains("projectx2")) return true
+        val device = (android.os.Build.DEVICE ?: "").lowercase()
+        val model = (android.os.Build.MODEL ?: "").lowercase()
+        val product = (android.os.Build.PRODUCT ?: "").lowercase()
+
+        // Ultra 1 & Ultra 2 codenames and hardware model numbers
+        if (device.contains("projectx2") || device.contains("projectv2") ||
+            device.contains("l70") || model.contains("l70") || product.contains("l70") ||
+            model.contains("ultra") || product.contains("ultra")
+        ) {
+            return true
+        }
+
         val m = Regex("(?i)(wise|fresh)(\\d+)").find(device) ?: return false
         return (m.groupValues[2].toIntOrNull() ?: 0) >= 8
     }
