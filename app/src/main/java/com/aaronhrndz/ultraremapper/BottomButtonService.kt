@@ -1,4 +1,4 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
@@ -287,7 +287,7 @@ class BottomButtonService : AccessibilityService() {
                 isFlashlightWindowActive = true
                 if (pendingBoostFromAction) {
                     pendingBoostFromAction = false
-                    scheduleBoostTaps(1150L, 1290L)
+                    scheduleBoostTaps(1250L, 1500L)
                 }
             } else if (pendingWirelessAdbAutoToggle) {
                 tapHandler.removeCallbacksAndMessages(null)
@@ -320,15 +320,22 @@ class BottomButtonService : AccessibilityService() {
         val cx = dm.widthPixels / 2f
         val cy = dm.heightPixels / 2f
         val path = Path().apply { moveTo(cx, cy) }
-        val stroke = GestureDescription.StrokeDescription(path, 0L, 40L)
+        val stroke = GestureDescription.StrokeDescription(path, 0L, 60L)
         val gesture = GestureDescription.Builder().addStroke(stroke).build()
         dispatchGesture(gesture, null, null)
+
+        // Parallel trigger: send update_flashlight_mode broadcast directly to Samsung FlashLight receiver
+        try {
+            val bIntent = android.content.Intent("update_flashlight_mode")
+                .setPackage("com.samsung.android.watch.flashlight")
+            sendBroadcast(bIntent)
+        } catch (_: Exception) {}
     }
 
     /**
      * Mirrors Samsung FlashLight `isBoostModeSupportedDevice()`:
      * Build.DEVICE contains "projectx2" (Ultra) or matches (wise|fresh)N with N >= 8.
-     * Tap cycle: normal â†’ max â†’ boost (supported) | blink strobe (unsupported).
+     * Tap cycle: normal → max → boost (supported) | blink strobe (unsupported).
      */
     private fun isFlashlightBoostSupported(): Boolean {
         val device = (android.os.Build.DEVICE ?: "").lowercase()
@@ -356,13 +363,17 @@ class BottomButtonService : AccessibilityService() {
         tapHandler.postDelayed({
             if (isSamsungFlashlightOnScreen()) tapCenter()
         }, secondDelayMs)
+        // Extra retry at +300ms in case first tap arrived during initial animation transition
+        tapHandler.postDelayed({
+            if (isSamsungFlashlightOnScreen()) tapCenter()
+        }, secondDelayMs + 300L)
     }
 
     fun tapBoostOnOpen() {
         setWindowTrackingEnabled(true)
         pendingBoostFromAction = true
         // Fallback timer if TYPE_WINDOW_STATE_CHANGED arrived before serviceInfo updated
-        scheduleBoostTaps(1400L, 1540L)
+        scheduleBoostTaps(1450L, 1700L)
     }
 
     fun autoToggleWirelessAdb() {
