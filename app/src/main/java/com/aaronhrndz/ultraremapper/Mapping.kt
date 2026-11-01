@@ -236,18 +236,20 @@ object Mapping {
 
     fun triggerRecents(context: Context) {
         val appCtx = context.applicationContext
-        try {
-            val intent = Intent(Intent.ACTION_MAIN).apply {
-                component = ComponentName(
-                    "com.samsung.android.apps.wearable.recent",
-                    "com.samsung.android.apps.wearable.recent.RecentActivityAlias"
-                )
-                addCategory(Intent.CATEGORY_LAUNCHER)
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
-            appCtx.startActivity(intent)
-            return
-        } catch (_: Throwable) {}
+        val activities = listOf(
+            "com.samsung.android.clockwork.recent.activity.RecentActivity",
+            "com.samsung.android.apps.wearable.recent.RecentActivityAlias"
+        )
+        for (cls in activities) {
+            try {
+                val intent = Intent(Intent.ACTION_MAIN).apply {
+                    component = ComponentName("com.samsung.android.apps.wearable.recent", cls)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                }
+                appCtx.startActivity(intent)
+                return
+            } catch (_: Throwable) {}
+        }
 
         val svc = BottomButtonService.instance
         if (svc != null) {
