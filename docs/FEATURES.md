@@ -23,7 +23,7 @@ Detailed breakdown of all features, capabilities, and actions supported by Ultra
 - **Pick Quick Workout**: Native exercise picker selector (`ExerciseActionButtonSelectionActivity`).
 
 ### Samsung Native Functions
-- **Flashlight (Boost)**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **Boost (maximum) brightness** (`level 12` on Ultra / supported models), and toggles off cleanly on repeat press. Zero idle battery impact.
+- **Flashlight**: Opens Samsung's official Wear OS Flashlight (`com.samsung.android.watch.flashlight`), verifies active foreground window, steps up to **hardware maximum brightness** (including **Boost / level 12** on Galaxy Watch Ultra models), and toggles off cleanly on repeat press. Zero idle battery impact.
 - **Find My Phone**: Rings your paired phone via Samsung Find or Google Find My Device.
 - **Stopwatch**: Launches Samsung Stopwatch (`com.samsung.android.watch.stopwatch`).
 - **Water Lock**: Activates Samsung's native Water Lock mode (`StWaterLockSettingActivity`).

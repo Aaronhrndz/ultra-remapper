@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Hardware Button Remapper for Samsung Galaxy Watch Ultra, Ultra 2, Watch 8 Classic & Wear OS Watches</b><br/>
-  <sub>Dynamic Hardware Detection Â· Quick Button & Bottom Button Mapping Â· Samsung Flashlight Boost Â· Samsung Health Workouts & Favorites Â· Standalone OTA</sub>
+  <sub>Dynamic Hardware Detection · Quick Button & Bottom Button Mapping · Samsung Flashlight (Auto-Max / Boost) · Samsung Health Workouts & Favorites · Standalone OTA</sub>
 </p>
 
 <p align="center">
@@ -35,7 +35,7 @@
 ## Capabilities Overview
 
 - **Physical Button Remapping**: Independent single, double, and long press customization for the **Quick / Center Button** (Galaxy Watch Ultra, Watch 8 Classic), **Bottom (Back) Button**, and **Top (Home) Button** (Hold) across Wear OS Samsung watches.
-- **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic Boost to max brightness), Stopwatch, Water Lock, and Digital Assistant.
+- **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic hardware Max/Boost), Stopwatch, Water Lock, and Digital Assistant.
 - **Smart Utilities**: One-click Wireless ADB toggle, GPS parking saver & walking navigation, water eject speaker sweep, Glove Mode, LTE toggle, and tactical red flashlight.
 - **Phone Media Controls**: Wrist-based media playback and volume control bridging local and phone sessions (Spotify, YouTube, KDE Connect).
 - **Autonomous In-Watch OTA**: Background release checks with in-watch installer and live progress bar — no PC or phone app required for updates.

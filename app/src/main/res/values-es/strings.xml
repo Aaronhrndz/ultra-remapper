@@ -67,7 +67,7 @@
     <string name="hint_workout_laps">⚠️ Para vueltas (laps), asigna pulsación simple a Mis entrenamientos</string>
 
     <!-- Samsung Actions -->
-    <string name="action_flashlight">Linterna (Boost)</string>
+    <string name="action_flashlight">Linterna</string>
     <string name="action_shealth_workout">Mis entrenamientos</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
     <string name="action_stopwatch">Cronómetro</string>

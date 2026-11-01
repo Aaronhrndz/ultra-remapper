@@ -17,7 +17,7 @@ Complete matrix detailing the permissions, elevation methods, and ADB configurat
 | **Utilities** | Do Not Disturb | `ACCESS_NOTIFICATION_POLICY` | ADB Listener or In-App prompt | Covered by notification listener / in-app grant |
 | **Utilities** | Red Flashlight (Max) | None | None | Launches full-screen composable light (no extra permissions needed) |
 | **Utilities** | Water Eject Speaker | `MODIFY_AUDIO_SETTINGS` | Auto-granted | Plays synthesized acoustic sweep at max stream volume |
-| **Samsung** | Flashlight (Boost brightness) | `ACCESSIBILITY` | (Already covered by Bottom Button) | Monitors foreground window to step up brightness to level 12 |
+| **Samsung** | Flashlight | `ACCESSIBILITY` | (Already covered by Bottom Button) | Monitors foreground window to step up brightness to hardware maximum / Boost (level 12 on Ultra) |
 | **Samsung** | Stock Workout / Favorites | None | None | Triggers native `setting_action_button_press` hook directly |
 | **Samsung** | All Exercises, Route Workout | None | None | Direct package intent launch |
 | **Samsung** | Find My Phone, Stopwatch, Water Lock | None | None | Direct system intent launch |

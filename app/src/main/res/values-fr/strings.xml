@@ -54,7 +54,7 @@
 
     <string name="hint_workout_laps">⚠️ Les tours (laps) nécessitent le clic simple sur Mes entraînements</string>
 
-    <string name="action_flashlight">Lampe torche (Boost)</string>
+    <string name="action_flashlight">Lampe torche</string>
     <string name="action_shealth_workout">Mes entraînements</string>
     <string name="action_shealth_route">Mode Itinéraire (Samsung Health)</string>
     <string name="action_stopwatch">Chronomètre</string>

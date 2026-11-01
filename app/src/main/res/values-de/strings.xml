@@ -54,7 +54,7 @@
 
     <string name="hint_workout_laps">⚠️ Runden (Laps) erfordern Einfachklick auf Meine Trainings</string>
 
-    <string name="action_flashlight">Taschenlampe (Boost)</string>
+    <string name="action_flashlight">Taschenlampe</string>
     <string name="action_shealth_workout">Meine Trainings</string>
     <string name="action_shealth_route">Routen-Modus (Samsung Health)</string>
     <string name="action_stopwatch">Stoppuhr</string>
