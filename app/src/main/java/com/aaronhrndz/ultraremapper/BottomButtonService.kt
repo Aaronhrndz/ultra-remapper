@@ -61,7 +61,17 @@ class BottomButtonService : AccessibilityService() {
             Mapping.perform(this, "bottom_single", backToHome = true)
             UpdateChecker.checkOpportunistic(applicationContext)
         } else {
-            performGlobalAction(GLOBAL_ACTION_BACK)
+            // Respect Samsung stock setting: 0 = Back, 1 = Recent apps
+            val stockSetting = try {
+                android.provider.Settings.Global.getInt(contentResolver, "setting_recent_key_short_press", 0)
+            } catch (_: Exception) {
+                0
+            }
+            if (stockSetting == 1) {
+                performGlobalAction(GLOBAL_ACTION_RECENTS)
+            } else {
+                performGlobalAction(GLOBAL_ACTION_BACK)
+            }
         }
     }
 
