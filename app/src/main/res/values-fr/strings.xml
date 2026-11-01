@@ -90,7 +90,7 @@
     <string name="toast_adb_mode_off">Écran actif : DÉSACTIVÉ</string>
     <string name="toast_lte_on">LTE et Données : ACTIVÉ</string>
     <string name="toast_lte_off">LTE et Données : DÉSACTIVÉ</string>
-    <string name="toast_write_secure_needed">Exécutez : adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_write_secure_needed">Exécutez : adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="toast_water_eject">Éjection de l’eau en cours…</string>
     <string name="toast_dnd_on">Ne pas déranger : ACTIVÉ</string>
     <string name="toast_dnd_off">Ne pas déranger : DÉSACTIVÉ</string>

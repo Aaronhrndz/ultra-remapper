@@ -55,6 +55,16 @@ class BottomButtonService : AccessibilityService() {
         } catch (_: Exception) {}
     }
 
+    private fun performSingleTapAction() {
+        val mappedAction = Mapping.get(this, "bottom_single")
+        if (mappedAction != "none") {
+            Mapping.perform(this, "bottom_single", backToHome = true)
+            UpdateChecker.checkOpportunistic(applicationContext)
+        } else {
+            performGlobalAction(GLOBAL_ACTION_BACK)
+        }
+    }
+
     private val firePendingTaps = Runnable {
         val count = tapCount
         resetGestureState()
@@ -64,7 +74,7 @@ class BottomButtonService : AccessibilityService() {
                     Mapping.perform(this, "bottom_double_tap", backToHome = true)
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
-                    performGlobalAction(GLOBAL_ACTION_BACK)
+                    performSingleTapAction()
                 }
             }
             3 -> {
@@ -72,11 +82,11 @@ class BottomButtonService : AccessibilityService() {
                     Mapping.perform(this, "bottom_triple_tap", backToHome = true)
                     UpdateChecker.checkOpportunistic(applicationContext)
                 } else {
-                    performGlobalAction(GLOBAL_ACTION_BACK)
+                    performSingleTapAction()
                 }
             }
             else -> {
-                performGlobalAction(GLOBAL_ACTION_BACK)
+                performSingleTapAction()
             }
         }
     }
@@ -182,12 +192,13 @@ class BottomButtonService : AccessibilityService() {
             return false
         }
 
+        val hasSingleTap = Mapping.get(this, "bottom_single") != "none"
         val hasDoubleTap = Mapping.get(this, "bottom_double_tap") != "none"
         val hasTripleTap = Mapping.get(this, "bottom_triple_tap") != "none"
         val hasLongPress = Mapping.get(this, "bottom_long") != "none"
 
         // If bottom button is completely unmapped ("Nada"), yield 100% to stock OS
-        if (!hasDoubleTap && !hasTripleTap && !hasLongPress) {
+        if (!hasSingleTap && !hasDoubleTap && !hasTripleTap && !hasLongPress) {
             return false
         }
 
@@ -215,7 +226,7 @@ class BottomButtonService : AccessibilityService() {
                 tapCount++
                 if (!anyMultiGesture) {
                     resetGestureState()
-                    performGlobalAction(GLOBAL_ACTION_BACK)
+                    performSingleTapAction()
                 } else {
                     if (tapCount >= 3) {
                         handler.removeCallbacks(firePendingTaps)
@@ -287,7 +298,7 @@ class BottomButtonService : AccessibilityService() {
                 isFlashlightWindowActive = true
                 if (pendingBoostFromAction) {
                     pendingBoostFromAction = false
-                    scheduleBoostTaps(1250L, 1500L)
+                    scheduleBoostTaps(1400L, 1750L)
                 }
             } else if (pendingWirelessAdbAutoToggle) {
                 tapHandler.removeCallbacksAndMessages(null)
@@ -363,17 +374,13 @@ class BottomButtonService : AccessibilityService() {
         tapHandler.postDelayed({
             if (isSamsungFlashlightOnScreen()) tapCenter()
         }, secondDelayMs)
-        // Extra retry at +300ms in case first tap arrived during initial animation transition
-        tapHandler.postDelayed({
-            if (isSamsungFlashlightOnScreen()) tapCenter()
-        }, secondDelayMs + 300L)
     }
 
     fun tapBoostOnOpen() {
         setWindowTrackingEnabled(true)
         pendingBoostFromAction = true
         // Fallback timer if TYPE_WINDOW_STATE_CHANGED arrived before serviceInfo updated
-        scheduleBoostTaps(1450L, 1700L)
+        scheduleBoostTaps(1550L, 1900L)
     }
 
     fun autoToggleWirelessAdb() {
@@ -409,14 +416,13 @@ class BottomButtonService : AccessibilityService() {
                     return
                 }
             }
-            // Fallback: search by text or clickable view
-            val list = root.findAccessibilityNodeInfosByText("Water lock")
-            if (list.isEmpty()) {
-                root.findAccessibilityNodeInfosByText("Bloqueo")
-            }
-            for (item in list) {
-                if (item.isClickable) {
-                    item.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
+            // Fallback: search by clickable toggle/button or any switch
+            val buttons = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
+            findClickableButtons(root, buttons)
+            for (btn in buttons) {
+                val className = btn.className?.toString() ?: ""
+                if (className.contains("Switch", ignoreCase = true) || className.contains("Button", ignoreCase = true)) {
+                    btn.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
                     HapticFeedbackHelper.playButtonHaptic(this)
                     pendingWaterLockAutoToggle = false
                     return

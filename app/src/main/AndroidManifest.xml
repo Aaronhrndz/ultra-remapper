@@ -5,7 +5,7 @@
     <uses-feature android:name="android.hardware.type.watch" />
 
     <!-- Exempts the app from background-activity-start blocking so the Action button can open apps.
-         Grant with: adb shell appops set com.bennybar.ultraremapper SYSTEM_ALERT_WINDOW allow -->
+         Grant with: adb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />

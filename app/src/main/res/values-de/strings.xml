@@ -90,7 +90,7 @@
     <string name="toast_adb_mode_off">Wachhalten: AUS</string>
     <string name="toast_lte_on">LTE &amp; Mobile Daten: EIN</string>
     <string name="toast_lte_off">LTE &amp; Mobile Daten: AUS</string>
-    <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.bennybar.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="toast_write_secure_needed">Befehl erforderlich: adb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="toast_water_eject">Wasser wird ausgestoßen…</string>
     <string name="toast_dnd_on">Nicht stören: EIN</string>
     <string name="toast_dnd_off">Nicht stören: AUS</string>

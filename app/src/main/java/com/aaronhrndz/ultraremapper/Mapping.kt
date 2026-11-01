@@ -28,6 +28,7 @@ object Mapping {
         "toctoc" to R.string.gesture_toctoc,
     )
     val bottomGestures = listOf(
+        "bottom_single" to R.string.gesture_single,
         "bottom_double_tap" to R.string.gesture_double,
         "bottom_triple_tap" to R.string.gesture_triple,
         "bottom_long" to R.string.gesture_long,
@@ -397,6 +398,23 @@ object Mapping {
     }
 
     private fun openMediaPlayer(context: Context, backToHome: Boolean) {
+        val intents = listOf(
+            Intent(Intent.ACTION_VIEW).apply {
+                component = ComponentName("com.samsung.android.wear.mediacontroller", "com.samsung.android.wear.mediacontroller.MainActivity")
+            },
+            Intent(Intent.ACTION_MAIN).apply {
+                component = ComponentName("com.samsung.android.wear.mediacontroller", "com.samsung.android.wear.mediacontroller.MainActivity")
+            },
+            Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_MUSIC)
+        )
+        for (intent in intents) {
+            try {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                if (backToHome) intent.addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
+                context.startActivity(intent)
+                return
+            } catch (_: Exception) {}
+        }
         val pkgs = listOf(
             "com.samsung.android.wear.mediacontroller",
             "com.google.android.wearable.media.sessions"
