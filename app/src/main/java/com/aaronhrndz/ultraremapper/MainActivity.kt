@@ -618,10 +618,10 @@ private fun Home(
 
     ScreenScaffold(scrollState = columnState) { _ ->
         var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
-        var isTopExpanded by remember { mutableStateOf(true) }
-        var isActionExpanded by remember { mutableStateOf(true) }
-        var isBottomExpanded by remember { mutableStateOf(true) }
-        var isGesturesExpanded by remember { mutableStateOf(true) }
+        var isTopExpanded by remember { mutableStateOf(false) }
+        var isActionExpanded by remember { mutableStateOf(false) }
+        var isBottomExpanded by remember { mutableStateOf(false) }
+        var isGesturesExpanded by remember { mutableStateOf(false) }
 
         TransformingLazyColumn(
             state = columnState,

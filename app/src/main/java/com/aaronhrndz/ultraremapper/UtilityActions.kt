@@ -1,8 +1,9 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
 import android.annotation.SuppressLint
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.location.Criteria
@@ -290,11 +291,23 @@ object UtilityActions {
         val current = try {
             Settings.System.getInt(appCtx.contentResolver, "setting_touch_sensitivity_on", 0)
         } catch (_: Exception) {
-            0
+            try {
+                Settings.Secure.getInt(appCtx.contentResolver, "setting_touch_sensitivity_on", 0)
+            } catch (_: Exception) { 0 }
         }
         val target = if (current == 1) 0 else 1
+
+        // 1. Try direct write if privileged or system
+        var written = false
         try {
             Settings.System.putInt(appCtx.contentResolver, "setting_touch_sensitivity_on", target)
+            written = true
+        } catch (_: Exception) {}
+
+        if (written) {
+            try {
+                Settings.Secure.putInt(appCtx.contentResolver, "setting_touch_sensitivity_on", target)
+            } catch (_: Exception) {}
             if (target == 1) {
                 vibrateDouble(appCtx)
                 Toast.makeText(appCtx, appCtx.getString(R.string.toast_glove_mode_on), Toast.LENGTH_SHORT).show()
@@ -302,7 +315,29 @@ object UtilityActions {
                 vibrateSingle(appCtx)
                 Toast.makeText(appCtx, appCtx.getString(R.string.toast_glove_mode_off), Toast.LENGTH_SHORT).show()
             }
-        } catch (_: Exception) {
+            return
+        }
+
+        // 2. Automated toggle via AccessibilityService & Display Settings (bypasses Android 14 SettingsProvider restriction)
+        try {
+            BottomButtonService.instance?.autoToggleGloveMode()
+            val displayIntent = Intent().apply {
+                component = ComponentName(
+                    "com.google.android.apps.wearable.settings",
+                    "com.samsung.android.clockwork.settings.display.StDisplaySettingWrapperActivity"
+                )
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            appCtx.startActivity(displayIntent)
+            if (target == 1) {
+                vibrateDouble(appCtx)
+                Toast.makeText(appCtx, appCtx.getString(R.string.toast_glove_mode_on), Toast.LENGTH_SHORT).show()
+            } else {
+                vibrateSingle(appCtx)
+                Toast.makeText(appCtx, appCtx.getString(R.string.toast_glove_mode_off), Toast.LENGTH_SHORT).show()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("UltraRemapper", "toggleTouchSensitivity automation error: ${e.message}", e)
             Toast.makeText(appCtx, appCtx.getString(R.string.toast_write_secure_needed), Toast.LENGTH_LONG).show()
         }
     }
