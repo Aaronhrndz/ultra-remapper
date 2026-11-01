@@ -1,0 +1,77 @@
+name: Bug report
+description: Create a report to help us improve Ultra Remapper
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill out this form completely. Reports missing required device/version info will be closed.
+
+  - type: input
+    id: watch_model
+    attributes:
+      label: Galaxy Watch Model & Hardware
+      description: Exact model number (e.g. Galaxy Watch Ultra SM-L700, Ultra 2 LTE SM-L715F, Watch 6 Classic SM-R960).
+      placeholder: "e.g. Galaxy Watch Ultra 2 (SM-L715F)"
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: Ultra Remapper Version
+      description: Found at the bottom of the app settings screen (e.g. 1.6.13).
+      placeholder: "e.g. 1.6.13"
+    validations:
+      required: true
+
+  - type: input
+    id: wearos_version
+    attributes:
+      label: Wear OS / One UI Watch Version
+      description: Watch Settings -> About watch -> Software info (e.g. One UI 6.0 Watch / Wear OS 5.0).
+      placeholder: "e.g. One UI 6.0 Watch / Wear OS 5.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: permissions_granted
+    attributes:
+      label: Have you granted the required ADB permissions?
+      description: Select which ADB commands have been executed on this watch.
+      options:
+        - "Yes: All permissions (Action hook, Accessibility, Overlay, Whitelist, Secure Settings)"
+        - "Partial: Only Accessibility & Action Button"
+        - "None / Sideload only"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the Bug
+      description: Clear and concise description of what the issue is.
+      placeholder: "What went wrong?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction_steps
+    attributes:
+      label: Steps to Reproduce
+      description: Step-by-step instructions on how to trigger the issue.
+      placeholder: |
+        1. Map '...' to button '...'
+        2. Press button
+        3. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: Expected Behavior
+      description: What did you expect to happen instead?
+    validations:
+      required: true

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Community Questions & Discussions
+    url: https://github.com/Aaronhrndz/ultra-remapper/discussions
+    about: Please ask setup questions and share ideas in Discussions instead of opening an issue.
