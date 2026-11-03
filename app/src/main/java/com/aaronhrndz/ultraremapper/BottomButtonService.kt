@@ -387,12 +387,26 @@ class BottomButtonService : AccessibilityService() {
 
     private fun scheduleBoostTaps(firstDelayMs: Long, secondDelayMs: Long) {
         tapHandler.removeCallbacksAndMessages(null)
-        tapHandler.postDelayed({
-            if (isSamsungFlashlightOnScreen()) tapCenter()
+        tapHandler.postDelayed(object : Runnable {
+            var attempts = 0
+            override fun run() {
+                if (isSamsungFlashlightOnScreen()) {
+                    tapCenter()
+                } else if (attempts++ < 8) {
+                    tapHandler.postDelayed(this, 120L)
+                }
+            }
         }, firstDelayMs)
         if (!isFlashlightBoostSupported()) return
-        tapHandler.postDelayed({
-            if (isSamsungFlashlightOnScreen()) tapCenter()
+        tapHandler.postDelayed(object : Runnable {
+            var attempts = 0
+            override fun run() {
+                if (isSamsungFlashlightOnScreen()) {
+                    tapCenter()
+                } else if (attempts++ < 8) {
+                    tapHandler.postDelayed(this, 120L)
+                }
+            }
         }, secondDelayMs)
     }
 
