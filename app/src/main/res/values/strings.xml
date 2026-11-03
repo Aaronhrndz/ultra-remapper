@@ -141,4 +141,17 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="diag_toctoc_title">Configure Toc toc gesture</string>
     <string name="diag_toctoc_sub">Select Ultra Remapper in Toc toc settings</string>
     <string name="toast_select_toctoc">Select Ultra Remapper under Applications</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_subtitle">Permissions, ADB &amp; System</string>
+    <string name="settings_permissions_title">System Permissions</string>
+    <string name="settings_permissions_subtitle">Click to grant via local ADB</string>
+    <string name="settings_adb_section">Local ADB &amp; Features</string>
+    <string name="settings_adb_status_connected">ADB: Connected (Localhost)</string>
+    <string name="settings_adb_status_disconnected">ADB: Disconnected</string>
+    <string name="settings_adb_wizard_button">Local ADB Pairing Wizard</string>
+    <string name="settings_adb_wizard_desc">Pair watch to itself without computer</string>
+    <string name="settings_samsung_pay_title">Samsung Pay</string>
+    <string name="settings_samsung_pay_enabled">Active (Long press bottom button)</string>
+    <string name="settings_samsung_pay_disabled">Frozen (Disabled via ADB)</string>
+    <string name="grant_button_label">Grant</string>
 </resources>

@@ -115,4 +115,17 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="diag_toctoc_title">Anklopfen konfigurieren</string>
     <string name="diag_toctoc_sub">Ultra Remapper in Anklopfen-Einstellungen wählen</string>
     <string name="toast_select_toctoc">Ultra Remapper unter Apps auswählen</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_subtitle">Berechtigungen, ADB &amp; System</string>
+    <string name="settings_permissions_title">Systemberechtigungen</string>
+    <string name="settings_permissions_subtitle">Tippen, um per lokalem ADB zu erteilen</string>
+    <string name="settings_adb_section">Lokales ADB &amp; Optionen</string>
+    <string name="settings_adb_status_connected">ADB: Verbunden (Localhost)</string>
+    <string name="settings_adb_status_disconnected">ADB: Getrennt</string>
+    <string name="settings_adb_wizard_button">Lokaler ADB-Kopplungs-Assistent</string>
+    <string name="settings_adb_wizard_desc">Uhr ohne PC mit sich selbst koppeln</string>
+    <string name="settings_samsung_pay_title">Samsung Pay</string>
+    <string name="settings_samsung_pay_enabled">Aktiv (Langes Drücken unten)</string>
+    <string name="settings_samsung_pay_disabled">Eingefroren (Deaktiviert per ADB)</string>
+    <string name="grant_button_label">Erteilen</string>
 </resources>

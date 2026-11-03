@@ -115,4 +115,17 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="diag_toctoc_title">Configurer geste Toc toc</string>
     <string name="diag_toctoc_sub">Choisir Ultra Remapper dans réglages Toc toc</string>
     <string name="toast_select_toctoc">Sélectionner Ultra Remapper sous Applications</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_subtitle">Autorisations, ADB et Système</string>
+    <string name="settings_permissions_title">Autorisations du Système</string>
+    <string name="settings_permissions_subtitle">Toucher pour accorder via ADB local</string>
+    <string name="settings_adb_section">ADB Local et Options</string>
+    <string name="settings_adb_status_connected">ADB : Connecté (Localhost)</string>
+    <string name="settings_adb_status_disconnected">ADB : Déconnecté</string>
+    <string name="settings_adb_wizard_button">Assistant de Jumelage ADB Local</string>
+    <string name="settings_adb_wizard_desc">Jumeler la montre à elle-même sans PC</string>
+    <string name="settings_samsung_pay_title">Samsung Pay</string>
+    <string name="settings_samsung_pay_enabled">Actif (Pression longue bouton bas)</string>
+    <string name="settings_samsung_pay_disabled">Gelé (Désactivé via ADB)</string>
+    <string name="grant_button_label">Accorder</string>
 </resources>

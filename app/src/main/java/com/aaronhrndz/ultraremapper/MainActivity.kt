@@ -1,6 +1,9 @@
 package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
+import com.aaronhrndz.ultraremapper.adb.LocalAdbClient
+import com.aaronhrndz.ultraremapper.ui.AdbWizardScreen
+import com.aaronhrndz.ultraremapper.ui.SettingsScreen
 
 import android.content.ComponentName
 import android.content.Context
@@ -404,6 +407,7 @@ class MainActivity : ComponentActivity() {
 
                     val nav = rememberSwipeDismissableNavController()
                     var splashVisible by remember { mutableStateOf(targetDestination == "home") }
+                    var localAdbClient by remember { mutableStateOf<LocalAdbClient?>(null) }
 
                     LaunchedEffect(targetDestination, updateInfo) {
                         if (targetDestination == "update_details" && updateInfo != null) {
@@ -450,7 +454,28 @@ class MainActivity : ComponentActivity() {
                                     nav.navigate("help/${Uri.encode(helpText)}")
                                 },
                                 onPick = { nav.navigate("pick/$it") },
+                                onOpenSettings = { nav.navigate("settings") },
                                 onOpenDevOptions = { nav.navigate("dev_options") }
+                            )
+                        }
+                        composable("settings") {
+                            SettingsScreen(
+                                client = localAdbClient,
+                                onOpenWizard = { nav.navigate("adb_wizard") },
+                                onRefreshPermissions = {
+                                    setup = readSetupState(context)
+                                },
+                                onDone = { nav.popBackStack() }
+                            )
+                        }
+                        composable("adb_wizard") {
+                            AdbWizardScreen(
+                                onPairingSuccess = { client ->
+                                    localAdbClient = client
+                                    setup = readSetupState(context)
+                                    nav.popBackStack()
+                                },
+                                onCancel = { nav.popBackStack() }
                             )
                         }
                         composable("help/{text}") { entry ->
@@ -530,6 +555,7 @@ private fun Home(
     onOpenNotifListeners: () -> Unit,
     onShowAdbHelp: (String) -> Unit,
     onPick: (String) -> Unit,
+    onOpenSettings: () -> Unit = {},
     onOpenDevOptions: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -1313,6 +1339,49 @@ private fun Home(
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
+            item(key = "settings_menu_entry") {
+                Button(
+                    onClick = onOpenSettings,
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = context.getString(R.string.settings_title),
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "›",
+                                color = UltraOrange,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    },
+                    secondaryLabel = {
+                        Text(
+                            text = context.getString(R.string.settings_subtitle),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color(0xFF9EA7B8),
+                            style = MaterialTheme.typography.labelSmall
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
             item(key = "app_version_footer") {
                 val installedVersion = remember {
                     try {
@@ -2079,16 +2148,6 @@ private fun DevOptionsScreen(
 ) {
     val context = LocalContext.current
     var isBeta by remember { mutableStateOf(UpdateChecker.isBetaChannel(context)) }
-    val setup = remember { readSetupState(context) }
-    val permList = remember(setup) {
-        listOf(
-            Triple("Accesibilidad (A11y)", setup.a11yEnabled, "Control gestos y pulsaciones"),
-            Triple("Superposición (Overlay)", setup.overlayAllowed, "SYSTEM_ALERT_WINDOW para linterna/segundo plano"),
-            Triple("Botón de Acción (Ruta)", setup.actionRouted, "setting_action_button_press"),
-            Triple("Secure Settings", setup.secureSettingsGranted, "WRITE_SECURE_SETTINGS"),
-            Triple("Listener Notificaciones", setup.mediaListenerEnabled, "MediaControlService / fondo permanente")
-        )
-    }
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
@@ -2160,63 +2219,6 @@ private fun DevOptionsScreen(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = SlateCard),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            item(key = "dev_permissions_header") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Text(
-                        text = "PERMISOS ADB / SISTEMA",
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            items(permList, key = { it.first }) { (name, granted, desc) ->
-                Button(
-                    onClick = { /* informativo */ },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = name,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Text(
-                                text = if (granted) "OK" else "FALTA",
-                                fontWeight = FontWeight.Bold,
-                                color = if (granted) Color(0xFF4CAF50) else Color(0xFFF44336)
-                            )
-                        }
-                    },
-                    secondaryLabel = {
-                        Text(
-                            text = desc,
-                            color = Color(0xFF9EA7B8),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (granted) SlateCard else Color(0xFF2A1F20)
-                    ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
