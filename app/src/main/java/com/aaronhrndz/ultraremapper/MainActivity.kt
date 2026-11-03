@@ -594,11 +594,11 @@ private fun Home(
                 Mapping.get(context, "top_double") != "none"
     }
     val needsMediaBridge = remember(allConfiguredActions, setup.a11yEnabled) {
-        setup.a11yEnabled || allConfiguredActions.any { act -> Mapping.mediaActions.any { it.first == act } }
+        setup.a11yEnabled || allConfiguredActions.any { act -> act == "flashlight" || Mapping.mediaActions.any { it.first == act } }
     }
 
     val needsOverlay = remember(allConfiguredActions) {
-        allConfiguredActions.contains("red_flashlight")
+        allConfiguredActions.contains("red_flashlight") || allConfiguredActions.contains("flashlight")
     }
     val needsAssistant = remember(allConfiguredActions, isMasterEnabled) {
         isMasterEnabled && Mapping.get(context, "top_long") != "none"
