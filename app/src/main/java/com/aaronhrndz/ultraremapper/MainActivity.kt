@@ -2079,6 +2079,16 @@ private fun DevOptionsScreen(
 ) {
     val context = LocalContext.current
     var isBeta by remember { mutableStateOf(UpdateChecker.isBetaChannel(context)) }
+    val setup = remember { readSetupState(context) }
+    val permList = remember(setup) {
+        listOf(
+            Triple("Accesibilidad (A11y)", setup.a11yEnabled, "Control gestos y pulsaciones"),
+            Triple("Superposición (Overlay)", setup.overlayAllowed, "SYSTEM_ALERT_WINDOW para linterna/segundo plano"),
+            Triple("Botón de Acción (Ruta)", setup.actionRouted, "setting_action_button_press"),
+            Triple("Secure Settings", setup.secureSettingsGranted, "WRITE_SECURE_SETTINGS"),
+            Triple("Listener Notificaciones", setup.mediaListenerEnabled, "MediaControlService / fondo permanente")
+        )
+    }
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
@@ -2150,6 +2160,63 @@ private fun DevOptionsScreen(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = SlateCard),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            item(key = "dev_permissions_header") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        text = "PERMISOS ADB / SISTEMA",
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            items(permList, key = { it.first }) { (name, granted, desc) ->
+                Button(
+                    onClick = { /* informativo */ },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = name,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text(
+                                text = if (granted) "OK" else "FALTA",
+                                fontWeight = FontWeight.Bold,
+                                color = if (granted) Color(0xFF4CAF50) else Color(0xFFF44336)
+                            )
+                        }
+                    },
+                    secondaryLabel = {
+                        Text(
+                            text = desc,
+                            color = Color(0xFF9EA7B8),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (granted) SlateCard else Color(0xFF2A1F20)
+                    ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
