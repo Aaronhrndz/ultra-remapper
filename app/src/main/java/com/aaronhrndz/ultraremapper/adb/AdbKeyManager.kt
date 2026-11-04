@@ -1,25 +1,38 @@
 package com.aaronhrndz.ultraremapper.adb
 
 import android.content.Context
+import org.bouncycastle.asn1.x500.X500Name
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder
+import java.io.ByteArrayInputStream
+import java.math.BigInteger
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.SecureRandom
-import java.security.interfaces.RSAPrivateCrtKey
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.security.interfaces.RSAPrivateKey
 import java.security.interfaces.RSAPublicKey
 import java.util.Base64
+import java.util.Date
 import javax.crypto.Cipher
 
 /**
- * Handles RSA-2048 keypair generation, storage and ADB authentication token signing.
+ * Handles RSA-2048 keypair and self-signed X.509 certificate generation,
+ * storage, and ADB authentication token signing.
  */
 object AdbKeyManager {
     private const val PREF_NAME = "ultra_adb_keys"
     private const val KEY_PRIVATE = "rsa_private"
     private const val KEY_PUBLIC = "rsa_public"
+    private const val KEY_CERT = "x509_cert"
 
     @Volatile
     private var cachedKeyPair: KeyPair? = null
+
+    @Volatile
+    private var cachedCert: X509Certificate? = null
 
     fun getOrCreateKeyPair(context: Context): KeyPair {
         cachedKeyPair?.let { return it }
@@ -57,6 +70,56 @@ object AdbKeyManager {
 
         cachedKeyPair = newPair
         return newPair
+    }
+
+    fun getOrCreateCertificate(context: Context): X509Certificate {
+        cachedCert?.let { return it }
+
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val certStr = prefs.getString(KEY_CERT, null)
+
+        if (certStr != null) {
+            try {
+                val certBytes = Base64.getDecoder().decode(certStr)
+                val cf = CertificateFactory.getInstance("X.509")
+                val cert = cf.generateCertificate(ByteArrayInputStream(certBytes)) as X509Certificate
+                cachedCert = cert
+                return cert
+            } catch (_: Exception) {}
+        }
+
+        val keyPair = getOrCreateKeyPair(context)
+        val cert = generateSelfSignedCertificate(keyPair)
+
+        val certBase64 = Base64.getEncoder().encodeToString(cert.encoded)
+        prefs.edit()
+            .putString(KEY_CERT, certBase64)
+            .apply()
+
+        cachedCert = cert
+        return cert
+    }
+
+    private fun generateSelfSignedCertificate(keyPair: KeyPair): X509Certificate {
+        val now = System.currentTimeMillis()
+        val startDate = Date(now - 24 * 60 * 60 * 1000L) // 1 day ago
+        val endDate = Date(now + 10 * 365 * 24 * 60 * 60 * 1000L) // 10 years
+
+        val serial = BigInteger.valueOf(now)
+        val name = X500Name("CN=UltraRemapper")
+
+        val certBuilder = JcaX509v3CertificateBuilder(
+            name,
+            serial,
+            startDate,
+            endDate,
+            name,
+            keyPair.public
+        )
+
+        val signer = JcaContentSignerBuilder("SHA256withRSA").build(keyPair.private)
+        val certHolder = certBuilder.build(signer)
+        return JcaX509CertificateConverter().getCertificate(certHolder)
     }
 
     /** Signs token from ADB daemon using raw RSA PKCS#1 v1.5 padding */

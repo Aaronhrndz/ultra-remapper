@@ -1,158 +1,104 @@
 package com.aaronhrndz.ultraremapper.adb
 
 import android.content.Context
-import java.io.InputStream
-import java.io.OutputStream
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.security.interfaces.RSAPrivateKey
-import java.security.interfaces.RSAPublicKey
+import io.github.muntashirakon.adb.AdbConnection
+import io.github.muntashirakon.adb.PairingConnectionCtx
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.concurrent.TimeUnit
 
 /**
- * Lightweight local ADB client communicating with adbd on localhost (127.0.0.1).
+ * ADB client implementation for local Wear OS (127.0.0.1) supporting both:
+ * 1. SPAKE2 TLS 1.3 pairing via ephemeral pairing port & 6-digit code.
+ * 2. Shell execution over AdbConnection (TLS or TCP).
  */
 class LocalAdbClient(
-    private val host: String = "127.0.0.1",
-    private val port: Int = 5555
+    val host: String = "127.0.0.1",
+    val port: Int = 5555
 ) : AutoCloseable {
 
-    private var socket: Socket? = null
-    private var inStream: InputStream? = null
-    private var outStream: OutputStream? = null
-    private var localIdCounter = 1
+    private var adbConnection: AdbConnection? = null
 
     var isConnected: Boolean = false
         private set
 
-    fun connect(context: Context, timeoutMs: Int = 5000): Boolean {
-        try {
-            val sock = Socket()
-            sock.tcpNoDelay = true
-            sock.connect(InetSocketAddress(host, port), timeoutMs)
-            sock.soTimeout = timeoutMs
+    /**
+     * Performs SPAKE2 TLS 1.3 pairing using the 6-digit PIN on the pairing port.
+     */
+    fun pair(context: Context, pairingPort: Int, pin: String): Boolean {
+        return try {
+            val keyPair = AdbKeyManager.getOrCreateKeyPair(context)
+            val cert = AdbKeyManager.getOrCreateCertificate(context)
+            val pinBytes = pin.toByteArray(Charsets.UTF_8)
 
-            val input = sock.getInputStream()
-            val output = sock.getOutputStream()
-
-            // 1. Send CNXN
-            val banner = "host::features=shell_v2,cmd\u0000".toByteArray(Charsets.UTF_8)
-            val cnxn = AdbMessage(
-                command = AdbMessage.CMD_CNXN,
-                arg0 = AdbMessage.CONNECT_VERSION,
-                arg1 = AdbMessage.CONNECT_MAXDATA,
-                data = banner
+            val pairingCtx = PairingConnectionCtx(
+                host,
+                pairingPort,
+                pinBytes,
+                keyPair.private,
+                cert,
+                "UltraRemapper"
             )
-            cnxn.writeTo(output)
-
-            // 2. Read Response
-            var resp = AdbMessage.readFrom(input)
-
-            // Handle AUTH challenge if required
-            if (resp.command == AdbMessage.CMD_AUTH) {
-                val keyPair = AdbKeyManager.getOrCreateKeyPair(context)
-                val token = resp.data
-
-                // Attempt signature authentication first
-                val signature = AdbKeyManager.signToken(token, keyPair.private as RSAPrivateKey)
-                val authSig = AdbMessage(
-                    command = AdbMessage.CMD_AUTH,
-                    arg0 = AdbMessage.AUTH_TYPE_SIGNATURE,
-                    arg1 = 0,
-                    data = signature
-                )
-                authSig.writeTo(output)
-
-                resp = AdbMessage.readFrom(input)
-
-                // If signature declined, send Public Key
-                if (resp.command == AdbMessage.CMD_AUTH) {
-                    val pubKeyStr = AdbKeyManager.getAdbPublicKeyString(keyPair.public as RSAPublicKey)
-                    val authPub = AdbMessage(
-                        command = AdbMessage.CMD_AUTH,
-                        arg0 = AdbMessage.AUTH_TYPE_RSAPUBLICKEY,
-                        arg1 = 0,
-                        data = pubKeyStr.toByteArray(Charsets.UTF_8)
-                    )
-                    authPub.writeTo(output)
-                    resp = AdbMessage.readFrom(input)
-                }
+            pairingCtx.use {
+                it.start()
             }
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
 
-            if (resp.command == AdbMessage.CMD_CNXN) {
-                socket = sock
-                inStream = input
-                outStream = output
+    /**
+     * Connects to the ADB daemon connection port.
+     */
+    fun connect(context: Context, timeoutMs: Long = 8000L): Boolean {
+        return try {
+            val keyPair = AdbKeyManager.getOrCreateKeyPair(context)
+            val cert = AdbKeyManager.getOrCreateCertificate(context)
+
+            val builder = AdbConnection.Builder(host, port)
+                .setPrivateKey(keyPair.private)
+                .setCertificate(cert)
+                .setDeviceName("UltraRemapper")
+
+            val conn = builder.build()
+            conn.connect(timeoutMs, TimeUnit.MILLISECONDS, false)
+
+            if (conn.isConnectionEstablished) {
+                adbConnection = conn
                 isConnected = true
-                return true
+                true
             } else {
-                sock.close()
-                return false
+                conn.close()
+                false
             }
         } catch (_: Exception) {
             close()
-            return false
+            false
         }
     }
 
     /**
      * Executes a single shell command synchronously and returns the output string.
      */
-    fun exec(command: String, timeoutMs: Int = 10000): String {
-        val out = outStream ?: throw IllegalStateException("Not connected to ADB")
-        val input = inStream ?: throw IllegalStateException("Not connected to ADB")
-        val sock = socket ?: throw IllegalStateException("Not connected to ADB")
-        sock.soTimeout = timeoutMs
-
-        val localId = localIdCounter++
-        val destination = "shell:$command\u0000".toByteArray(Charsets.UTF_8)
-
-        // 1. OPEN channel
-        val openMsg = AdbMessage(AdbMessage.CMD_OPEN, localId, 0, destination)
-        openMsg.writeTo(out)
-
-        val resp = AdbMessage.readFrom(input)
-        if (resp.command != AdbMessage.CMD_OKAY) {
-            throw IllegalStateException("Failed to open ADB stream: received cmd ${resp.command}")
+    fun exec(command: String): String {
+        val conn = adbConnection ?: throw IllegalStateException("Not connected to ADB")
+        val stream = conn.open("shell:$command")
+        val reader = BufferedReader(InputStreamReader(stream.openInputStream()))
+        val output = StringBuilder()
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            output.append(line).append("\n")
         }
-        val remoteId = resp.arg0
-
-        val resultBuilder = StringBuilder()
-
-        // 2. Read WRTE packets until CLSE
-        while (true) {
-            val packet = AdbMessage.readFrom(input)
-            when (packet.command) {
-                AdbMessage.CMD_WRTE -> {
-                    resultBuilder.append(String(packet.data, Charsets.UTF_8))
-                    // Send OKAY acknowledge
-                    val okayMsg = AdbMessage(AdbMessage.CMD_OKAY, localId, remoteId)
-                    okayMsg.writeTo(out)
-                }
-                AdbMessage.CMD_CLSE -> {
-                    // Send CLSE acknowledge
-                    val closeMsg = AdbMessage(AdbMessage.CMD_CLSE, localId, remoteId)
-                    closeMsg.writeTo(out)
-                    break
-                }
-                AdbMessage.CMD_OKAY -> {
-                    // Ignored / stream sync
-                }
-                else -> {
-                    break
-                }
-            }
-        }
-
-        return resultBuilder.toString().trim()
+        stream.close()
+        return output.toString().trim()
     }
 
     override fun close() {
-        try { inStream?.close() } catch (_: Exception) {}
-        try { outStream?.close() } catch (_: Exception) {}
-        try { socket?.close() } catch (_: Exception) {}
-        inStream = null
-        outStream = null
-        socket = null
+        try {
+            adbConnection?.close()
+        } catch (_: Exception) {}
+        adbConnection = null
         isConnected = false
     }
 }

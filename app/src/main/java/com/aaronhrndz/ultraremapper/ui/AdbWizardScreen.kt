@@ -128,15 +128,34 @@ fun AdbWizardScreen(
         }
     }
 
-    val connectAction: (String) -> Unit = { _ ->
+    val connectAction: (String) -> Unit = { pin ->
         keyboardController?.hide()
         isConnecting = true
         statusMessage = "Conectando..."
-        val port = detectedConnectPort ?: detectedPairingPort ?: 5555
+        val pairingPort = detectedPairingPort
+        val connectPort = detectedConnectPort ?: 5555
+
         thread {
-            val client = LocalAdbClient("127.0.0.1", port)
-            val ok = client.connect(context)
-            if (ok) {
+            val client = LocalAdbClient("127.0.0.1", connectPort)
+            var pairedOk = true
+
+            // If PIN provided and pairing port detected, pair first
+            if (pin.length == 6) {
+                if (pairingPort != null) {
+                    statusMessage = "Emparejando dispositivo..."
+                    pairedOk = client.pair(context, pairingPort, pin)
+                }
+            }
+
+            if (!pairedOk) {
+                isConnecting = false
+                statusMessage = "Fallo al emparejar. Código incorrecto o expirado."
+                return@thread
+            }
+
+            statusMessage = "Estableciendo conexión ADB..."
+            val connected = client.connect(context)
+            if (connected) {
                 HapticFeedbackHelper.playButtonHaptic(context)
                 onPairingSuccess(client)
             } else {
@@ -193,7 +212,7 @@ fun AdbWizardScreen(
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
-                            text = "3. Toca 'Vincular dispositivo nuevo', apunta el código de 6 dígitos y vuelve aquí.",
+                            text = "3. Toca 'Vincular dispositivo nuevo', apunta el código de emparejamiento de 6 dígitos y vuelve aquí.",
                             color = Color(0xFFD5DCE6),
                             fontSize = 11.sp
                         )
@@ -264,6 +283,35 @@ fun AdbWizardScreen(
                 }
             } else {
                 // STEP 2: Native Number TextField + Connect
+                item(key = "s2_open_btn") {
+                    Button(
+                        onClick = {
+                            HapticFeedbackHelper.playUiTap(context)
+                            openWirelessDebuggingSettings(context)
+                        },
+                        label = {
+                            Text(
+                                text = "Abrir Depuración Inalámbrica",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = UltraOrange,
+                            contentColor = Color.White
+                        ),
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 6.dp)
+                            .transformedHeight(this, transformationSpec)
+                    )
+                }
+
                 item(key = "s2_desc") {
                     val portInfo = when {
                         detectedPairingPort != null -> "Puerto detectado: $detectedPairingPort"
