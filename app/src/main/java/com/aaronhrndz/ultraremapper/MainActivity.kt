@@ -451,17 +451,35 @@ class MainActivity : ComponentActivity() {
                                         } catch (_: Throwable) {}
                                     }
                                 },
-                                onShowAdbHelp = { helpText ->
-                                    nav.navigate("help/${Uri.encode(helpText)}")
+                                onShowAdbHelp = { helpText, targetKey ->
+                                    nav.navigate("help/${Uri.encode(helpText)}?target=${Uri.encode(targetKey ?: "")}")
                                 },
                                 onPick = { nav.navigate("pick/$it") },
                                 onOpenSettings = { nav.navigate("settings") },
                                 onOpenDevOptions = { nav.navigate("dev_options") }
                             )
                         }
-                        composable("settings") {
+                        composable("settings") { entry ->
+                            val targetHighlight = entry.arguments?.getString("target")?.takeIf { it.isNotBlank() }
                             SettingsScreen(
                                 client = localAdbClient,
+                                targetHighlight = targetHighlight,
+                                onClientConnected = { client ->
+                                    localAdbClient = client
+                                    setup = readSetupState(context)
+                                },
+                                onOpenWizard = { nav.navigate("adb_wizard") },
+                                onRefreshPermissions = {
+                                    setup = readSetupState(context)
+                                },
+                                onDone = { nav.popBackStack() }
+                            )
+                        }
+                        composable("settings?target={target}") { entry ->
+                            val targetHighlight = entry.arguments?.getString("target")?.takeIf { it.isNotBlank() }
+                            SettingsScreen(
+                                client = localAdbClient,
+                                targetHighlight = targetHighlight,
                                 onClientConnected = { client ->
                                     localAdbClient = client
                                     setup = readSetupState(context)
@@ -483,13 +501,35 @@ class MainActivity : ComponentActivity() {
                                 onCancel = { nav.popBackStack() }
                             )
                         }
+                        composable("help/{text}?target={target}") { entry ->
+                            val text = Uri.decode(entry.arguments?.getString("text") ?: "")
+                            val target = Uri.decode(entry.arguments?.getString("target") ?: "")
+                            AdbHelpScreen(
+                                text = text,
+                                targetHighlight = target.takeIf { it.isNotBlank() },
+                                onOpenSettings = { targetKey ->
+                                    nav.popBackStack()
+                                    if (targetKey != null && targetKey.isNotBlank()) {
+                                        nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                    } else {
+                                        nav.navigate("settings")
+                                    }
+                                },
+                                onDone = { nav.popBackStack() }
+                            )
+                        }
                         composable("help/{text}") { entry ->
                             val text = Uri.decode(entry.arguments?.getString("text") ?: "")
                             AdbHelpScreen(
                                 text = text,
-                                onOpenSettings = {
+                                targetHighlight = null,
+                                onOpenSettings = { targetKey ->
                                     nav.popBackStack()
-                                    nav.navigate("settings")
+                                    if (targetKey != null && targetKey.isNotBlank()) {
+                                        nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                    } else {
+                                        nav.navigate("settings")
+                                    }
                                 },
                                 onDone = { nav.popBackStack() }
                             )
@@ -565,7 +605,7 @@ private fun Home(
     onOpenA11ySettings: () -> Unit,
     onOpenAppInfo: () -> Unit,
     onOpenNotifListeners: () -> Unit,
-    onShowAdbHelp: (String) -> Unit,
+    onShowAdbHelp: (String, String?) -> Unit,
     onPick: (String) -> Unit,
     onOpenSettings: () -> Unit = {},
     onOpenDevOptions: () -> Unit,
@@ -817,7 +857,7 @@ private fun Home(
                     item(key = "diag_route") {
                         Button(
                             onClick = {
-                                onShowAdbHelp(context.getString(R.string.diag_dialog_route_body))
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_route_body), "ACTION_ROUTE")
                             },
                             label = {
                                 Row(
@@ -860,7 +900,7 @@ private fun Home(
                     item(key = "diag_overlay") {
                         Button(
                             onClick = {
-                                onShowAdbHelp(context.getString(R.string.diag_dialog_overlay_body))
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_overlay_body), "OVERLAY")
                             },
                             label = {
                                 Row(
@@ -917,7 +957,7 @@ private fun Home(
                     item(key = "diag_media") {
                         Button(
                             onClick = {
-                                onShowAdbHelp(context.getString(R.string.diag_dialog_media_body))
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_media_body), "NOTIFICATION_LISTENER")
                             },
                             label = {
                                 Row(
@@ -960,7 +1000,7 @@ private fun Home(
                     item(key = "diag_secure") {
                         Button(
                             onClick = {
-                                onShowAdbHelp(context.getString(R.string.diag_dialog_secure_body))
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_secure_body), "SECURE_SETTINGS")
                             },
                             label = {
                                 Row(
@@ -1003,7 +1043,7 @@ private fun Home(
                     item(key = "diag_samsung_pay") {
                         Button(
                             onClick = {
-                                onShowAdbHelp(context.getString(R.string.diag_dialog_samsung_pay_conflict_body))
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_samsung_pay_conflict_body), "SAMSUNG_PAY")
                             },
                             label = {
                                 Row(
@@ -1980,7 +2020,8 @@ private fun UpdateDetailsScreen(
 @Composable
 private fun AdbHelpScreen(
     text: String,
-    onOpenSettings: () -> Unit,
+    targetHighlight: String? = null,
+    onOpenSettings: (String?) -> Unit,
     onDone: () -> Unit,
 ) {
     val columnState = rememberTransformingLazyColumnState()
@@ -2028,7 +2069,7 @@ private fun AdbHelpScreen(
             }
             item(key = "help_settings") {
                 Button(
-                    onClick = onOpenSettings,
+                    onClick = { onOpenSettings(targetHighlight) },
                     label = {
                         Text(
                             context.getString(R.string.diag_dialog_go_to_settings),

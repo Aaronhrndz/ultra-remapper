@@ -4,6 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -86,6 +89,7 @@ private fun readPermissionItems(context: Context): List<PermissionItem> {
 @Composable
 fun SettingsScreen(
     client: LocalAdbClient?,
+    targetHighlight: String? = null,
     onClientConnected: ((LocalAdbClient) -> Unit)? = null,
     onOpenWizard: () -> Unit,
     onRefreshPermissions: () -> Unit,
@@ -95,7 +99,8 @@ fun SettingsScreen(
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
-    var isPermsExpanded by remember { mutableStateOf(false) }
+    val shouldExpandPermsInitially = targetHighlight != null && targetHighlight != "SAMSUNG_PAY"
+    var isPermsExpanded by remember { mutableStateOf(shouldExpandPermsInitially) }
     var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
     var isSamsungPayEnabled by remember { mutableStateOf(AdbLocalManager.isSamsungPayEnabled(context)) }
     var permVersion by remember { mutableStateOf(0) }
@@ -103,6 +108,25 @@ fun SettingsScreen(
     var isToastError by remember { mutableStateOf(false) }
     var activeLoadingItem by remember { mutableStateOf<String?>(null) }
     var isAutoConnecting by remember { mutableStateOf(false) }
+
+    // Flash highlight animation for target item
+    val flashAnim = remember { Animatable(0f) }
+    LaunchedEffect(targetHighlight) {
+        if (targetHighlight != null) {
+            // Wait brief moment for layout/expand
+            kotlinx.coroutines.delay(200)
+            if (targetHighlight == "SAMSUNG_PAY") {
+                columnState.animateScrollToItem(4, 0)
+            } else {
+                columnState.animateScrollToItem(1, 0)
+            }
+            // Flash twice: 0 -> 1 -> 0 -> 1 -> 0
+            flashAnim.animateTo(1f, tween(250))
+            flashAnim.animateTo(0f, tween(200))
+            flashAnim.animateTo(1f, tween(250))
+            flashAnim.animateTo(0f, tween(300))
+        }
+    }
 
     var connectedClientState by remember { mutableStateOf(client ?: LocalAdbClient.activeInstance) }
     val isAdbConnected = (connectedClientState?.isConnected == true)
@@ -191,6 +215,12 @@ fun SettingsScreen(
                         perms.forEachIndexed { idx, perm ->
                             if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
                             val isThisLoading = (activeLoadingItem == perm.type.name)
+                            val isHighlighted = targetHighlight == perm.type.name
+                            val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
+                                UltraOrange.copy(alpha = flashAnim.value)
+                            } else {
+                                Color.Transparent
+                            }
                             Button(
                                 enabled = activeLoadingItem == null && !isAutoConnecting,
                                 onClick = {
@@ -276,7 +306,13 @@ fun SettingsScreen(
                                     containerColor = Color(0xFF282E38),
                                     contentColor = Color.White
                                 ),
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(
+                                        if (isHighlighted && highlightColor != Color.Transparent) {
+                                            Modifier.border(2.dp, highlightColor, RoundedCornerShape(14.dp))
+                                        } else Modifier
+                                    )
                             )
                         }
                     }
@@ -350,6 +386,12 @@ fun SettingsScreen(
             // Samsung Pay Freeze Switch
             item(key = "samsung_pay_switch") {
                 val isPayLoading = (activeLoadingItem == "SAMSUNG_PAY")
+                val isPayHighlighted = targetHighlight == "SAMSUNG_PAY"
+                val payHighlightColor = if (isPayHighlighted && flashAnim.value > 0.05f) {
+                    UltraOrange.copy(alpha = flashAnim.value)
+                } else {
+                    Color.Transparent
+                }
                 Button(
                     enabled = activeLoadingItem == null && !isAutoConnecting,
                     onClick = {
@@ -432,6 +474,11 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .transformedHeight(this, transformationSpec)
+                        .then(
+                            if (isPayHighlighted && payHighlightColor != Color.Transparent) {
+                                Modifier.border(2.dp, payHighlightColor, RoundedCornerShape(18.dp))
+                            } else Modifier
+                        )
                 )
             }
 
