@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
     <!-- Master Switch -->
@@ -124,7 +124,7 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="settings_adb_wizard_button">Assistant de Jumelage ADB Local</string>
     <string name="settings_adb_wizard_desc">Jumeler la montre à elle-même sans PC</string>
     <string name="settings_samsung_pay_title">Samsung Pay</string>
-    <string name="settings_samsung_pay_enabled">Actif (Pression longue bouton bas)</string>
-    <string name="settings_samsung_pay_disabled">Gelé (Désactivé via ADB)</string>
+    <string name="settings_samsung_pay_enabled">Actif</string>
+    <string name="settings_samsung_pay_disabled">Gelé</string>
     <string name="grant_button_label">Accorder</string>
 </resources>

@@ -147,7 +147,7 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="settings_adb_wizard_button">Local ADB Pairing Wizard</string>
     <string name="settings_adb_wizard_desc">Pair watch to itself without computer</string>
     <string name="settings_samsung_pay_title">Samsung Pay</string>
-    <string name="settings_samsung_pay_enabled">Active (Long press bottom button)</string>
-    <string name="settings_samsung_pay_disabled">Frozen (Disabled via ADB)</string>
+    <string name="settings_samsung_pay_enabled">Active</string>
+    <string name="settings_samsung_pay_disabled">Frozen</string>
     <string name="grant_button_label">Grant</string>
 </resources>

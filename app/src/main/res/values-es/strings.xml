@@ -147,7 +147,7 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="settings_adb_wizard_button">Asistente de Vinculación ADB</string>
     <string name="settings_adb_wizard_desc">Vincular reloj a sí mismo sin PC</string>
     <string name="settings_samsung_pay_title">Samsung Pay</string>
-    <string name="settings_samsung_pay_enabled">Activo (Pulsación larga inferior)</string>
-    <string name="settings_samsung_pay_disabled">Congelado (Deshabilitado por ADB)</string>
+    <string name="settings_samsung_pay_enabled">Activo</string>
+    <string name="settings_samsung_pay_disabled">Congelado</string>
     <string name="grant_button_label">Conceder</string>
 </resources>

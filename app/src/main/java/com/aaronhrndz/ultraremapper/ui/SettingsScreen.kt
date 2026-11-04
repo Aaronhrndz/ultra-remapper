@@ -440,8 +440,7 @@ fun SettingsScreen(
                                 if (success) {
                                     isSamsungPayEnabled = AdbLocalManager.isSamsungPayEnabled(context)
                                     HapticFeedbackHelper.playButtonHaptic(context)
-                                    statusToast = if (isSamsungPayEnabled) "Samsung Pay Activado" else "Samsung Pay Congelado"
-                                    isToastError = false
+                                    statusToast = null
                                 } else {
                                     statusToast = "Error al cambiar Samsung Pay"
                                     isToastError = true

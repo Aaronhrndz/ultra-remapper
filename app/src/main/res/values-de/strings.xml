@@ -124,7 +124,7 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="settings_adb_wizard_button">Lokaler ADB-Kopplungs-Assistent</string>
     <string name="settings_adb_wizard_desc">Uhr ohne PC mit sich selbst koppeln</string>
     <string name="settings_samsung_pay_title">Samsung Pay</string>
-    <string name="settings_samsung_pay_enabled">Aktiv (Langes Drücken unten)</string>
-    <string name="settings_samsung_pay_disabled">Eingefroren (Deaktiviert per ADB)</string>
+    <string name="settings_samsung_pay_enabled">Aktiv</string>
+    <string name="settings_samsung_pay_disabled">Eingefroren</string>
     <string name="grant_button_label">Erteilen</string>
 </resources>
