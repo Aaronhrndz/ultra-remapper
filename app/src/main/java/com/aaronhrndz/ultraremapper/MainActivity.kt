@@ -461,6 +461,10 @@ class MainActivity : ComponentActivity() {
                         composable("settings") {
                             SettingsScreen(
                                 client = localAdbClient,
+                                onClientConnected = { client ->
+                                    localAdbClient = client
+                                    setup = readSetupState(context)
+                                },
                                 onOpenWizard = { nav.navigate("adb_wizard") },
                                 onRefreshPermissions = {
                                     setup = readSetupState(context)

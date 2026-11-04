@@ -28,11 +28,13 @@ import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.aaronhrndz.ultraremapper.ActionButtonService
 import com.aaronhrndz.ultraremapper.CollapseChevron
+import com.aaronhrndz.ultraremapper.SwitchLoadingSpinner
 import com.aaronhrndz.ultraremapper.HapticFeedbackHelper
 import com.aaronhrndz.ultraremapper.Mapping
 import com.aaronhrndz.ultraremapper.MediaControlService
 import com.aaronhrndz.ultraremapper.R
 import com.aaronhrndz.ultraremapper.adb.AdbLocalManager
+import com.aaronhrndz.ultraremapper.adb.AdbMdnsDiscovery
 import com.aaronhrndz.ultraremapper.adb.LocalAdbClient
 import com.aaronhrndz.ultraremapper.adb.PermissionType
 import kotlin.concurrent.thread
@@ -84,6 +86,7 @@ private fun readPermissionItems(context: Context): List<PermissionItem> {
 @Composable
 fun SettingsScreen(
     client: LocalAdbClient?,
+    onClientConnected: ((LocalAdbClient) -> Unit)? = null,
     onOpenWizard: () -> Unit,
     onRefreshPermissions: () -> Unit,
     onDone: () -> Unit
@@ -97,13 +100,38 @@ fun SettingsScreen(
     var isSamsungPayEnabled by remember { mutableStateOf(AdbLocalManager.isSamsungPayEnabled(context)) }
     var permVersion by remember { mutableStateOf(0) }
     var statusToast by remember { mutableStateOf<String?>(null) }
-    var isExecutingAdb by remember { mutableStateOf(false) }
+    var isToastError by remember { mutableStateOf(false) }
+    var activeLoadingItem by remember { mutableStateOf<String?>(null) }
+    var isAutoConnecting by remember { mutableStateOf(false) }
 
-    val activeClient = client ?: LocalAdbClient.activeInstance
-    val isAdbConnected = (activeClient?.isConnected == true)
+    var connectedClientState by remember { mutableStateOf(client ?: LocalAdbClient.activeInstance) }
+    val isAdbConnected = (connectedClientState?.isConnected == true)
     val isAdbPaired = LocalAdbClient.isPaired(context)
     val perms = remember(permVersion, isAdbConnected) { readPermissionItems(context) }
     val mainHandler = remember { android.os.Handler(android.os.Looper.getMainLooper()) }
+
+    // Auto-connect on entering Settings if paired and not yet connected
+    LaunchedEffect(Unit) {
+        if (!isAdbConnected && isAdbPaired) {
+            isAutoConnecting = true
+            thread {
+                val lastPort = LocalAdbClient.getLastPort(context)
+                val testClient = LocalAdbClient("127.0.0.1", lastPort)
+                val ok = testClient.connect(context, timeoutMs = 3000L)
+                mainHandler.post {
+                    isAutoConnecting = false
+                    if (ok) {
+                        connectedClientState = testClient
+                        onClientConnected?.invoke(testClient)
+                        permVersion++
+                        onRefreshPermissions()
+                        statusToast = "ADB conectado en segundo plano"
+                        isToastError = false
+                    }
+                }
+            }
+        }
+    }
 
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
@@ -163,16 +191,17 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(6.dp))
                         perms.forEachIndexed { idx, perm ->
                             if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                            val isThisLoading = (activeLoadingItem == perm.type.name)
                             Button(
-                                enabled = !isExecutingAdb,
+                                enabled = activeLoadingItem == null && !isAutoConnecting,
                                 onClick = {
-                                    val currentClient = client ?: LocalAdbClient.activeInstance
+                                    val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
                                     if (currentClient?.isConnected != true) {
                                         onOpenWizard()
                                         return@Button
                                     }
                                     val targetState = !perm.isGranted
-                                    isExecutingAdb = true
+                                    activeLoadingItem = perm.type.name
                                     statusToast = null
                                     thread {
                                         val ok = AdbLocalManager.setPermissionState(
@@ -184,13 +213,16 @@ fun SettingsScreen(
                                         // Brief pause to allow system to commit permission change
                                         Thread.sleep(300)
                                         mainHandler.post {
-                                            isExecutingAdb = false
+                                            activeLoadingItem = null
                                             if (ok) {
                                                 permVersion++
                                                 onRefreshPermissions()
                                                 HapticFeedbackHelper.playButtonHaptic(context)
+                                                statusToast = "${perm.name}: ${if (targetState) "Concedido" else "Revocado"}"
+                                                isToastError = false
                                             } else {
-                                                statusToast = "Fallo al cambiar permiso por ADB"
+                                                statusToast = "Fallo al cambiar ${perm.name}"
+                                                isToastError = true
                                             }
                                         }
                                     }
@@ -219,22 +251,26 @@ fun SettingsScreen(
                                             )
                                         }
                                         Spacer(modifier = Modifier.width(8.dp))
-                                        // Switch Pill
-                                        Box(
-                                            modifier = Modifier
-                                                .width(32.dp)
-                                                .height(18.dp)
-                                                .clip(CircleShape)
-                                                .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
-                                                .padding(2.dp)
-                                        ) {
+                                        if (isThisLoading) {
+                                            SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
+                                        } else {
+                                            // Switch Pill
                                             Box(
                                                 modifier = Modifier
-                                                    .size(14.dp)
-                                                    .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
+                                                    .width(32.dp)
+                                                    .height(18.dp)
                                                     .clip(CircleShape)
-                                                    .background(Color.White)
-                                            )
+                                                    .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
+                                                    .padding(2.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(14.dp)
+                                                        .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
+                                                        .clip(CircleShape)
+                                                        .background(Color.White)
+                                                )
+                                            }
                                         }
                                     }
                                 },
@@ -352,6 +388,7 @@ fun SettingsScreen(
                     },
                     secondaryLabel = {
                         val statusText = when {
+                            isAutoConnecting -> "ADB: Conectando..."
                             isAdbConnected -> context.getString(R.string.settings_adb_status_connected)
                             isAdbPaired -> "ADB: Vinculado (Desconectado)"
                             else -> context.getString(R.string.settings_adb_status_disconnected)
@@ -359,6 +396,7 @@ fun SettingsScreen(
                         Text(
                             text = statusText,
                             color = when {
+                                isAutoConnecting -> Color(0xFFFFB74D)
                                 isAdbConnected -> GreenOk
                                 isAdbPaired -> Color(0xFF64B5F6)
                                 else -> UltraOrange
@@ -381,28 +419,32 @@ fun SettingsScreen(
 
             // Samsung Pay Freeze Switch
             item(key = "samsung_pay_switch") {
+                val isPayLoading = (activeLoadingItem == "SAMSUNG_PAY")
                 Button(
-                    enabled = !isExecutingAdb,
+                    enabled = activeLoadingItem == null && !isAutoConnecting,
                     onClick = {
-                        val currentClient = client ?: LocalAdbClient.activeInstance
+                        val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
                         if (currentClient?.isConnected != true) {
                             onOpenWizard()
                             return@Button
                         }
                         val targetState = !isSamsungPayEnabled
-                        isExecutingAdb = true
+                        activeLoadingItem = "SAMSUNG_PAY"
                         statusToast = null
                         thread {
                             val success = AdbLocalManager.toggleSamsungPay(currentClient, targetState)
                             // Brief pause to allow PackageManager state to update
                             Thread.sleep(300)
                             mainHandler.post {
-                                isExecutingAdb = false
+                                activeLoadingItem = null
                                 if (success) {
                                     isSamsungPayEnabled = AdbLocalManager.isSamsungPayEnabled(context)
                                     HapticFeedbackHelper.playButtonHaptic(context)
+                                    statusToast = if (isSamsungPayEnabled) "Samsung Pay Activado" else "Samsung Pay Congelado"
+                                    isToastError = false
                                 } else {
                                     statusToast = "Error al cambiar Samsung Pay"
+                                    isToastError = true
                                 }
                             }
                         }
@@ -431,21 +473,25 @@ fun SettingsScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(32.dp)
-                                    .height(18.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isSamsungPayEnabled) UltraOrange else Color(0xFF383D47))
-                                    .padding(2.dp)
-                            ) {
+                            if (isPayLoading) {
+                                SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
+                            } else {
                                 Box(
                                     modifier = Modifier
-                                        .size(14.dp)
-                                        .align(if (isSamsungPayEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .width(32.dp)
+                                        .height(18.dp)
                                         .clip(CircleShape)
-                                        .background(Color.White)
-                                )
+                                        .background(if (isSamsungPayEnabled) UltraOrange else Color(0xFF383D47))
+                                        .padding(2.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .align(if (isSamsungPayEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                            .clip(CircleShape)
+                                            .background(Color.White)
+                                    )
+                                }
                             }
                         }
                     },
@@ -464,7 +510,7 @@ fun SettingsScreen(
                 item(key = "status_toast") {
                     Text(
                         text = msg,
-                        color = RedAlert,
+                        color = if (isToastError) RedAlert else GreenOk,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier

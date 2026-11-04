@@ -255,6 +255,40 @@ fun AdbWizardScreen(
                     )
                 }
 
+                // Direct connect option if already paired earlier
+                item(key = "s1_direct_connect_btn") {
+                    if (LocalAdbClient.isPaired(context)) {
+                        Button(
+                            enabled = !isConnecting,
+                            onClick = {
+                                currentStep = 2
+                                connectAction("")
+                            },
+                            label = {
+                                Text(
+                                    text = "Conectar directo (ya vinculado)",
+                                    color = Color(0xFF64B5F6),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 11.sp,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1E2838),
+                                contentColor = Color.White
+                            ),
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .transformedHeight(this, transformationSpec)
+                        )
+                    }
+                }
+
                 item(key = "s1_next_btn") {
                     Button(
                         enabled = isAdbActive,

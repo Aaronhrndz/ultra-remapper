@@ -7,7 +7,7 @@ import android.net.nsd.NsdServiceInfo
 /**
  * Discovers local Wireless Debugging ADB and Pairing ports announced via mDNS on localhost.
  */
-class AdbMdnsDiscovery(context: Context) {
+class AdbMdnsDiscovery(private val context: Context) {
     private val nsdManager = context.getSystemService(Context.NSD_SERVICE) as? NsdManager
 
     @Volatile
@@ -27,6 +27,7 @@ class AdbMdnsDiscovery(context: Context) {
         // 1. Discover ADB Connect service: _adb-tls-connect._tcp
         connectListener = createListener { info ->
             discoveredConnectPort = info.port
+            LocalAdbClient.setLastPort(context, info.port)
             onPortFound(false, info.port)
         }
         try {

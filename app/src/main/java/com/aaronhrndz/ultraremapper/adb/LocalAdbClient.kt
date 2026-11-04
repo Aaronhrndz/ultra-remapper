@@ -44,6 +44,13 @@ class LocalAdbClient(
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             return prefs.getInt(KEY_LAST_PORT, 5555)
         }
+
+        fun setLastPort(context: Context, port: Int) {
+            if (port > 0) {
+                val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                prefs.edit().putInt(KEY_LAST_PORT, port).apply()
+            }
+        }
     }
 
     private var adbConnection: AdbConnection? = null
