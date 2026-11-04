@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
@@ -150,4 +150,5 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="settings_samsung_pay_enabled">Activo</string>
     <string name="settings_samsung_pay_disabled">Congelado</string>
     <string name="grant_button_label">Conceder</string>
+    <string name="diag_dialog_go_to_settings">Abrir Ajustes / Permisos</string>
 </resources>

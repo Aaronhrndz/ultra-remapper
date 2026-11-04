@@ -127,4 +127,5 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="settings_samsung_pay_enabled">Actif</string>
     <string name="settings_samsung_pay_disabled">Gelé</string>
     <string name="grant_button_label">Accorder</string>
+    <string name="diag_dialog_go_to_settings">Ouvrir Paramètres / Autorisations</string>
 </resources>

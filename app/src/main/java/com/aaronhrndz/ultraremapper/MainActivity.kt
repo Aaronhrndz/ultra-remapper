@@ -484,7 +484,14 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("help/{text}") { entry ->
                             val text = Uri.decode(entry.arguments?.getString("text") ?: "")
-                            AdbHelpScreen(text = text, onDone = { nav.popBackStack() })
+                            AdbHelpScreen(
+                                text = text,
+                                onOpenSettings = {
+                                    nav.popBackStack()
+                                    nav.navigate("settings")
+                                },
+                                onDone = { nav.popBackStack() }
+                            )
                         }
                         composable("dev_options") {
                             DevOptionsScreen(
@@ -1924,6 +1931,7 @@ private fun UpdateDetailsScreen(
 @Composable
 private fun AdbHelpScreen(
     text: String,
+    onOpenSettings: () -> Unit,
     onDone: () -> Unit,
 ) {
     val columnState = rememberTransformingLazyColumnState()
@@ -1951,15 +1959,49 @@ private fun AdbHelpScreen(
                 }
             }
             item(key = "help_body") {
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.White,
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 6.dp, vertical = 8.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(12.dp)
+                ) {
+                    Text(
+                        text = text,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White,
+                        lineHeight = 16.sp
+                    )
+                }
+            }
+            item(key = "help_spacer") {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            item(key = "help_settings") {
+                Button(
+                    onClick = onOpenSettings,
+                    label = {
+                        Text(
+                            context.getString(R.string.diag_dialog_go_to_settings),
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = UltraOrange,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .transformedHeight(this, transformationSpec)
                 )
+            }
+            item(key = "help_spacer_buttons") {
+                Spacer(modifier = Modifier.height(4.dp))
             }
             item(key = "help_close") {
                 Button(
@@ -1967,14 +2009,16 @@ private fun AdbHelpScreen(
                     label = {
                         Text(
                             context.getString(R.string.diag_dialog_close),
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = UltraOrange,
-                        contentColor = Color.White
+                        containerColor = Color(0xFF1F232A),
+                        contentColor = Color(0xFF9EA7B8)
                     ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier

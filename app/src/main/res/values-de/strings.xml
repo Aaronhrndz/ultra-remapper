@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
     <!-- Master Switch -->
@@ -127,4 +127,5 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="settings_samsung_pay_enabled">Aktiv</string>
     <string name="settings_samsung_pay_disabled">Eingefroren</string>
     <string name="grant_button_label">Erteilen</string>
+    <string name="diag_dialog_go_to_settings">Einstellungen / Berechtigungen öffnen</string>
 </resources>

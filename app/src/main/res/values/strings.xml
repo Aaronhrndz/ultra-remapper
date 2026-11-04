@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
@@ -150,4 +150,5 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="settings_samsung_pay_enabled">Active</string>
     <string name="settings_samsung_pay_disabled">Frozen</string>
     <string name="grant_button_label">Grant</string>
+    <string name="diag_dialog_go_to_settings">Open Settings / Permissions</string>
 </resources>
