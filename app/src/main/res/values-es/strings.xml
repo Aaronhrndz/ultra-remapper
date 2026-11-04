@@ -143,8 +143,7 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="toast_select_toctoc">Selecciona Ultra Remapper en Aplicaciones</string>
     <string name="settings_title">Ajustes</string>
     <string name="settings_subtitle">Permisos, ADB y Sistema</string>
-    <string name="settings_permissions_title">Permisos del Sistema</string>
-    <string name="settings_permissions_subtitle">Toca para conceder por ADB local</string>
+    <string name="settings_permissions_title">Permisos</string>
     <string name="settings_adb_section">ADB Local y Opciones</string>
     <string name="settings_adb_status_connected">ADB: Conectado (Localhost)</string>
     <string name="settings_adb_status_disconnected">ADB: No emparejado</string>

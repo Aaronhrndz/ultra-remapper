@@ -1272,73 +1272,6 @@ private fun Home(
                 Spacer(modifier = Modifier.height(14.dp))
             }
 
-            item(key = "haptic_switch") {
-                Button(
-                    onClick = {
-                        val next = !isHapticEnabled
-                        isHapticEnabled = next
-                        Mapping.setHapticFeedbackEnabled(context, next)
-                        if (next) {
-                            HapticFeedbackHelper.playButtonHaptic(context)
-                        }
-                    },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    context.getString(R.string.haptic_switch_title),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White.copy(alpha = 0.9f),
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    context.getString(R.string.haptic_switch_subtitle),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = Color(0xFF9EA7B8),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(32.dp)
-                                    .height(18.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isHapticEnabled) UltraOrange.copy(alpha = 0.85f) else Color(0xFF383D47))
-                                    .padding(2.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
-                                        .clip(CircleShape)
-                                        .background(Color.White)
-                                )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            item(key = "haptic_bottom_spacer") {
-                Spacer(modifier = Modifier.height(14.dp))
-            }
-
             item(key = "settings_menu_entry") {
                 Button(
                     onClick = onOpenSettings,
@@ -1348,28 +1281,26 @@ private fun Home(
                             horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(
-                                text = context.getString(R.string.settings_title),
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "›",
-                                color = UltraOrange,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = context.getString(R.string.settings_title),
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = context.getString(R.string.settings_subtitle),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            ForwardChevron()
                         }
-                    },
-                    secondaryLabel = {
-                        Text(
-                            text = context.getString(R.string.settings_subtitle),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            color = Color(0xFF9EA7B8),
-                            style = MaterialTheme.typography.labelSmall
-                        )
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = SlateCard,

@@ -39,3 +39,23 @@ fun CollapseChevron(
         }
     }
 }
+
+@Composable
+fun ForwardChevron(
+    modifier: Modifier = Modifier,
+    color: Color = Color(0xFF8A93A2)
+) {
+    Canvas(modifier = modifier.size(18.dp)) {
+        val w = size.width
+        val h = size.height
+        val strokeWidth = 2.2.dp.toPx()
+
+        // Chevron pointing RIGHT (>): (left, top) -> (right, center) -> (left, bottom)
+        val top = Offset(w * 0.35f, h * 0.2f)
+        val center = Offset(w * 0.7f, h * 0.5f)
+        val bottom = Offset(w * 0.35f, h * 0.8f)
+
+        drawLine(color, top, center, strokeWidth, StrokeCap.Round)
+        drawLine(color, center, bottom, strokeWidth, StrokeCap.Round)
+    }
+}

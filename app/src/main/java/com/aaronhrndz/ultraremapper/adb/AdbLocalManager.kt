@@ -10,28 +10,40 @@ object AdbLocalManager {
 
     const val SAMSUNG_PAY_PACKAGE = "com.samsung.android.samsungpay.gear"
 
-    fun executeSingleGrant(client: LocalAdbClient, pkgName: String, permissionType: PermissionType): Boolean {
+    fun executeSingleGrant(client: LocalAdbClient, pkgName: String, permissionType: PermissionType): Boolean =
+        setPermissionState(client, pkgName, permissionType, true)
+
+    fun setPermissionState(client: LocalAdbClient, pkgName: String, permissionType: PermissionType, enable: Boolean): Boolean {
         if (!client.isConnected) return false
         return try {
             when (permissionType) {
                 PermissionType.OVERLAY -> {
-                    client.exec("appops set $pkgName SYSTEM_ALERT_WINDOW allow")
+                    val mode = if (enable) "allow" else "ignore"
+                    client.exec("appops set $pkgName SYSTEM_ALERT_WINDOW $mode")
                     true
                 }
                 PermissionType.SECURE_SETTINGS -> {
-                    client.exec("pm grant $pkgName android.permission.WRITE_SECURE_SETTINGS")
+                    val op = if (enable) "grant" else "revoke"
+                    client.exec("pm $op $pkgName android.permission.WRITE_SECURE_SETTINGS")
                     true
                 }
                 PermissionType.ACTION_ROUTE -> {
-                    client.exec("settings put global setting_action_button_press $pkgName/$pkgName.ActionButtonService")
+                    val target = if (enable) {
+                        "$pkgName/$pkgName.ActionButtonService"
+                    } else {
+                        "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
+                    }
+                    client.exec("settings put global setting_action_button_press $target")
                     true
                 }
                 PermissionType.NOTIFICATION_LISTENER -> {
-                    client.exec("cmd notification allow_listener $pkgName/$pkgName.MediaControlService")
+                    val op = if (enable) "allow_listener" else "disallow_listener"
+                    client.exec("cmd notification $op $pkgName/$pkgName.MediaControlService")
                     true
                 }
                 PermissionType.BATTERY_WHITELIST -> {
-                    client.exec("cmd deviceidle whitelist +$pkgName")
+                    val sign = if (enable) "+" else "-"
+                    client.exec("cmd deviceidle whitelist $sign$pkgName")
                     true
                 }
             }
