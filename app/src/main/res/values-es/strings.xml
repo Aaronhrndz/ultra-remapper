@@ -1,4 +1,4 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
@@ -153,5 +153,5 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="diag_dialog_go_to_settings">Abrir Ajustes / Permisos</string>
     <string name="diag_samsung_pay_conflict_title">Conflicto con Samsung Pay</string>
     <string name="diag_samsung_pay_conflict_sub">Congélalo para evitar fallos</string>
-    <string name="diag_dialog_samsung_pay_conflict_body">Mantener pulsado el botón inferior entra en conflicto con Samsung Pay. Para asegurar que tu acción funcione siempre al 100%, congela Samsung Pay en Ajustes.</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">Para asegurar que tu acción funcione siempre, puedes congelar Samsung Pay en los ajustes de Ultra Remapper.</string>
 </resources>
