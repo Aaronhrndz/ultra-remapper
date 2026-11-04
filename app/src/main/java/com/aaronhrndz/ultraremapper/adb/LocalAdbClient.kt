@@ -113,17 +113,47 @@ class LocalAdbClient(
     /**
      * Executes a single shell command synchronously and returns the output string.
      */
-    fun exec(command: String): String {
-        val conn = adbConnection ?: throw IllegalStateException("Not connected to ADB")
+    fun exec(command: String, timeoutMs: Long = 5000L): String {
+        val conn = adbConnection ?: activeInstance?.adbConnection
+            ?: throw IllegalStateException("Not connected to ADB")
         val stream = conn.open("shell:$command")
-        val reader = BufferedReader(InputStreamReader(stream.openInputStream()))
         val output = StringBuilder()
-        var line: String?
-        while (reader.readLine().also { line = it } != null) {
-            output.append(line).append("\n")
+        val inStream = stream.openInputStream()
+        val buffer = ByteArray(1024)
+        val startTime = System.currentTimeMillis()
+
+        try {
+            while (!stream.isClosed) {
+                val available = inStream.available()
+                if (available > 0) {
+                    val readBytes = inStream.read(buffer, 0, minOf(available, buffer.size))
+                    if (readBytes > 0) {
+                        output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
+                    }
+                } else {
+                    if (System.currentTimeMillis() - startTime > timeoutMs) {
+                        break
+                    }
+                    Thread.sleep(50)
+                }
+            }
+            // Read any final remaining bytes after close
+            while (inStream.available() > 0) {
+                val readBytes = inStream.read(buffer, 0, minOf(inStream.available(), buffer.size))
+                if (readBytes > 0) {
+                    output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
+                }
+            }
+        } catch (_: Exception) {
+        } finally {
+            try {
+                stream.close()
+            } catch (_: Exception) {}
         }
-        stream.close()
-        return output.toString().trim()
+
+        val result = output.toString().trim()
+        android.util.Log.d("LocalAdbClient", "exec('$command') -> '$result'")
+        return result
     }
 
     override fun close() {

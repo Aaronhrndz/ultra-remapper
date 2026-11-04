@@ -97,10 +97,13 @@ fun SettingsScreen(
     var isSamsungPayEnabled by remember { mutableStateOf(AdbLocalManager.isSamsungPayEnabled(context)) }
     var permVersion by remember { mutableStateOf(0) }
     var statusToast by remember { mutableStateOf<String?>(null) }
+    var isExecutingAdb by remember { mutableStateOf(false) }
 
-    val isAdbConnected = (client?.isConnected == true) || (LocalAdbClient.activeInstance?.isConnected == true)
+    val activeClient = client ?: LocalAdbClient.activeInstance
+    val isAdbConnected = (activeClient?.isConnected == true)
     val isAdbPaired = LocalAdbClient.isPaired(context)
     val perms = remember(permVersion, isAdbConnected) { readPermissionItems(context) }
+    val mainHandler = remember { android.os.Handler(android.os.Looper.getMainLooper()) }
 
     ScreenScaffold(scrollState = columnState) { _ ->
         TransformingLazyColumn(
@@ -161,25 +164,34 @@ fun SettingsScreen(
                         perms.forEachIndexed { idx, perm ->
                             if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
                             Button(
+                                enabled = !isExecutingAdb,
                                 onClick = {
-                                    if (!isAdbConnected) {
+                                    val currentClient = client ?: LocalAdbClient.activeInstance
+                                    if (currentClient?.isConnected != true) {
                                         onOpenWizard()
                                         return@Button
                                     }
                                     val targetState = !perm.isGranted
+                                    isExecutingAdb = true
+                                    statusToast = null
                                     thread {
                                         val ok = AdbLocalManager.setPermissionState(
-                                            client!!,
+                                            currentClient,
                                             context.packageName,
                                             perm.type,
                                             targetState
                                         )
-                                        if (ok) {
-                                            permVersion++
-                                            onRefreshPermissions()
-                                            HapticFeedbackHelper.playButtonHaptic(context)
-                                        } else {
-                                            statusToast = "Fallo al cambiar permiso por ADB"
+                                        // Brief pause to allow system to commit permission change
+                                        Thread.sleep(300)
+                                        mainHandler.post {
+                                            isExecutingAdb = false
+                                            if (ok) {
+                                                permVersion++
+                                                onRefreshPermissions()
+                                                HapticFeedbackHelper.playButtonHaptic(context)
+                                            } else {
+                                                statusToast = "Fallo al cambiar permiso por ADB"
+                                            }
                                         }
                                     }
                                 },
@@ -370,19 +382,28 @@ fun SettingsScreen(
             // Samsung Pay Freeze Switch
             item(key = "samsung_pay_switch") {
                 Button(
+                    enabled = !isExecutingAdb,
                     onClick = {
-                        if (!isAdbConnected) {
+                        val currentClient = client ?: LocalAdbClient.activeInstance
+                        if (currentClient?.isConnected != true) {
                             onOpenWizard()
                             return@Button
                         }
                         val targetState = !isSamsungPayEnabled
+                        isExecutingAdb = true
+                        statusToast = null
                         thread {
-                            val success = AdbLocalManager.toggleSamsungPay(client!!, targetState)
-                            if (success) {
-                                isSamsungPayEnabled = targetState
-                                HapticFeedbackHelper.playButtonHaptic(context)
-                            } else {
-                                statusToast = "Error al cambiar Samsung Pay"
+                            val success = AdbLocalManager.toggleSamsungPay(currentClient, targetState)
+                            // Brief pause to allow PackageManager state to update
+                            Thread.sleep(300)
+                            mainHandler.post {
+                                isExecutingAdb = false
+                                if (success) {
+                                    isSamsungPayEnabled = AdbLocalManager.isSamsungPayEnabled(context)
+                                    HapticFeedbackHelper.playButtonHaptic(context)
+                                } else {
+                                    statusToast = "Error al cambiar Samsung Pay"
+                                }
                             }
                         }
                     },

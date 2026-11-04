@@ -14,17 +14,18 @@ object AdbLocalManager {
         setPermissionState(client, pkgName, permissionType, true)
 
     fun setPermissionState(client: LocalAdbClient, pkgName: String, permissionType: PermissionType, enable: Boolean): Boolean {
-        if (!client.isConnected) return false
+        val targetClient = if (client.isConnected) client else LocalAdbClient.activeInstance
+        if (targetClient?.isConnected != true) return false
         return try {
             when (permissionType) {
                 PermissionType.OVERLAY -> {
                     val mode = if (enable) "allow" else "ignore"
-                    client.exec("appops set $pkgName SYSTEM_ALERT_WINDOW $mode")
+                    targetClient.exec("appops set $pkgName SYSTEM_ALERT_WINDOW $mode")
                     true
                 }
                 PermissionType.SECURE_SETTINGS -> {
                     val op = if (enable) "grant" else "revoke"
-                    client.exec("pm $op $pkgName android.permission.WRITE_SECURE_SETTINGS")
+                    targetClient.exec("pm $op $pkgName android.permission.WRITE_SECURE_SETTINGS")
                     true
                 }
                 PermissionType.ACTION_ROUTE -> {
@@ -33,21 +34,22 @@ object AdbLocalManager {
                     } else {
                         "com.samsung.android.wear.shealth/com.samsung.android.wear.shealth.service.ActionButtonService"
                     }
-                    client.exec("settings put global setting_action_button_press $target")
+                    targetClient.exec("settings put global setting_action_button_press $target")
                     true
                 }
                 PermissionType.NOTIFICATION_LISTENER -> {
                     val op = if (enable) "allow_listener" else "disallow_listener"
-                    client.exec("cmd notification $op $pkgName/$pkgName.MediaControlService")
+                    targetClient.exec("cmd notification $op $pkgName/$pkgName.MediaControlService")
                     true
                 }
                 PermissionType.BATTERY_WHITELIST -> {
                     val sign = if (enable) "+" else "-"
-                    client.exec("cmd deviceidle whitelist $sign$pkgName")
+                    targetClient.exec("cmd deviceidle whitelist $sign$pkgName")
                     true
                 }
             }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            android.util.Log.e("AdbLocalManager", "setPermissionState failed for $permissionType", e)
             false
         }
     }
@@ -66,16 +68,19 @@ object AdbLocalManager {
      * Returns true if operation succeeded, false if ADB failed (leaving previous state unchanged).
      */
     fun toggleSamsungPay(client: LocalAdbClient, targetEnabled: Boolean): Boolean {
-        if (!client.isConnected) return false
+        val targetClient = if (client.isConnected) client else LocalAdbClient.activeInstance
+        if (targetClient?.isConnected != true) return false
         return try {
             val cmd = if (targetEnabled) {
                 "pm enable $SAMSUNG_PAY_PACKAGE"
             } else {
                 "pm disable-user --user 0 $SAMSUNG_PAY_PACKAGE"
             }
-            val res = client.exec(cmd)
-            res.contains("new state", ignoreCase = true) || res.isEmpty()
-        } catch (_: Exception) {
+            val res = targetClient.exec(cmd)
+            android.util.Log.d("AdbLocalManager", "toggleSamsungPay($targetEnabled) -> '$res'")
+            res.contains("new state", ignoreCase = true) || res.contains("enabled", ignoreCase = true) || res.contains("disabled", ignoreCase = true) || res.isEmpty()
+        } catch (e: Exception) {
+            android.util.Log.e("AdbLocalManager", "toggleSamsungPay failed", e)
             false
         }
     }
