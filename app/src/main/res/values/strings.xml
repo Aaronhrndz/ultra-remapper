@@ -141,7 +141,7 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="settings_title">Settings</string>
     <string name="settings_subtitle">Permissions, ADB &amp; System</string>
     <string name="settings_permissions_title">Permissions</string>
-    <string name="settings_adb_section">Local ADB &amp; Features</string>
+    <string name="settings_adb_section">Other Settings</string>
     <string name="settings_adb_status_connected">ADB: Connected (Localhost)</string>
     <string name="settings_adb_status_disconnected">ADB: Disconnected</string>
     <string name="settings_adb_wizard_button">Local ADB Pairing Wizard</string>

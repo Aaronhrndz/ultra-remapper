@@ -118,7 +118,7 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="settings_title">Einstellungen</string>
     <string name="settings_subtitle">Berechtigungen, ADB &amp; System</string>
     <string name="settings_permissions_title">Berechtigungen</string>
-    <string name="settings_adb_section">Lokales ADB &amp; Optionen</string>
+    <string name="settings_adb_section">Weitere Einstellungen</string>
     <string name="settings_adb_status_connected">ADB: Verbunden (Localhost)</string>
     <string name="settings_adb_status_disconnected">ADB: Getrennt</string>
     <string name="settings_adb_wizard_button">Lokaler ADB-Kopplungs-Assistent</string>

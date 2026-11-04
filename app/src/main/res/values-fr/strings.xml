@@ -118,7 +118,7 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="settings_title">Paramètres</string>
     <string name="settings_subtitle">Autorisations, ADB et Système</string>
     <string name="settings_permissions_title">Autorisations</string>
-    <string name="settings_adb_section">ADB Local et Options</string>
+    <string name="settings_adb_section">Autres Paramètres</string>
     <string name="settings_adb_status_connected">ADB : Connecté (Localhost)</string>
     <string name="settings_adb_status_disconnected">ADB : Déconnecté</string>
     <string name="settings_adb_wizard_button">Assistant de Jumelage ADB Local</string>

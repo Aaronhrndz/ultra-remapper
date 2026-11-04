@@ -125,8 +125,7 @@ fun SettingsScreen(
                         onClientConnected?.invoke(testClient)
                         permVersion++
                         onRefreshPermissions()
-                        statusToast = "ADB conectado en segundo plano"
-                        isToastError = false
+                        statusToast = null
                     }
                 }
             }
@@ -218,8 +217,7 @@ fun SettingsScreen(
                                                 permVersion++
                                                 onRefreshPermissions()
                                                 HapticFeedbackHelper.playButtonHaptic(context)
-                                                statusToast = "${perm.name}: ${if (targetState) "Concedido" else "Revocado"}"
-                                                isToastError = false
+                                                statusToast = null
                                             } else {
                                                 statusToast = "Fallo al cambiar ${perm.name}"
                                                 isToastError = true
@@ -285,76 +283,8 @@ fun SettingsScreen(
                 }
             }
 
-            item(key = "spacer_haptic") {
-                Spacer(modifier = Modifier.height(10.dp))
-            }
-
-            // 2. HAPTIC FEEDBACK SWITCH
-            item(key = "haptic_switch") {
-                Button(
-                    onClick = {
-                        val next = !isHapticEnabled
-                        isHapticEnabled = next
-                        Mapping.setHapticFeedbackEnabled(context, next)
-                        if (next) {
-                            HapticFeedbackHelper.playButtonHaptic(context)
-                        }
-                    },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = context.getString(R.string.haptic_switch_title),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = context.getString(R.string.haptic_switch_subtitle),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = Color(0xFF9EA7B8),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(32.dp)
-                                    .height(18.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isHapticEnabled) UltraOrange else Color(0xFF383D47))
-                                    .padding(2.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
-                                        .clip(CircleShape)
-                                        .background(Color.White)
-                                )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            // 3. LOCAL ADB & SAMSUNG PAY SECTION
-            item(key = "adb_section_header") {
+            // 2. OTHER SETTINGS & LOCAL ADB SECTION
+            item(key = "other_settings_section_header") {
                 ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -505,11 +435,75 @@ fun SettingsScreen(
                 )
             }
 
+            // Haptic Feedback Switch (under Samsung Pay)
+            item(key = "haptic_switch") {
+                Button(
+                    onClick = {
+                        val next = !isHapticEnabled
+                        isHapticEnabled = next
+                        Mapping.setHapticFeedbackEnabled(context, next)
+                        if (next) {
+                            HapticFeedbackHelper.playButtonHaptic(context)
+                        }
+                    },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = context.getString(R.string.haptic_switch_title),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    text = context.getString(R.string.haptic_switch_subtitle),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    color = Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(32.dp)
+                                    .height(18.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isHapticEnabled) UltraOrange else Color(0xFF383D47))
+                                    .padding(2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(14.dp)
+                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                )
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
             statusToast?.let { msg ->
                 item(key = "status_toast") {
                     Text(
                         text = msg,
-                        color = if (isToastError) RedAlert else GreenOk,
+                        color = RedAlert,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
