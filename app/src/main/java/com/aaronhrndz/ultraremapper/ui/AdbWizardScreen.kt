@@ -133,34 +133,41 @@ fun AdbWizardScreen(
         isConnecting = true
         statusMessage = "Conectando..."
         val pairingPort = detectedPairingPort
-        val connectPort = detectedConnectPort ?: 5555
+        val connectPort = detectedConnectPort ?: LocalAdbClient.getLastPort(context)
 
         thread {
+            val mainHandler = android.os.Handler(android.os.Looper.getMainLooper())
             val client = LocalAdbClient("127.0.0.1", connectPort)
             var pairedOk = true
 
             // If PIN provided and pairing port detected, pair first
             if (pin.length == 6) {
                 if (pairingPort != null) {
-                    statusMessage = "Emparejando dispositivo..."
+                    mainHandler.post { statusMessage = "Emparejando dispositivo..." }
                     pairedOk = client.pair(context, pairingPort, pin)
                 }
             }
 
             if (!pairedOk) {
-                isConnecting = false
-                statusMessage = "Fallo al emparejar. Código incorrecto o expirado."
+                mainHandler.post {
+                    isConnecting = false
+                    statusMessage = "Fallo al emparejar. Código incorrecto o expirado."
+                }
                 return@thread
             }
 
-            statusMessage = "Estableciendo conexión ADB..."
+            mainHandler.post { statusMessage = "Estableciendo conexión ADB..." }
             val connected = client.connect(context)
             if (connected) {
-                HapticFeedbackHelper.playButtonHaptic(context)
-                onPairingSuccess(client)
+                mainHandler.post {
+                    HapticFeedbackHelper.playButtonHaptic(context)
+                    onPairingSuccess(client)
+                }
             } else {
-                isConnecting = false
-                statusMessage = "Fallo al conectar. Verifica que Depuración inalámbrica esté activa."
+                mainHandler.post {
+                    isConnecting = false
+                    statusMessage = "Fallo al conectar (puerto $connectPort). Abre Depuración inalámbrica para verificar puerto."
+                }
             }
         }
     }

@@ -98,7 +98,8 @@ fun SettingsScreen(
     var permVersion by remember { mutableStateOf(0) }
     var statusToast by remember { mutableStateOf<String?>(null) }
 
-    val isAdbConnected = client?.isConnected == true
+    val isAdbConnected = (client?.isConnected == true) || (LocalAdbClient.activeInstance?.isConnected == true)
+    val isAdbPaired = LocalAdbClient.isPaired(context)
     val perms = remember(permVersion, isAdbConnected) { readPermissionItems(context) }
 
     ScreenScaffold(scrollState = columnState) { _ ->
@@ -338,9 +339,18 @@ fun SettingsScreen(
                         )
                     },
                     secondaryLabel = {
+                        val statusText = when {
+                            isAdbConnected -> context.getString(R.string.settings_adb_status_connected)
+                            isAdbPaired -> "ADB: Vinculado (Desconectado)"
+                            else -> context.getString(R.string.settings_adb_status_disconnected)
+                        }
                         Text(
-                            text = if (isAdbConnected) context.getString(R.string.settings_adb_status_connected) else context.getString(R.string.settings_adb_status_disconnected),
-                            color = if (isAdbConnected) GreenOk else UltraOrange,
+                            text = statusText,
+                            color = when {
+                                isAdbConnected -> GreenOk
+                                isAdbPaired -> Color(0xFF64B5F6)
+                                else -> UltraOrange
+                            },
                             style = MaterialTheme.typography.bodySmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis

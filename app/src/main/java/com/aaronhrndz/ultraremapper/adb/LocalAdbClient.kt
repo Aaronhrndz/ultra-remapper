@@ -17,6 +17,35 @@ class LocalAdbClient(
     val port: Int = 5555
 ) : AutoCloseable {
 
+    companion object {
+        private const val PREFS_NAME = "ultra_adb_state"
+        private const val KEY_IS_PAIRED = "is_adb_paired"
+        private const val KEY_LAST_PORT = "last_connect_port"
+
+        @Volatile
+        var activeInstance: LocalAdbClient? = null
+            private set
+
+        fun isPaired(context: Context): Boolean {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getBoolean(KEY_IS_PAIRED, false)
+        }
+
+        fun setPaired(context: Context, paired: Boolean, port: Int? = null) {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            val editor = prefs.edit().putBoolean(KEY_IS_PAIRED, paired)
+            if (port != null && port > 0) {
+                editor.putInt(KEY_LAST_PORT, port)
+            }
+            editor.apply()
+        }
+
+        fun getLastPort(context: Context): Int {
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            return prefs.getInt(KEY_LAST_PORT, 5555)
+        }
+    }
+
     private var adbConnection: AdbConnection? = null
 
     var isConnected: Boolean = false
@@ -42,6 +71,7 @@ class LocalAdbClient(
             pairingCtx.use {
                 it.start()
             }
+            setPaired(context, true, port)
             true
         } catch (_: Exception) {
             false
@@ -67,6 +97,8 @@ class LocalAdbClient(
             if (conn.isConnectionEstablished) {
                 adbConnection = conn
                 isConnected = true
+                activeInstance = this
+                setPaired(context, true, port)
                 true
             } else {
                 conn.close()
@@ -100,5 +132,8 @@ class LocalAdbClient(
         } catch (_: Exception) {}
         adbConnection = null
         isConnected = false
+        if (activeInstance == this) {
+            activeInstance = null
+        }
     }
 }
