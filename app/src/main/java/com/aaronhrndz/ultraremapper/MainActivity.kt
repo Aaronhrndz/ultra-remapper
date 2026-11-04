@@ -1,6 +1,7 @@
 package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
+import com.aaronhrndz.ultraremapper.adb.AdbLocalManager
 import com.aaronhrndz.ultraremapper.adb.LocalAdbClient
 import com.aaronhrndz.ultraremapper.ui.AdbWizardScreen
 import com.aaronhrndz.ultraremapper.ui.SettingsScreen
@@ -645,13 +646,18 @@ private fun Home(
         isMasterEnabled && Mapping.get(context, "toctoc") != "none"
     }
 
+    val needsSamsungPayFreeze = remember(allConfiguredActions, isMasterEnabled, mappingVersion) {
+        isMasterEnabled && Mapping.get(context, "bottom_long") != "none" && AdbLocalManager.isSamsungPayEnabled(context)
+    }
+
     val hasPendingRequiredAction = (!setup.a11yEnabled && needsA11y) ||
             (setup.hasActionButton && !setup.actionRouted) ||
             (!setup.overlayAllowed && needsOverlay) ||
             (!setup.mediaListenerEnabled && needsMediaBridge) ||
             (!setup.secureSettingsGranted && needsSecureSettings) ||
             (!setup.isAssistant && needsAssistant) ||
-            (!setup.isTocTocConfigured && needsTocToc)
+            (!setup.isTocTocConfigured && needsTocToc) ||
+            needsSamsungPayFreeze
 
     ScreenScaffold(scrollState = columnState) { _ ->
         var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
@@ -985,6 +991,49 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            colors = orangeColors,
+                            transformation = SurfaceTransformation(transformationSpec),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .transformedHeight(this, transformationSpec)
+                        )
+                    }
+                }
+                if (needsSamsungPayFreeze) {
+                    item(key = "diag_samsung_pay") {
+                        Button(
+                            onClick = {
+                                onShowAdbHelp(context.getString(R.string.diag_dialog_samsung_pay_conflict_body))
+                            },
+                            label = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        context.getString(R.string.diag_samsung_pay_conflict_title),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f, fill = false)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(4.dp))
+                                            .background(Color(0xFF2E323A))
+                                            .padding(horizontal = 5.dp, vertical = 2.dp)
+                                    ) {
+                                        Text(
+                                            text = "ADB",
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            },
+                            secondaryLabel = { Text(context.getString(R.string.diag_samsung_pay_conflict_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             colors = orangeColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier

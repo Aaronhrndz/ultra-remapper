@@ -151,4 +151,7 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="settings_samsung_pay_disabled">Frozen</string>
     <string name="grant_button_label">Grant</string>
     <string name="diag_dialog_go_to_settings">Open Settings / Permissions</string>
+    <string name="diag_samsung_pay_conflict_title">Samsung Pay Conflict</string>
+    <string name="diag_samsung_pay_conflict_sub">Freeze it to prevent conflicts</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">Holding the bottom button conflicts with Samsung Pay/Wallet. To ensure your custom action works reliably every time, freeze Samsung Pay in Settings.</string>
 </resources>

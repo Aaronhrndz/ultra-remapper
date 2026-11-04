@@ -128,4 +128,7 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="settings_samsung_pay_disabled">Gelé</string>
     <string name="grant_button_label">Accorder</string>
     <string name="diag_dialog_go_to_settings">Ouvrir Paramètres / Autorisations</string>
+    <string name="diag_samsung_pay_conflict_title">Conflit avec Samsung Pay</string>
+    <string name="diag_samsung_pay_conflict_sub">Geler pour éviter les conflits</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">Le maintien du bouton inférieur entre en conflit avec Samsung Pay. Pour garantir le bon fonctionnement de votre action à chaque fois, gelez Samsung Pay dans les Paramètres.</string>
 </resources>

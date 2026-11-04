@@ -128,4 +128,7 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="settings_samsung_pay_disabled">Eingefroren</string>
     <string name="grant_button_label">Erteilen</string>
     <string name="diag_dialog_go_to_settings">Einstellungen / Berechtigungen öffnen</string>
+    <string name="diag_samsung_pay_conflict_title">Konflikt mit Samsung Pay</string>
+    <string name="diag_samsung_pay_conflict_sub">Einfrieren, um Fehler zu vermeiden</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">Das Halten der unteren Taste kollidiert mit Samsung Pay. Friere Samsung Pay in den Einstellungen ein, damit deine Aktion immer zuverlässig ausgeführt wird.</string>
 </resources>
