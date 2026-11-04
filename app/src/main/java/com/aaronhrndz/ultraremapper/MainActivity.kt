@@ -615,7 +615,7 @@ private fun Home(
         bottomRows.any { it.third.first != "none" } || allConfiguredActions.contains("flashlight")
     }
     val needsSecureSettings = remember(allConfiguredActions, gestureRows, topRows) {
-        allConfiguredActions.any { it in setOf("glove_mode", "lte_toggle", "adb_mode") } ||
+        allConfiguredActions.any { it in setOf("lte_toggle", "adb_mode") } ||
                 gestureRows.any { it.third.first != "none" } ||
                 Mapping.get(context, "top_double") != "none"
     }

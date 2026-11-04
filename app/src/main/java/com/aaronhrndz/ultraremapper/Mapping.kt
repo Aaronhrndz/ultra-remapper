@@ -56,7 +56,6 @@ object Mapping {
         "flashlight" to R.string.action_flashlight,
         "red_flashlight" to R.string.action_red_flashlight,
         "dnd_toggle" to R.string.action_dnd_toggle,
-        "glove_mode" to R.string.action_glove_mode,
         "save_parking" to R.string.action_save_parking,
         "nav_parking" to R.string.action_nav_parking,
         "water_eject" to R.string.action_water_eject,
@@ -151,7 +150,6 @@ object Mapping {
             "flashlight" -> toggleFlashlight(context, backToHome)
             "red_flashlight" -> toggleRedFlashlight(context)
             "dnd_toggle" -> toggleDoNotDisturb(context)
-            "glove_mode" -> UtilityActions.toggleTouchSensitivity(context)
             "save_parking" -> UtilityActions.saveParking(context)
             "nav_parking" -> UtilityActions.navigateToParking(context, backToHome)
             "adb_mode" -> UtilityActions.toggleAdbEasyMode(context)

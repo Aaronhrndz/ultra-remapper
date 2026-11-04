@@ -90,7 +90,7 @@ enum class WatchPermission(
 ) {
     WRITE_SECURE(
         title = "Write Secure Settings",
-        description = "Permite alternar Modo Guantes, LTE y control del sistema sin root.",
+        description = "Permite alternar LTE y control del sistema sin root.",
         grantCmd = "pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS",
         revokeCmd = "pm revoke com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS",
         checkCmd = "dumpsys package com.aaronhrndz.ultraremapper | grep 'WRITE_SECURE_SETTINGS: granted=true'",

@@ -39,8 +39,6 @@ class BottomButtonService : AccessibilityService() {
         var pendingWalletDismissAction: Boolean = false
         @Volatile
         var pendingWaterLockAutoToggle: Boolean = false
-        @Volatile
-        var pendingGloveModeAutoToggle: Boolean = false
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -327,14 +325,6 @@ class BottomButtonService : AccessibilityService() {
                     }
                 }, 200L)
 
-            } else if (pendingGloveModeAutoToggle && (pkg.contains("settings") || cls?.contains("display", ignoreCase = true) == true)) {
-                tapHandler.removeCallbacksAndMessages(null)
-                tapHandler.postDelayed({
-                    if (pendingGloveModeAutoToggle) {
-                        performGloveModeClick()
-                    }
-                }, 150L)
-
             } else if (pkg != "android") {
                 isFlashlightWindowActive = false
                 pendingBoostFromAction = false
@@ -435,95 +425,6 @@ class BottomButtonService : AccessibilityService() {
                 performWaterLockClick()
             }
         }, 800L)
-    }
-
-    fun autoToggleGloveMode() {
-        setWindowTrackingEnabled(true)
-        pendingGloveModeAutoToggle = true
-        tapHandler.postDelayed({
-            if (pendingGloveModeAutoToggle) {
-                performGloveModeClick()
-            }
-        }, 600L)
-    }
-
-    private fun performGloveModeClick() {
-        try {
-            val root = rootInActiveWindow ?: return
-
-            // 1. Check if "Sensibilidad" or related keyword is already on screen
-            if (toggleGloveModeOnCurrentScreen(root)) {
-                pendingGloveModeAutoToggle = false
-                return
-            }
-
-            // 2. Not yet on screen: scroll down on the RecyclerView
-            val scrollables = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
-            findScrollableNodes(root, scrollables)
-            for (s in scrollables) {
-                s.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-            }
-
-            // Re-check after small scroll animation
-            tapHandler.postDelayed({
-                try {
-                    val newRoot = rootInActiveWindow ?: return@postDelayed
-                    if (toggleGloveModeOnCurrentScreen(newRoot)) {
-                        pendingGloveModeAutoToggle = false
-                        return@postDelayed
-                    }
-                    // Try one more scroll if still not visible
-                    val sc2 = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
-                    findScrollableNodes(newRoot, sc2)
-                    for (s in sc2) {
-                        s.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
-                    }
-                    tapHandler.postDelayed({
-                        val thirdRoot = rootInActiveWindow
-                        if (thirdRoot != null) {
-                            toggleGloveModeOnCurrentScreen(thirdRoot)
-                        }
-                        pendingGloveModeAutoToggle = false
-                    }, 200L)
-                } catch (_: Exception) {
-                    pendingGloveModeAutoToggle = false
-                }
-            }, 200L)
-        } catch (_: Exception) {
-            pendingGloveModeAutoToggle = false
-        }
-    }
-
-    private fun toggleGloveModeOnCurrentScreen(root: android.view.accessibility.AccessibilityNodeInfo): Boolean {
-        val keywords = listOf("sensibilidad", "guante", "touch sensitivity", "glove")
-        for (kw in keywords) {
-            val matches = root.findAccessibilityNodeInfosByText(kw)
-            for (item in matches) {
-                // Find parent container or switch widget
-                var parent: android.view.accessibility.AccessibilityNodeInfo? = item.parent
-                var depth = 0
-                while (parent != null && depth < 4) {
-                    val checkables = mutableListOf<android.view.accessibility.AccessibilityNodeInfo>()
-                    findCheckableNodes(parent, checkables)
-                    for (chk in checkables) {
-                        chk.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
-                        HapticFeedbackHelper.playButtonHaptic(this)
-                        // Return to home / close settings after toggle
-                        performGlobalAction(GLOBAL_ACTION_HOME)
-                        return true
-                    }
-                    if (parent.isClickable) {
-                        parent.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
-                        HapticFeedbackHelper.playButtonHaptic(this)
-                        performGlobalAction(GLOBAL_ACTION_HOME)
-                        return true
-                    }
-                    parent = parent.parent
-                    depth++
-                }
-            }
-        }
-        return false
     }
 
     private fun findScrollableNodes(node: android.view.accessibility.AccessibilityNodeInfo?, list: MutableList<android.view.accessibility.AccessibilityNodeInfo>) {
