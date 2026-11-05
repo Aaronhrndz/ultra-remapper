@@ -474,6 +474,7 @@ class MainActivity : ComponentActivity() {
                                 onRefreshPermissions = {
                                     setup = readSetupState(context)
                                 },
+                                onOpenDevOptions = { nav.navigate("dev_options") },
                                 onDone = { nav.popBackStack() }
                             )
                         }
@@ -490,6 +491,7 @@ class MainActivity : ComponentActivity() {
                                 onRefreshPermissions = {
                                     setup = readSetupState(context)
                                 },
+                                onOpenDevOptions = { nav.navigate("dev_options") },
                                 onDone = { nav.popBackStack() }
                             )
                         }
@@ -717,56 +719,6 @@ private fun Home(
             state = columnState,
             contentPadding = PaddingValues(top = 42.dp, bottom = 76.dp, start = 10.dp, end = 10.dp)
         ) {
-            item(key = "master_switch") {
-                Button(
-                    onClick = {
-                        val next = !isMasterEnabled
-                        isMasterEnabled = next
-                        Mapping.setEnabled(context, next)
-                        isActionButtonRouted(context)
-                        syncTopButtonRoute(context)
-                    },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                context.getString(R.string.master_switch_title),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .width(36.dp)
-                                    .height(20.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isMasterEnabled) UltraOrange else Color(0xFF434954))
-                                    .padding(2.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(16.dp)
-                                        .align(if (isMasterEnabled) Alignment.CenterEnd else Alignment.CenterStart)
-                                        .clip(CircleShape)
-                                        .background(Color.White)
-                                )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
 
 
 
@@ -785,12 +737,16 @@ private fun Home(
                             Text(
                                 context.getString(bannerTitleRes, updateInfo.versionName),
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.basicMarquee()
                             )
                         },
                         secondaryLabel = {
-                            Text(context.getString(R.string.update_banner_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(
+                                context.getString(R.string.update_banner_sub),
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
+                            )
                         },
                         colors = orangeColors,
                         transformation = SurfaceTransformation(transformationSpec),
@@ -822,11 +778,15 @@ private fun Home(
                                 Text(
                                     context.getString(R.string.diag_assistant_title),
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             },
                             secondaryLabel = {
-                                Text(context.getString(R.string.diag_assistant_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(
+                                    context.getString(R.string.diag_assistant_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
                             },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
@@ -846,11 +806,15 @@ private fun Home(
                                 Text(
                                     context.getString(R.string.diag_toctoc_title),
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             },
                             secondaryLabel = {
-                                Text(context.getString(R.string.diag_toctoc_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                Text(
+                                    context.getString(R.string.diag_toctoc_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
                             },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
@@ -875,8 +839,9 @@ private fun Home(
                                     Text(
                                         context.getString(R.string.diag_route_title),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        modifier = Modifier
+                                            .weight(1f, fill = false)
+                                            .basicMarquee()
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Box(
@@ -894,7 +859,13 @@ private fun Home(
                                     }
                                 }
                             },
-                            secondaryLabel = { Text(context.getString(R.string.diag_route_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_route_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -918,8 +889,9 @@ private fun Home(
                                     Text(
                                         context.getString(R.string.diag_overlay_title),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        modifier = Modifier
+                                            .weight(1f, fill = false)
+                                            .basicMarquee()
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Box(
@@ -937,7 +909,13 @@ private fun Home(
                                     }
                                 }
                             },
-                            secondaryLabel = { Text(context.getString(R.string.diag_overlay_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_overlay_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -950,8 +928,20 @@ private fun Home(
                     item(key = "diag_a11y") {
                         Button(
                             onClick = onOpenA11ySettings,
-                            label = { Text(context.getString(R.string.diag_a11y_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            secondaryLabel = { Text(context.getString(R.string.diag_a11y_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            label = {
+                                Text(
+                                    context.getString(R.string.diag_a11y_title),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_a11y_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -975,8 +965,9 @@ private fun Home(
                                     Text(
                                         context.getString(R.string.diag_media_title),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        modifier = Modifier
+                                            .weight(1f, fill = false)
+                                            .basicMarquee()
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Box(
@@ -994,7 +985,13 @@ private fun Home(
                                     }
                                 }
                             },
-                            secondaryLabel = { Text(context.getString(R.string.diag_media_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_media_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -1018,8 +1015,9 @@ private fun Home(
                                     Text(
                                         context.getString(R.string.diag_secure_settings),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        modifier = Modifier
+                                            .weight(1f, fill = false)
+                                            .basicMarquee()
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Box(
@@ -1037,7 +1035,13 @@ private fun Home(
                                     }
                                 }
                             },
-                            secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_secure_settings_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -1061,8 +1065,9 @@ private fun Home(
                                     Text(
                                         context.getString(R.string.diag_samsung_pay_conflict_title),
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        modifier = Modifier.weight(1f, fill = false)
+                                        modifier = Modifier
+                                            .weight(1f, fill = false)
+                                            .basicMarquee()
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Box(
@@ -1080,7 +1085,13 @@ private fun Home(
                                     }
                                 }
                             },
-                            secondaryLabel = { Text(context.getString(R.string.diag_samsung_pay_conflict_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            secondaryLabel = {
+                                Text(
+                                    context.getString(R.string.diag_samsung_pay_conflict_sub),
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            },
                             colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
@@ -1417,43 +1428,6 @@ private fun Home(
                     modifier = Modifier
                         .fillMaxWidth()
                         .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            item(key = "app_version_footer") {
-                val installedVersion = remember {
-                    try {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.4.0"
-                    } catch (e: Exception) {
-                        "1.4.0"
-                    }
-                }
-                var tapCount by remember { mutableStateOf(0) }
-                val isBetaInstalled = remember { installedVersion.contains("beta", ignoreCase = true) }
-                val isBetaChannel = remember { UpdateChecker.isBetaChannel(context) }
-                val displayText = if (isBetaInstalled) {
-                    context.getString(R.string.app_version, "$installedVersion (Beta)")
-                } else if (isBetaChannel) {
-                    context.getString(R.string.app_version, "$installedVersion [Beta Channel]")
-                } else {
-                    context.getString(R.string.app_version, installedVersion)
-                }
-
-                Text(
-                    text = displayText,
-                    color = if (isBetaChannel) UltraOrange else Color(0xFF6A717E),
-                    style = MaterialTheme.typography.bodySmall,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 14.dp, bottom = 4.dp)
-                        .clickable {
-                            tapCount++
-                            if (tapCount >= 7) {
-                                tapCount = 0
-                                onOpenDevOptions()
-                            }
-                        }
                 )
             }
         }

@@ -6,6 +6,7 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
-import androidx.wear.compose.foundation.lazy.items
+import androidx.wear.compose.foundation.lazy.itemsIndexed
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.*
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
@@ -37,6 +38,8 @@ import com.aaronhrndz.ultraremapper.HapticFeedbackHelper
 import com.aaronhrndz.ultraremapper.Mapping
 import com.aaronhrndz.ultraremapper.MediaControlService
 import com.aaronhrndz.ultraremapper.R
+import com.aaronhrndz.ultraremapper.SystemRouteHelper
+import com.aaronhrndz.ultraremapper.UpdateChecker
 import com.aaronhrndz.ultraremapper.adb.AdbLocalManager
 import com.aaronhrndz.ultraremapper.adb.AdbMdnsDiscovery
 import com.aaronhrndz.ultraremapper.adb.LocalAdbClient
@@ -94,12 +97,14 @@ fun SettingsScreen(
     onClientConnected: ((LocalAdbClient) -> Unit)? = null,
     onOpenWizard: () -> Unit,
     onRefreshPermissions: () -> Unit,
+    onOpenDevOptions: () -> Unit = {},
     onDone: () -> Unit
 ) {
     val context = LocalContext.current
     val columnState = rememberTransformingLazyColumnState()
     val transformationSpec = rememberTransformationSpec()
 
+    var isMasterEnabled by remember { mutableStateOf(Mapping.isEnabled(context)) }
     val shouldExpandPermsInitially = targetHighlight != null && targetHighlight != "SAMSUNG_PAY"
     var isPermsExpanded by remember { mutableStateOf(shouldExpandPermsInitially) }
     var isAdbExpanded by remember { mutableStateOf(false) }
@@ -112,6 +117,12 @@ fun SettingsScreen(
     var activeLoadingItem by remember { mutableStateOf<String?>(null) }
     var isAutoConnecting by remember { mutableStateOf(false) }
 
+    var connectedClientState by remember { mutableStateOf(client ?: LocalAdbClient.activeInstance) }
+    val isAdbConnected = (connectedClientState?.isConnected == true)
+    val isAdbPaired = LocalAdbClient.isPaired(context)
+    val perms = remember(permVersion, isAdbConnected) { readPermissionItems(context) }
+    val mainHandler = remember { android.os.Handler(android.os.Looper.getMainLooper()) }
+
     // Track handled target to avoid re-scrolling on back navigation
     var handledTarget by rememberSaveable { mutableStateOf<String?>(null) }
 
@@ -122,12 +133,13 @@ fun SettingsScreen(
             handledTarget = targetHighlight
             kotlinx.coroutines.delay(250)
             if (targetHighlight == "SAMSUNG_PAY") {
-                // Samsung Pay card index is below perms card
-                val targetIndex = 3
+                // Samsung Pay card index: header (0), master_switch (1), perms_header (2), perms items (3..2+N), adb_collapsible (3+N), samsung_pay (4+N)
+                val targetIndex = 4 + perms.size
                 columnState.animateScrollToItem(targetIndex, 0)
             } else {
-                // First item (Overlay, index 1) requires offset 0 so it stays fully visible on round watch
-                val targetIndex = 1
+                // Find matching permission item index
+                val permIdx = perms.indexOfFirst { it.type.name == targetHighlight }
+                val targetIndex = if (permIdx >= 0) 3 + permIdx else 3
                 columnState.animateScrollToItem(targetIndex, 0)
             }
             // 3 slow, very noticeable highlight pulses
@@ -137,12 +149,6 @@ fun SettingsScreen(
             }
         }
     }
-
-    var connectedClientState by remember { mutableStateOf(client ?: LocalAdbClient.activeInstance) }
-    val isAdbConnected = (connectedClientState?.isConnected == true)
-    val isAdbPaired = LocalAdbClient.isPaired(context)
-    val perms = remember(permVersion, isAdbConnected) { readPermissionItems(context) }
-    val mainHandler = remember { android.os.Handler(android.os.Looper.getMainLooper()) }
 
     // Auto-connect on entering Settings if paired and not yet connected
     LaunchedEffect(Unit) {
@@ -190,143 +196,178 @@ fun SettingsScreen(
                 }
             }
 
-            // 1. COLLAPSIBLE PERMISSIONS SECTION (Same card style & CollapseChevron as Home buttons)
-            item(key = "perms_collapsible_card") {
-                Column(
+            // Master Remapper Switch (First option in Settings)
+            item(key = "master_remapper_switch") {
+                Button(
+                    onClick = {
+                        val next = !isMasterEnabled
+                        isMasterEnabled = next
+                        SystemRouteHelper.onMasterToggle(context, next)
+                    },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                context.getString(R.string.master_switch_title),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .width(36.dp)
+                                    .height(20.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isMasterEnabled) UltraOrange else Color(0xFF434954))
+                                    .padding(2.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .align(if (isMasterEnabled) Alignment.CenterEnd else Alignment.CenterStart)
+                                        .clip(CircleShape)
+                                        .background(Color.White)
+                                )
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFF181B22))
-                        .padding(horizontal = 10.dp, vertical = 8.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable {
-                                isPermsExpanded = !isPermsExpanded
-                                HapticFeedbackHelper.playUiTap(context)
-                            }
-                            .padding(horizontal = 6.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = context.getString(R.string.settings_permissions_title),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        CollapseChevron(isExpanded = isPermsExpanded)
-                    }
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
 
-                    if (isPermsExpanded) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        perms.forEachIndexed { idx, perm ->
-                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
-                            val isThisLoading = (activeLoadingItem == perm.type.name)
-                            val isHighlighted = targetHighlight == perm.type.name
-                            val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
-                                UltraOrange.copy(alpha = flashAnim.value)
-                            } else {
-                                Color.Transparent
-                            }
-                            Button(
-                                enabled = activeLoadingItem == null && !isAutoConnecting,
-                                onClick = {
-                                    val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
-                                    if (currentClient?.isConnected != true) {
-                                        onOpenWizard()
-                                        return@Button
-                                    }
-                                    val targetState = !perm.isGranted
-                                    activeLoadingItem = perm.type.name
-                                    statusToast = null
-                                    thread {
-                                        val ok = AdbLocalManager.setPermissionState(
-                                            currentClient,
-                                            context.packageName,
-                                            perm.type,
-                                            targetState
-                                        )
-                                        // Brief pause to allow system to commit permission change
-                                        Thread.sleep(300)
-                                        mainHandler.post {
-                                            activeLoadingItem = null
-                                            if (ok) {
-                                                permVersion++
-                                                onRefreshPermissions()
-                                                HapticFeedbackHelper.playButtonHaptic(context)
-                                                statusToast = null
-                                            } else {
-                                                statusToast = "Fallo al cambiar ${perm.name}"
-                                                isToastError = true
-                                            }
-                                        }
-                                    }
-                                },
-                                label = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = perm.name,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = Color.White,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                            Text(
-                                                text = perm.description,
-                                                color = Color(0xFF9EA7B8),
-                                                style = MaterialTheme.typography.labelSmall,
-                                                maxLines = 1,
-                                                overflow = TextOverflow.Ellipsis
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        if (isThisLoading) {
-                                            SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
-                                        } else {
-                                            // Switch Pill
-                                            Box(
-                                                modifier = Modifier
-                                                    .width(32.dp)
-                                                    .height(18.dp)
-                                                    .clip(CircleShape)
-                                                    .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
-                                                    .padding(2.dp)
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(14.dp)
-                                                        .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
-                                                        .clip(CircleShape)
-                                                        .background(Color.White)
-                                                )
-                                            }
-                                        }
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF282E38),
-                                    contentColor = Color.White
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .then(
-                                        if (isHighlighted && highlightColor != Color.Transparent) {
-                                            Modifier.border(2.dp, highlightColor, RoundedCornerShape(14.dp))
-                                        } else Modifier
-                                    )
-                            )
-                        }
-                    }
+            // Permissions Section Header
+            item(key = "perms_section_header") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        text = context.getString(R.string.settings_permissions_title),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
+            }
+
+            // Permissions Items (each as a standalone list item so animateScrollToItem centers exactly on it)
+            itemsIndexed(perms, key = { _, item -> "perm_${item.type.name}" }) { _, perm ->
+                val isThisLoading = (activeLoadingItem == perm.type.name)
+                val isHighlighted = targetHighlight == perm.type.name
+                val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
+                    UltraOrange.copy(alpha = flashAnim.value)
+                } else {
+                    Color.Transparent
+                }
+                Button(
+                    enabled = activeLoadingItem == null && !isAutoConnecting,
+                    onClick = {
+                        val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
+                        if (currentClient?.isConnected != true) {
+                            onOpenWizard()
+                            return@Button
+                        }
+                        val targetState = !perm.isGranted
+                        activeLoadingItem = perm.type.name
+                        statusToast = null
+                        thread {
+                            val ok = AdbLocalManager.setPermissionState(
+                                currentClient,
+                                context.packageName,
+                                perm.type,
+                                targetState
+                            )
+                            Thread.sleep(300)
+                            mainHandler.post {
+                                activeLoadingItem = null
+                                if (ok) {
+                                    permVersion++
+                                    onRefreshPermissions()
+                                    HapticFeedbackHelper.playButtonHaptic(context)
+                                    statusToast = null
+                                } else {
+                                    statusToast = "Fallo al cambiar ${perm.name}"
+                                    isToastError = true
+                                }
+                            }
+                        }
+                    },
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = perm.name,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = perm.description,
+                                    color = Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            if (isThisLoading) {
+                                SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .width(32.dp)
+                                        .height(18.dp)
+                                        .clip(CircleShape)
+                                        .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
+                                        .padding(2.dp)
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(14.dp)
+                                            .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
+                                            .clip(CircleShape)
+                                            .background(Color.White)
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF282E38),
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .transformedHeight(this, transformationSpec)
+                        .then(
+                            if (isHighlighted && highlightColor != Color.Transparent) {
+                                Modifier.border(2.dp, highlightColor, RoundedCornerShape(16.dp))
+                            } else Modifier
+                        )
+                )
             }
 
             // 2. COLLAPSIBLE ADB SECTION
@@ -638,6 +679,44 @@ fun SettingsScreen(
                             .padding(top = 8.dp)
                     )
                 }
+            }
+
+            // App version footer (Moved from MainActivity home screen)
+            item(key = "app_version_footer") {
+                val installedVersion = remember {
+                    try {
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.6"
+                    } catch (e: Exception) {
+                        "2.1.6"
+                    }
+                }
+                var tapCount by remember { mutableStateOf(0) }
+                val isBetaInstalled = remember { installedVersion.contains("beta", ignoreCase = true) }
+                val isBetaChannel = remember { UpdateChecker.isBetaChannel(context) }
+                val displayText = if (isBetaInstalled) {
+                    context.getString(R.string.app_version, "$installedVersion (Beta)")
+                } else if (isBetaChannel) {
+                    context.getString(R.string.app_version, "$installedVersion [Beta Channel]")
+                } else {
+                    context.getString(R.string.app_version, installedVersion)
+                }
+
+                Text(
+                    text = displayText,
+                    color = if (isBetaChannel) UltraOrange else Color(0xFF6A717E),
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, bottom = 8.dp)
+                        .clickable {
+                            tapCount++
+                            if (tapCount >= 7) {
+                                tapCount = 0
+                                onOpenDevOptions()
+                            }
+                        }
+                )
             }
         }
     }
