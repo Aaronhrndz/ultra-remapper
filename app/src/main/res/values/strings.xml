@@ -2,12 +2,12 @@
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
-    <!-- Master Switch -->
+    
     <string name="master_switch_title">Remap buttons</string>
     <string name="haptic_switch_title">Haptic vibration</string>
     <string name="haptic_switch_subtitle">Feedback on button press</string>
 
-    <!-- Sections & Headers -->
+    
     <string name="hdr_center_button">Center Button</string>
     <string name="hdr_center_button_note">With Samsung Health on screen, remapping pauses to allow native controls.</string>
     <string name="hdr_bottom_button">Bottom Button</string>
@@ -59,14 +59,14 @@
     <string name="notif_update_title">Update Available: v%s</string>
     <string name="notif_update_desc">Tap to install directly on watch</string>
     <string name="notif_action_install">Install on Watch</string>
-    <!-- Gestures -->
+    
     <string name="gesture_single">Single press</string>
     <string name="gesture_double">Double press</string>
     <string name="gesture_triple">Triple press</string>
     <string name="gesture_long">Long press</string>
     <string name="hint_workout_laps">⚠️ Workout laps require Single press set to My Workouts</string>
 
-    <!-- Samsung Actions -->
+    
     <string name="action_flashlight">Flashlight</string>
     <string name="action_shealth_workout">My Workouts</string>
     <string name="action_shealth_route">Route Workout Mode</string>
@@ -74,7 +74,7 @@
     <string name="action_water_lock">Water Lock</string>
     <string name="action_assistant">Digital Assistant</string>
 
-    <!-- Utility Actions -->
+    
     <string name="action_red_flashlight">RGBW Flashlight</string>
     <string name="action_dnd_toggle">Do Not Disturb</string>
     <string name="action_save_parking">Save Parking Spot</string>
@@ -84,11 +84,11 @@
     <string name="action_water_eject">Water Eject Speaker</string>
     <string name="action_lte_toggle">LTE &amp; Mobile Data</string>
 
-    <!-- Home Assistant Actions -->
+    
     <string name="action_ha_assist">Home Assistant Assist</string>
     <string name="action_ha_open">Open Home Assistant</string>
 
-    <!-- Media Actions -->
+    
     <string name="action_play_pause">Play / Pause</string>
     <string name="action_next">Next Track</string>
     <string name="action_previous">Previous Track</string>
@@ -96,7 +96,7 @@
     <string name="action_vol_down">Volume Down</string>
     <string name="action_open_media_player">Open Media Controller</string>
 
-    <!-- Toasts & Notifications -->
+    
     <string name="toast_parking_saved">Parking spot saved!</string>
     <string name="toast_parking_acquiring">Acquiring GPS fix…</string>
     <string name="toast_parking_empty">No parking spot saved yet</string>
@@ -155,8 +155,10 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="grant_button_label">Grant</string>
     <string name="diag_dialog_go_to_settings">Grant directly on watch</string>
     <string name="diag_samsung_pay_conflict_title">Samsung Pay Conflict</string>
-    <string name="diag_samsung_pay_conflict_sub" formatted="false">Gesture works, but not 100%% reliably without freezing Samsung Pay</string>
-    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">The bottom button gesture works, but it will not work 100%% of the time because the system prioritizes Samsung Pay/Wallet.\n\nThe definitive fix for 100%% reliability is to freeze Samsung Pay from Ultra Remapper Settings.</string>
+    <string name="diag_samsung_pay_conflict_sub">Gesture works, but not always without freezing Samsung Pay</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">The bottom button gesture works, but it will not work every time because the system prioritizes Samsung Pay/Wallet.
+
+The definitive fix to make it work reliably is to freeze Samsung Pay from Ultra Remapper Settings.</string>
     <string name="settings_adb_unpair_button">Forget ADB Pairing</string>
     <string name="settings_adb_unpair_desc">Reset local pairing &amp; keys</string>
     <string name="settings_adb_unpair_confirm">Pairing removed</string>

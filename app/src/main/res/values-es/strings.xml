@@ -2,12 +2,12 @@
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permite a Ultra Remapper reasignar la pulsación larga del botón inferior. La pulsación corta sigue volviendo atrás.</string>
 
-    <!-- Master Switch -->
+    
     <string name="master_switch_title">Remapear botones</string>
     <string name="haptic_switch_title">Vibración háptica</string>
     <string name="haptic_switch_subtitle">Respuesta táctil al pulsar</string>
 
-    <!-- Sections & Headers -->
+    
     <string name="hdr_center_button">Botón Central</string>
     <string name="hdr_center_button_note">Con Samsung Health en pantalla la app se pausa para permitir los controles nativos.</string>
     <string name="hdr_bottom_button">Botón Inferior</string>
@@ -59,14 +59,14 @@
     <string name="notif_update_title">Actualización disponible: v%s</string>
     <string name="notif_update_desc">Toca para instalar directamente en el reloj</string>
     <string name="notif_action_install">Instalar en el Reloj</string>
-    <!-- Gestures -->
+    
     <string name="gesture_single">Una pulsación</string>
     <string name="gesture_double">Doble pulsación</string>
     <string name="gesture_triple">Triple pulsación</string>
     <string name="gesture_long">Pulsación larga</string>
     <string name="hint_workout_laps">⚠️ Para vueltas (laps), asigna pulsación simple a Mis entrenamientos</string>
 
-    <!-- Samsung Actions -->
+    
     <string name="action_flashlight">Linterna</string>
     <string name="action_shealth_workout">Mis entrenamientos</string>
     <string name="action_shealth_route">Modo Ruta (Samsung Health)</string>
@@ -74,7 +74,7 @@
     <string name="action_water_lock">Bloqueo de Agua</string>
     <string name="action_assistant">Asistente Digital</string>
 
-    <!-- Utility Actions -->
+    
     <string name="action_red_flashlight">Linterna RGBW</string>
     <string name="action_dnd_toggle">No Molestar</string>
     <string name="action_save_parking">Guardar Parking</string>
@@ -84,11 +84,11 @@
     <string name="action_water_eject">Expulsar Agua (Altavoz)</string>
     <string name="action_lte_toggle">LTE y Datos Móviles</string>
 
-    <!-- Home Assistant Actions -->
+    
     <string name="action_ha_assist">Home Assistant Assist (Voz)</string>
     <string name="action_ha_open">Abrir Home Assistant</string>
 
-    <!-- Media Actions -->
+    
     <string name="action_play_pause">Reproducir / Pausa</string>
     <string name="action_next">Pista Siguiente</string>
     <string name="action_previous">Pista Anterior</string>
@@ -96,7 +96,7 @@
     <string name="action_vol_down">Bajar Volumen</string>
     <string name="action_open_media_player">Abrir Controlador Multimedia</string>
 
-    <!-- Toasts & Notifications -->
+    
     <string name="toast_parking_saved">¡Ubicación de parking guardada!</string>
     <string name="toast_parking_acquiring">Obteniendo señal GPS…</string>
     <string name="toast_parking_empty">No hay ningún parking guardado</string>
@@ -155,8 +155,10 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="grant_button_label">Conceder</string>
     <string name="diag_dialog_go_to_settings">Conceder desde el reloj</string>
     <string name="diag_samsung_pay_conflict_title">Conflicto con Samsung Pay</string>
-    <string name="diag_samsung_pay_conflict_sub" formatted="false">El gesto funciona, pero no al 100%% sin congelar Samsung Pay</string>
-    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">El gesto del botón inferior funciona, pero no funcionará el 100%% de las veces debido a que el sistema invoca Samsung Pay/Wallet prioritariamente.\n\nLa solución definitiva para que funcione siempre al 100%% es congelar Samsung Pay desde la sección Ajustes de Ultra Remapper.</string>
+    <string name="diag_samsung_pay_conflict_sub">El gesto funciona, pero no siempre sin congelar Samsung Pay</string>
+    <string name="diag_dialog_samsung_pay_conflict_body">El gesto del botón inferior funciona, pero no funcionará siempre debido a que el sistema invoca Samsung Pay/Wallet prioritariamente.
+
+La solución definitiva para que funcione siempre de forma fiable es congelar Samsung Pay desde la sección Ajustes de Ultra Remapper.</string>
     <string name="settings_adb_unpair_button">Borrar vinculación ADB</string>
     <string name="settings_adb_unpair_desc">Restablecer emparejamiento y claves</string>
     <string name="settings_adb_unpair_confirm">Vinculación eliminada</string>
