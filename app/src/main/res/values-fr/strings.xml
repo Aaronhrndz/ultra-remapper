@@ -1,4 +1,4 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Permet à Ultra Remapper de réassigner l’appui long du bouton inférieur.</string>
     <!-- Master Switch -->
@@ -131,4 +131,7 @@ Paramètres de la montre › Applications › Applications par défaut › Assis
     <string name="diag_samsung_pay_conflict_title">Conflit avec Samsung Pay</string>
     <string name="diag_samsung_pay_conflict_sub">Geler pour éviter les conflits</string>
     <string name="diag_dialog_samsung_pay_conflict_body">Le maintien du bouton inférieur entre en conflit avec Samsung Pay. Pour garantir le bon fonctionnement de votre action à chaque fois, gelez Samsung Pay dans les Paramètres.</string>
+    <string name="settings_adb_unpair_button">Supprimer le jumelage ADB</string>
+    <string name="settings_adb_unpair_desc">Réinitialiser jumelage et clés</string>
+    <string name="settings_adb_unpair_confirm">Jumelage supprimé</string>
 </resources>

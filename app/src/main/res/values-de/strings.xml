@@ -1,4 +1,4 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Ermöglicht Ultra Remapper die Neubelegung des langen Drucks der unteren Taste.</string>
     <!-- Master Switch -->
@@ -131,4 +131,7 @@ Uhr-Einstellungen › Apps › Standard-Apps › Digitaler Assistent › Ultra R
     <string name="diag_samsung_pay_conflict_title">Konflikt mit Samsung Pay</string>
     <string name="diag_samsung_pay_conflict_sub">Einfrieren, um Fehler zu vermeiden</string>
     <string name="diag_dialog_samsung_pay_conflict_body">Das Halten der unteren Taste kollidiert mit Samsung Pay. Friere Samsung Pay in den Einstellungen ein, damit deine Aktion immer zuverlässig ausgeführt wird.</string>
+    <string name="settings_adb_unpair_button">ADB-Kopplung löschen</string>
+    <string name="settings_adb_unpair_desc">Kopplung und Schlüssel zurücksetzen</string>
+    <string name="settings_adb_unpair_confirm">Kopplung gelöscht</string>
 </resources>

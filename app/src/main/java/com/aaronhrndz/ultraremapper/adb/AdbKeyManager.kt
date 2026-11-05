@@ -34,6 +34,13 @@ object AdbKeyManager {
     @Volatile
     private var cachedCert: X509Certificate? = null
 
+    fun clearKeys(context: Context) {
+        cachedKeyPair = null
+        cachedCert = null
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+    }
+
     fun getOrCreateKeyPair(context: Context): KeyPair {
         cachedKeyPair?.let { return it }
 

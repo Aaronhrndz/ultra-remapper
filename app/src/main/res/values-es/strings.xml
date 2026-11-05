@@ -154,4 +154,7 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="diag_samsung_pay_conflict_title">Conflicto con Samsung Pay</string>
     <string name="diag_samsung_pay_conflict_sub">Congélalo para evitar fallos</string>
     <string name="diag_dialog_samsung_pay_conflict_body">Para asegurar que tu acción funcione siempre, puedes congelar Samsung Pay en los ajustes de Ultra Remapper.</string>
+    <string name="settings_adb_unpair_button">Borrar vinculación ADB</string>
+    <string name="settings_adb_unpair_desc">Restablecer emparejamiento y claves</string>
+    <string name="settings_adb_unpair_confirm">Vinculación eliminada</string>
 </resources>

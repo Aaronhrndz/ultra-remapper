@@ -51,6 +51,17 @@ class LocalAdbClient(
                 prefs.edit().putInt(KEY_LAST_PORT, port).apply()
             }
         }
+
+        fun unpair(context: Context) {
+            try {
+                activeInstance?.close()
+            } catch (_: Exception) {}
+            activeInstance = null
+
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit().clear().apply()
+            AdbKeyManager.clearKeys(context)
+        }
     }
 
     private var adbConnection: AdbConnection? = null

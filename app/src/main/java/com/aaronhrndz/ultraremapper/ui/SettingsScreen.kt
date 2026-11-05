@@ -113,18 +113,15 @@ fun SettingsScreen(
     val flashAnim = remember { Animatable(0f) }
     LaunchedEffect(targetHighlight) {
         if (targetHighlight != null) {
-            // Wait brief moment for layout/expand
-            kotlinx.coroutines.delay(200)
-            if (targetHighlight == "SAMSUNG_PAY") {
-                columnState.animateScrollToItem(4, 0)
-            } else {
-                columnState.animateScrollToItem(1, 0)
+            kotlinx.coroutines.delay(250)
+            val targetIndex = if (targetHighlight == "SAMSUNG_PAY") 4 else 1
+            // Center target item on round watch screen
+            columnState.animateScrollToItem(targetIndex, -100)
+            // 3 slow, very noticeable highlight pulses
+            repeat(3) {
+                flashAnim.animateTo(1f, tween(450))
+                flashAnim.animateTo(0f, tween(400))
             }
-            // Flash twice: 0 -> 1 -> 0 -> 1 -> 0
-            flashAnim.animateTo(1f, tween(250))
-            flashAnim.animateTo(0f, tween(200))
-            flashAnim.animateTo(1f, tween(250))
-            flashAnim.animateTo(0f, tween(300))
         }
     }
 
@@ -381,6 +378,49 @@ fun SettingsScreen(
                         .fillMaxWidth()
                         .transformedHeight(this, transformationSpec)
                 )
+            }
+
+            // Forget / Unpair ADB Button
+            if (isAdbPaired) {
+                item(key = "adb_unpair_card") {
+                    Button(
+                        onClick = {
+                            LocalAdbClient.unpair(context)
+                            connectedClientState = null
+                            permVersion++
+                            onRefreshPermissions()
+                            HapticFeedbackHelper.playButtonHaptic(context)
+                            statusToast = context.getString(R.string.settings_adb_unpair_confirm)
+                            isToastError = false
+                        },
+                        label = {
+                            Text(
+                                text = context.getString(R.string.settings_adb_unpair_button),
+                                fontWeight = FontWeight.Bold,
+                                color = RedAlert,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        secondaryLabel = {
+                            Text(
+                                text = context.getString(R.string.settings_adb_unpair_desc),
+                                color = Color(0xFF9EA7B8),
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = SlateCard,
+                            contentColor = RedAlert
+                        ),
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .transformedHeight(this, transformationSpec)
+                    )
+                }
             }
 
             // Samsung Pay Freeze Switch

@@ -72,13 +72,20 @@ object AdbLocalManager {
         if (targetClient?.isConnected != true) return false
         return try {
             val cmd = if (targetEnabled) {
-                "pm enable $SAMSUNG_PAY_PACKAGE"
+                "pm enable $SAMSUNG_PAY_PACKAGE; pm unhide $SAMSUNG_PAY_PACKAGE"
             } else {
-                "pm disable-user --user 0 $SAMSUNG_PAY_PACKAGE"
+                "pm disable-user --user 0 $SAMSUNG_PAY_PACKAGE; pm disable $SAMSUNG_PAY_PACKAGE"
             }
             val res = targetClient.exec(cmd)
             android.util.Log.d("AdbLocalManager", "toggleSamsungPay($targetEnabled) -> '$res'")
-            res.contains("new state", ignoreCase = true) || res.contains("enabled", ignoreCase = true) || res.contains("disabled", ignoreCase = true) || res.isEmpty()
+            // Verify actual package status via pm list
+            val checkDisabled = targetClient.exec("pm list packages -d $SAMSUNG_PAY_PACKAGE")
+            val isPkgDisabled = checkDisabled.contains(SAMSUNG_PAY_PACKAGE)
+            if (!targetEnabled) {
+                isPkgDisabled || res.contains("disabled", ignoreCase = true) || res.contains("new state", ignoreCase = true) || !res.contains("error", ignoreCase = true)
+            } else {
+                !isPkgDisabled || res.contains("enabled", ignoreCase = true) || res.contains("new state", ignoreCase = true)
+            }
         } catch (e: Exception) {
             android.util.Log.e("AdbLocalManager", "toggleSamsungPay failed", e)
             false

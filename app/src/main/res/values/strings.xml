@@ -1,4 +1,4 @@
-﻿<resources>
+<resources>
     <string name="app_name">Ultra Remapper</string>
     <string name="bottom_service_description">Lets Ultra Remapper replace the bottom button long press. Short press still goes Back.</string>
 
@@ -154,4 +154,7 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="diag_samsung_pay_conflict_title">Samsung Pay Conflict</string>
     <string name="diag_samsung_pay_conflict_sub">Freeze it to prevent conflicts</string>
     <string name="diag_dialog_samsung_pay_conflict_body">Holding the bottom button conflicts with Samsung Pay/Wallet. To ensure your custom action works reliably every time, freeze Samsung Pay in Settings.</string>
+    <string name="settings_adb_unpair_button">Forget ADB Pairing</string>
+    <string name="settings_adb_unpair_desc">Reset local pairing &amp; keys</string>
+    <string name="settings_adb_unpair_confirm">Pairing removed</string>
 </resources>
