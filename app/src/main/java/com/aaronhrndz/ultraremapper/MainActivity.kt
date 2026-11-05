@@ -5,6 +5,7 @@ import com.aaronhrndz.ultraremapper.adb.AdbLocalManager
 import com.aaronhrndz.ultraremapper.adb.LocalAdbClient
 import com.aaronhrndz.ultraremapper.ui.AdbWizardScreen
 import com.aaronhrndz.ultraremapper.ui.SettingsScreen
+import com.aaronhrndz.ultraremapper.ui.PermissionsScreen
 
 import android.content.ComponentName
 import android.content.Context
@@ -470,6 +471,7 @@ class MainActivity : ComponentActivity() {
                                     localAdbClient = client
                                     setup = readSetupState(context)
                                 },
+                                onOpenPermissions = { nav.navigate("permissions") },
                                 onOpenWizard = { nav.navigate("adb_wizard") },
                                 onRefreshPermissions = {
                                     setup = readSetupState(context)
@@ -487,11 +489,44 @@ class MainActivity : ComponentActivity() {
                                     localAdbClient = client
                                     setup = readSetupState(context)
                                 },
+                                onOpenPermissions = { nav.navigate("permissions") },
                                 onOpenWizard = { nav.navigate("adb_wizard") },
                                 onRefreshPermissions = {
                                     setup = readSetupState(context)
                                 },
                                 onOpenDevOptions = { nav.navigate("dev_options") },
+                                onDone = { nav.popBackStack() }
+                            )
+                        }
+                        composable("permissions") { entry ->
+                            val targetHighlight = entry.arguments?.getString("target")?.takeIf { it.isNotBlank() }
+                            PermissionsScreen(
+                                client = localAdbClient,
+                                targetHighlight = targetHighlight,
+                                onClientConnected = { client ->
+                                    localAdbClient = client
+                                    setup = readSetupState(context)
+                                },
+                                onOpenWizard = { nav.navigate("adb_wizard") },
+                                onRefreshPermissions = {
+                                    setup = readSetupState(context)
+                                },
+                                onDone = { nav.popBackStack() }
+                            )
+                        }
+                        composable("permissions?target={target}") { entry ->
+                            val targetHighlight = entry.arguments?.getString("target")?.takeIf { it.isNotBlank() }
+                            PermissionsScreen(
+                                client = localAdbClient,
+                                targetHighlight = targetHighlight,
+                                onClientConnected = { client ->
+                                    localAdbClient = client
+                                    setup = readSetupState(context)
+                                },
+                                onOpenWizard = { nav.navigate("adb_wizard") },
+                                onRefreshPermissions = {
+                                    setup = readSetupState(context)
+                                },
                                 onDone = { nav.popBackStack() }
                             )
                         }
@@ -514,7 +549,11 @@ class MainActivity : ComponentActivity() {
                                 onOpenSettings = { targetKey ->
                                     nav.popBackStack()
                                     if (targetKey != null && targetKey.isNotBlank()) {
-                                        nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                        if (targetKey == "SAMSUNG_PAY") {
+                                            nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                        } else {
+                                            nav.navigate("permissions?target=${Uri.encode(targetKey)}")
+                                        }
                                     } else {
                                         nav.navigate("settings")
                                     }
@@ -530,7 +569,11 @@ class MainActivity : ComponentActivity() {
                                 onOpenSettings = { targetKey ->
                                     nav.popBackStack()
                                     if (targetKey != null && targetKey.isNotBlank()) {
-                                        nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                        if (targetKey == "SAMSUNG_PAY") {
+                                            nav.navigate("settings?target=${Uri.encode(targetKey)}")
+                                        } else {
+                                            nav.navigate("permissions?target=${Uri.encode(targetKey)}")
+                                        }
                                     } else {
                                         nav.navigate("settings")
                                     }

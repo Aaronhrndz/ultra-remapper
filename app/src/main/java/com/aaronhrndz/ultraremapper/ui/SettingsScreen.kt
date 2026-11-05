@@ -33,6 +33,7 @@ import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import com.aaronhrndz.ultraremapper.ActionButtonService
 import com.aaronhrndz.ultraremapper.CollapseChevron
+import com.aaronhrndz.ultraremapper.ForwardChevron
 import com.aaronhrndz.ultraremapper.SwitchLoadingSpinner
 import com.aaronhrndz.ultraremapper.HapticFeedbackHelper
 import com.aaronhrndz.ultraremapper.Mapping
@@ -58,7 +59,7 @@ data class PermissionItem(
     val description: String
 )
 
-private fun readPermissionItems(context: Context): List<PermissionItem> {
+fun readPermissionItems(context: Context): List<PermissionItem> {
     val overlayOk = Settings.canDrawOverlays(context)
     val secureOk = context.checkSelfPermission("android.permission.WRITE_SECURE_SETTINGS") == android.content.pm.PackageManager.PERMISSION_GRANTED
     val actionRouteOk = try {
@@ -95,6 +96,7 @@ fun SettingsScreen(
     client: LocalAdbClient?,
     targetHighlight: String? = null,
     onClientConnected: ((LocalAdbClient) -> Unit)? = null,
+    onOpenPermissions: () -> Unit,
     onOpenWizard: () -> Unit,
     onRefreshPermissions: () -> Unit,
     onOpenDevOptions: () -> Unit = {},
@@ -133,16 +135,12 @@ fun SettingsScreen(
             handledTarget = targetHighlight
             kotlinx.coroutines.delay(250)
             if (targetHighlight == "SAMSUNG_PAY") {
-                // Header (0), master (1), haptic (2), perms_card (3), adb_card (4), samsung_pay (5)
-                columnState.animateScrollToItem(5, 0)
-            } else {
-                // Permissions collapsible card is index 3
-                columnState.animateScrollToItem(3, 0)
-            }
-            // 3 slow, very noticeable highlight pulses
-            repeat(3) {
-                flashAnim.animateTo(1f, tween(450))
-                flashAnim.animateTo(0f, tween(400))
+                // Index 8 is samsung_pay_switch
+                columnState.animateScrollToItem(8, 0)
+                repeat(3) {
+                    flashAnim.animateTo(1f, tween(450))
+                    flashAnim.animateTo(0f, tween(400))
+                }
             }
         }
     }
@@ -189,6 +187,26 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            // SECTION 1: GENERAL SETTINGS
+            item(key = "hdr_general") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        text = context.getString(R.string.hdr_general_settings),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().basicMarquee()
                     )
                 }
             }
@@ -309,152 +327,31 @@ fun SettingsScreen(
                 )
             }
 
-            // 1. COLLAPSIBLE PERMISSIONS SECTION
-            item(key = "perms_collapsible_card") {
-                Column(
+            // SECTION 2: ADB SETTINGS
+            item(key = "hdr_adb") {
+                ListHeader(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
-                        .clip(RoundedCornerShape(18.dp))
-                        .background(Color(0xFF181B22))
-                        .padding(horizontal = 10.dp, vertical = 8.dp)
+                        .padding(top = 10.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
                 ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable {
-                                isPermsExpanded = !isPermsExpanded
-                                HapticFeedbackHelper.playUiTap(context)
-                            }
-                            .padding(horizontal = 6.dp, vertical = 8.dp)
-                    ) {
-                        Text(
-                            text = context.getString(R.string.settings_permissions_title),
-                            color = Color.White,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            modifier = Modifier.basicMarquee()
-                        )
-                        CollapseChevron(isExpanded = isPermsExpanded)
-                    }
-
-                    if (isPermsExpanded) {
-                        Spacer(modifier = Modifier.height(6.dp))
-                        perms.forEachIndexed { idx, perm ->
-                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
-                            val isThisLoading = (activeLoadingItem == perm.type.name)
-                            val isHighlighted = targetHighlight == perm.type.name
-                            val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
-                                UltraOrange.copy(alpha = flashAnim.value)
-                            } else {
-                                Color.Transparent
-                            }
-                            Button(
-                                enabled = activeLoadingItem == null && !isAutoConnecting,
-                                onClick = {
-                                    val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
-                                    if (currentClient?.isConnected != true) {
-                                        onOpenWizard()
-                                        return@Button
-                                    }
-                                    val targetState = !perm.isGranted
-                                    activeLoadingItem = perm.type.name
-                                    statusToast = null
-                                    thread {
-                                        val ok = AdbLocalManager.setPermissionState(
-                                            currentClient,
-                                            context.packageName,
-                                            perm.type,
-                                            targetState
-                                        )
-                                        Thread.sleep(300)
-                                        mainHandler.post {
-                                            activeLoadingItem = null
-                                            if (ok) {
-                                                permVersion++
-                                                onRefreshPermissions()
-                                                HapticFeedbackHelper.playButtonHaptic(context)
-                                                statusToast = null
-                                            } else {
-                                                statusToast = "Fallo al cambiar ${perm.name}"
-                                                isToastError = true
-                                            }
-                                        }
-                                    }
-                                },
-                                label = {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Column(modifier = Modifier.weight(1f)) {
-                                            Text(
-                                                text = perm.name,
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = Color.White,
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                maxLines = 1,
-                                                modifier = Modifier.basicMarquee()
-                                            )
-                                            Text(
-                                                text = perm.description,
-                                                color = Color(0xFF9EA7B8),
-                                                style = MaterialTheme.typography.labelSmall,
-                                                maxLines = 1,
-                                                modifier = Modifier.basicMarquee()
-                                            )
-                                        }
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        if (isThisLoading) {
-                                            SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
-                                        } else {
-                                            Box(
-                                                modifier = Modifier
-                                                    .width(32.dp)
-                                                    .height(18.dp)
-                                                    .clip(CircleShape)
-                                                    .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
-                                                .padding(2.dp)
-                                            ) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(14.dp)
-                                                        .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
-                                                        .clip(CircleShape)
-                                                        .background(Color.White)
-                                                )
-                                            }
-                                        }
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = Color(0xFF282E38),
-                                    contentColor = Color.White
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .then(
-                                        if (isHighlighted && highlightColor != Color.Transparent) {
-                                            Modifier.border(2.dp, highlightColor, RoundedCornerShape(16.dp))
-                                        } else Modifier
-                                    )
-                            )
-                        }
-                    }
+                    Text(
+                        text = context.getString(R.string.hdr_adb_section),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().basicMarquee()
+                    )
                 }
             }
 
-            // 2. COLLAPSIBLE ADB SECTION
+            // Collapsible ADB Section Card
             item(key = "adb_collapsible_card") {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
                         .clip(RoundedCornerShape(18.dp))
                         .background(Color(0xFF181B22))
                         .padding(horizontal = 10.dp, vertical = 8.dp)
@@ -575,6 +472,70 @@ fun SettingsScreen(
                 }
             }
 
+            // Permissions entry button (Dedicated screen, placed under ADB section)
+            item(key = "perms_screen_entry") {
+                Button(
+                    onClick = onOpenPermissions,
+                    label = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = context.getString(R.string.settings_permissions_title),
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                                val grantedCount = perms.count { it.isGranted }
+                                Text(
+                                    text = "$grantedCount de ${perms.size} activos",
+                                    color = if (grantedCount == perms.size) GreenOk else Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee()
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            ForwardChevron()
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = SlateCard,
+                        contentColor = Color.White
+                    ),
+                    transformation = SurfaceTransformation(transformationSpec),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 4.dp)
+                        .transformedHeight(this, transformationSpec)
+                )
+            }
+
+            // SECTION 3: SAMSUNG PAY
+            item(key = "hdr_samsung_pay") {
+                ListHeader(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .transformedHeight(this, transformationSpec),
+                    transformation = SurfaceTransformation(transformationSpec)
+                ) {
+                    Text(
+                        text = context.getString(R.string.hdr_samsung_pay_section),
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().basicMarquee()
+                    )
+                }
+            }
+
             // Samsung Pay Freeze Switch
             item(key = "samsung_pay_switch") {
                 val isPayLoading = (activeLoadingItem == "SAMSUNG_PAY")
@@ -597,7 +558,6 @@ fun SettingsScreen(
                         samsungPayError = null
                         thread {
                             val success = AdbLocalManager.toggleSamsungPay(currentClient, targetState)
-                            // Brief pause to allow PackageManager state to update
                             Thread.sleep(300)
                             mainHandler.post {
                                 activeLoadingItem = null
@@ -664,7 +624,6 @@ fun SettingsScreen(
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 6.dp)
                         .transformedHeight(this, transformationSpec)
                         .then(
                             if (isPayHighlighted && payHighlightColor != Color.Transparent) {
@@ -708,9 +667,9 @@ fun SettingsScreen(
             item(key = "app_version_footer") {
                 val installedVersion = remember {
                     try {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.7"
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.8"
                     } catch (e: Exception) {
-                        "2.1.7"
+                        "2.1.8"
                     }
                 }
                 var tapCount by remember { mutableStateOf(0) }
