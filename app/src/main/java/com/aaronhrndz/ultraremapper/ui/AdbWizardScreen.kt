@@ -99,6 +99,13 @@ fun AdbWizardScreen(
     var isConnecting by remember { mutableStateOf(false) }
     var statusMessage by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(currentStep) {
+        if (currentStep == 2) {
+            columnState.scrollToItem(0)
+        }
+    }
 
     // Re-check system ADB status when returning from Settings
     DisposableEffect(lifecycleOwner) {
