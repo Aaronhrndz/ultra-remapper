@@ -155,8 +155,8 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="grant_button_label">Conceder</string>
     <string name="diag_dialog_go_to_settings">Conceder desde el reloj</string>
     <string name="diag_samsung_pay_conflict_title">Conflicto con Samsung Pay</string>
-    <string name="diag_samsung_pay_conflict_sub" formatted="false">El gesto funciona, pero no al 100% sin congelar Samsung Pay</string>
-    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">El gesto del botón inferior funciona, pero no funcionará el 100% de las veces debido a que el sistema invoca Samsung Pay/Wallet prioritariamente.\n\nLa solución definitiva para que funcione siempre al 100% es congelar Samsung Pay desde la sección Ajustes de Ultra Remapper.</string>
+    <string name="diag_samsung_pay_conflict_sub" formatted="false">El gesto funciona, pero no al 100%% sin congelar Samsung Pay</string>
+    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">El gesto del botón inferior funciona, pero no funcionará el 100%% de las veces debido a que el sistema invoca Samsung Pay/Wallet prioritariamente.\n\nLa solución definitiva para que funcione siempre al 100%% es congelar Samsung Pay desde la sección Ajustes de Ultra Remapper.</string>
     <string name="settings_adb_unpair_button">Borrar vinculación ADB</string>
     <string name="settings_adb_unpair_desc">Restablecer emparejamiento y claves</string>
     <string name="settings_adb_unpair_confirm">Vinculación eliminada</string>

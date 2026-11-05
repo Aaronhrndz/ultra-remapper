@@ -155,8 +155,8 @@ Watch Settings › Apps › Choose default apps › Digital assistant app › Ch
     <string name="grant_button_label">Grant</string>
     <string name="diag_dialog_go_to_settings">Grant directly on watch</string>
     <string name="diag_samsung_pay_conflict_title">Samsung Pay Conflict</string>
-    <string name="diag_samsung_pay_conflict_sub" formatted="false">Gesture works, but not 100% reliably without freezing Samsung Pay</string>
-    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">The bottom button gesture works, but it will not work 100% of the time because the system prioritizes Samsung Pay/Wallet.\n\nThe definitive fix for 100% reliability is to freeze Samsung Pay from Ultra Remapper Settings.</string>
+    <string name="diag_samsung_pay_conflict_sub" formatted="false">Gesture works, but not 100%% reliably without freezing Samsung Pay</string>
+    <string name="diag_dialog_samsung_pay_conflict_body" formatted="false">The bottom button gesture works, but it will not work 100%% of the time because the system prioritizes Samsung Pay/Wallet.\n\nThe definitive fix for 100%% reliability is to freeze Samsung Pay from Ultra Remapper Settings.</string>
     <string name="settings_adb_unpair_button">Forget ADB Pairing</string>
     <string name="settings_adb_unpair_desc">Reset local pairing &amp; keys</string>
     <string name="settings_adb_unpair_confirm">Pairing removed</string>

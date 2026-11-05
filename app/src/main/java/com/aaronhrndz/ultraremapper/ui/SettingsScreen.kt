@@ -136,7 +136,7 @@ fun SettingsScreen(
             kotlinx.coroutines.delay(250)
             if (targetHighlight == "SAMSUNG_PAY") {
                 // Index 8 is samsung_pay_switch
-                columnState.animateScrollToItem(8, 0)
+                columnState.animateScrollToItem(7, 0)
                 repeat(3) {
                     flashAnim.animateTo(1f, tween(450))
                     flashAnim.animateTo(0f, tween(400))
@@ -187,26 +187,6 @@ fun SettingsScreen(
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            // SECTION 1: GENERAL SETTINGS
-            item(key = "hdr_general") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 4.dp)
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Text(
-                        text = context.getString(R.string.hdr_general_settings),
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().basicMarquee()
                     )
                 }
             }
@@ -667,9 +647,9 @@ fun SettingsScreen(
             item(key = "app_version_footer") {
                 val installedVersion = remember {
                     try {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.8"
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.9"
                     } catch (e: Exception) {
-                        "2.1.8"
+                        "2.1.9"
                     }
                 }
                 var tapCount by remember { mutableStateOf(0) }
