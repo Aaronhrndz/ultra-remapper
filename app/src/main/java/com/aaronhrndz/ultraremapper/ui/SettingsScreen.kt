@@ -133,14 +133,11 @@ fun SettingsScreen(
             handledTarget = targetHighlight
             kotlinx.coroutines.delay(250)
             if (targetHighlight == "SAMSUNG_PAY") {
-                // Samsung Pay card index: header (0), master_switch (1), perms_header (2), perms items (3..2+N), adb_collapsible (3+N), samsung_pay (4+N)
-                val targetIndex = 4 + perms.size
-                columnState.animateScrollToItem(targetIndex, 0)
+                // Header (0), master (1), haptic (2), perms_card (3), adb_card (4), samsung_pay (5)
+                columnState.animateScrollToItem(5, 0)
             } else {
-                // Find matching permission item index
-                val permIdx = perms.indexOfFirst { it.type.name == targetHighlight }
-                val targetIndex = if (permIdx >= 0) 3 + permIdx else 3
-                columnState.animateScrollToItem(targetIndex, 0)
+                // Permissions collapsible card is index 3
+                columnState.animateScrollToItem(3, 0)
             }
             // 3 slow, very noticeable highlight pulses
             repeat(3) {
@@ -211,12 +208,13 @@ fun SettingsScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                context.getString(R.string.master_switch_title),
+                                text = context.getString(R.string.master_switch_title),
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
                                 fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.weight(1f, fill = false).basicMarquee()
                             )
+                            Spacer(modifier = Modifier.width(8.dp))
                             Box(
                                 modifier = Modifier
                                     .width(36.dp)
@@ -246,66 +244,15 @@ fun SettingsScreen(
                 )
             }
 
-            // Permissions Section Header
-            item(key = "perms_section_header") {
-                ListHeader(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 10.dp)
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
-                ) {
-                    Text(
-                        text = context.getString(R.string.settings_permissions_title),
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            // Permissions Items (each as a standalone list item so animateScrollToItem centers exactly on it)
-            itemsIndexed(perms, key = { _, item -> "perm_${item.type.name}" }) { _, perm ->
-                val isThisLoading = (activeLoadingItem == perm.type.name)
-                val isHighlighted = targetHighlight == perm.type.name
-                val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
-                    UltraOrange.copy(alpha = flashAnim.value)
-                } else {
-                    Color.Transparent
-                }
+            // Haptic Feedback Switch (Immediately below master switch)
+            item(key = "haptic_switch") {
                 Button(
-                    enabled = activeLoadingItem == null && !isAutoConnecting,
                     onClick = {
-                        val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
-                        if (currentClient?.isConnected != true) {
-                            onOpenWizard()
-                            return@Button
-                        }
-                        val targetState = !perm.isGranted
-                        activeLoadingItem = perm.type.name
-                        statusToast = null
-                        thread {
-                            val ok = AdbLocalManager.setPermissionState(
-                                currentClient,
-                                context.packageName,
-                                perm.type,
-                                targetState
-                            )
-                            Thread.sleep(300)
-                            mainHandler.post {
-                                activeLoadingItem = null
-                                if (ok) {
-                                    permVersion++
-                                    onRefreshPermissions()
-                                    HapticFeedbackHelper.playButtonHaptic(context)
-                                    statusToast = null
-                                } else {
-                                    statusToast = "Fallo al cambiar ${perm.name}"
-                                    isToastError = true
-                                }
-                            }
+                        val next = !isHapticEnabled
+                        isHapticEnabled = next
+                        Mapping.setHapticFeedbackEnabled(context, next)
+                        if (next) {
+                            HapticFeedbackHelper.playButtonHaptic(context)
                         }
                     },
                     label = {
@@ -316,58 +263,190 @@ fun SettingsScreen(
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = perm.name,
+                                    text = context.getString(R.string.haptic_switch_title),
+                                    maxLines = 1,
                                     fontWeight = FontWeight.SemiBold,
                                     color = Color.White,
                                     style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 Text(
-                                    text = perm.description,
+                                    text = context.getString(R.string.haptic_switch_subtitle),
+                                    maxLines = 1,
                                     color = Color(0xFF9EA7B8),
                                     style = MaterialTheme.typography.labelSmall,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
-                            if (isThisLoading) {
-                                SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
-                            } else {
+                            Box(
+                                modifier = Modifier
+                                    .width(32.dp)
+                                    .height(18.dp)
+                                    .clip(CircleShape)
+                                    .background(if (isHapticEnabled) UltraOrange else Color(0xFF383D47))
+                                    .padding(2.dp)
+                            ) {
                                 Box(
                                     modifier = Modifier
-                                        .width(32.dp)
-                                        .height(18.dp)
+                                        .size(14.dp)
+                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
                                         .clip(CircleShape)
-                                        .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
-                                        .padding(2.dp)
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(14.dp)
-                                            .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
-                                            .clip(CircleShape)
-                                            .background(Color.White)
-                                    )
-                                }
+                                        .background(Color.White)
+                                )
                             }
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF282E38),
+                        containerColor = SlateCard,
                         contentColor = Color.White
                     ),
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 4.dp)
                         .transformedHeight(this, transformationSpec)
-                        .then(
-                            if (isHighlighted && highlightColor != Color.Transparent) {
-                                Modifier.border(2.dp, highlightColor, RoundedCornerShape(16.dp))
-                            } else Modifier
-                        )
                 )
+            }
+
+            // 1. COLLAPSIBLE PERMISSIONS SECTION
+            item(key = "perms_collapsible_card") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                isPermsExpanded = !isPermsExpanded
+                                HapticFeedbackHelper.playUiTap(context)
+                            }
+                            .padding(horizontal = 6.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = context.getString(R.string.settings_permissions_title),
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleSmall,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            modifier = Modifier.basicMarquee()
+                        )
+                        CollapseChevron(isExpanded = isPermsExpanded)
+                    }
+
+                    if (isPermsExpanded) {
+                        Spacer(modifier = Modifier.height(6.dp))
+                        perms.forEachIndexed { idx, perm ->
+                            if (idx > 0) Spacer(modifier = Modifier.height(4.dp))
+                            val isThisLoading = (activeLoadingItem == perm.type.name)
+                            val isHighlighted = targetHighlight == perm.type.name
+                            val highlightColor = if (isHighlighted && flashAnim.value > 0.05f) {
+                                UltraOrange.copy(alpha = flashAnim.value)
+                            } else {
+                                Color.Transparent
+                            }
+                            Button(
+                                enabled = activeLoadingItem == null && !isAutoConnecting,
+                                onClick = {
+                                    val currentClient = connectedClientState ?: client ?: LocalAdbClient.activeInstance
+                                    if (currentClient?.isConnected != true) {
+                                        onOpenWizard()
+                                        return@Button
+                                    }
+                                    val targetState = !perm.isGranted
+                                    activeLoadingItem = perm.type.name
+                                    statusToast = null
+                                    thread {
+                                        val ok = AdbLocalManager.setPermissionState(
+                                            currentClient,
+                                            context.packageName,
+                                            perm.type,
+                                            targetState
+                                        )
+                                        Thread.sleep(300)
+                                        mainHandler.post {
+                                            activeLoadingItem = null
+                                            if (ok) {
+                                                permVersion++
+                                                onRefreshPermissions()
+                                                HapticFeedbackHelper.playButtonHaptic(context)
+                                                statusToast = null
+                                            } else {
+                                                statusToast = "Fallo al cambiar ${perm.name}"
+                                                isToastError = true
+                                            }
+                                        }
+                                    }
+                                },
+                                label = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(
+                                                text = perm.name,
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = Color.White,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee()
+                                            )
+                                            Text(
+                                                text = perm.description,
+                                                color = Color(0xFF9EA7B8),
+                                                style = MaterialTheme.typography.labelSmall,
+                                                maxLines = 1,
+                                                modifier = Modifier.basicMarquee()
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        if (isThisLoading) {
+                                            SwitchLoadingSpinner(modifier = Modifier.padding(horizontal = 6.dp))
+                                        } else {
+                                            Box(
+                                                modifier = Modifier
+                                                    .width(32.dp)
+                                                    .height(18.dp)
+                                                    .clip(CircleShape)
+                                                    .background(if (perm.isGranted) UltraOrange else Color(0xFF383D47))
+                                                .padding(2.dp)
+                                            ) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(14.dp)
+                                                        .align(if (perm.isGranted) Alignment.CenterEnd else Alignment.CenterStart)
+                                                        .clip(CircleShape)
+                                                        .background(Color.White)
+                                                )
+                                            }
+                                        }
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF282E38),
+                                    contentColor = Color.White
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .then(
+                                        if (isHighlighted && highlightColor != Color.Transparent) {
+                                            Modifier.border(2.dp, highlightColor, RoundedCornerShape(16.dp))
+                                        } else Modifier
+                                    )
+                            )
+                        }
+                    }
+                }
             }
 
             // 2. COLLAPSIBLE ADB SECTION
@@ -375,6 +454,7 @@ fun SettingsScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 6.dp)
                         .clip(RoundedCornerShape(18.dp))
                         .background(Color(0xFF181B22))
                         .padding(horizontal = 10.dp, vertical = 8.dp)
@@ -391,12 +471,14 @@ fun SettingsScreen(
                             }
                             .padding(horizontal = 6.dp, vertical = 8.dp)
                     ) {
-                        Column {
+                        Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = context.getString(R.string.settings_adb_section),
                                 color = Color.White,
                                 style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                             val statusText = when {
                                 isAutoConnecting -> "ADB: Conectando..."
@@ -412,7 +494,9 @@ fun SettingsScreen(
                                     isAdbPaired -> Color(0xFF64B5F6)
                                     else -> Color(0xFF9EA7B8)
                                 },
-                                style = MaterialTheme.typography.labelSmall
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee()
                             )
                         }
                         CollapseChevron(isExpanded = isAdbExpanded)
@@ -430,7 +514,7 @@ fun SettingsScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             },
                             secondaryLabel = {
@@ -439,7 +523,7 @@ fun SettingsScreen(
                                     color = Color(0xFF9EA7B8),
                                     style = MaterialTheme.typography.labelSmall,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             },
                             colors = ButtonDefaults.buttonColors(
@@ -468,7 +552,7 @@ fun SettingsScreen(
                                         fontWeight = FontWeight.Bold,
                                         color = RedAlert,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        modifier = Modifier.basicMarquee()
                                     )
                                 },
                                 secondaryLabel = {
@@ -477,7 +561,7 @@ fun SettingsScreen(
                                         color = Color(0xFF9EA7B8),
                                         style = MaterialTheme.typography.labelSmall,
                                         maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
+                                        modifier = Modifier.basicMarquee()
                                     )
                                 },
                                 colors = ButtonDefaults.buttonColors(
@@ -540,14 +624,14 @@ fun SettingsScreen(
                                     color = Color.White,
                                     style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 Text(
                                     text = if (isSamsungPayEnabled) context.getString(R.string.settings_samsung_pay_enabled) else context.getString(R.string.settings_samsung_pay_disabled),
                                     color = if (isSamsungPayEnabled) Color(0xFF9EA7B8) else UltraOrange,
                                     style = MaterialTheme.typography.labelSmall,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -580,6 +664,7 @@ fun SettingsScreen(
                     transformation = SurfaceTransformation(transformationSpec),
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(top = 6.dp)
                         .transformedHeight(this, transformationSpec)
                         .then(
                             if (isPayHighlighted && payHighlightColor != Color.Transparent) {
@@ -603,69 +688,7 @@ fun SettingsScreen(
                 }
             }
 
-            // Haptic Feedback Switch (under Samsung Pay)
-            item(key = "haptic_switch") {
-                Button(
-                    onClick = {
-                        val next = !isHapticEnabled
-                        isHapticEnabled = next
-                        Mapping.setHapticFeedbackEnabled(context, next)
-                        if (next) {
-                            HapticFeedbackHelper.playButtonHaptic(context)
-                        }
-                    },
-                    label = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                    text = context.getString(R.string.haptic_switch_title),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color.White,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = context.getString(R.string.haptic_switch_subtitle),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    color = Color(0xFF9EA7B8),
-                                    style = MaterialTheme.typography.labelSmall
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(32.dp)
-                                    .height(18.dp)
-                                    .clip(CircleShape)
-                                    .background(if (isHapticEnabled) UltraOrange else Color(0xFF383D47))
-                                    .padding(2.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(14.dp)
-                                        .align(if (isHapticEnabled) Alignment.CenterEnd else Alignment.CenterStart)
-                                        .clip(CircleShape)
-                                        .background(Color.White)
-                                )
-                            }
-                        }
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
+
 
             statusToast?.let { msg ->
                 item(key = "status_toast") {
@@ -685,9 +708,9 @@ fun SettingsScreen(
             item(key = "app_version_footer") {
                 val installedVersion = remember {
                     try {
-                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.6"
+                        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.1.7"
                     } catch (e: Exception) {
-                        "2.1.6"
+                        "2.1.7"
                     }
                 }
                 var tapCount by remember { mutableStateOf(0) }

@@ -1156,10 +1156,10 @@ private fun Home(
                             Button(
                                 onClick = { onPick(gesture) },
                                 label = {
-                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 secondaryLabel = {
-                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(currentLabel, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                                 modifier = Modifier.fillMaxWidth()
@@ -1234,10 +1234,10 @@ private fun Home(
                                 Button(
                                     onClick = { onPick(gesture) },
                                     label = {
-                                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, modifier = Modifier.basicMarquee())
                                     },
                                     secondaryLabel = {
-                                        Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                        Text(currentLabel, maxLines = 1, modifier = Modifier.basicMarquee())
                                     },
                                     colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                                     modifier = Modifier.fillMaxWidth()
@@ -1309,10 +1309,10 @@ private fun Home(
                             Button(
                                 onClick = { onPick(gesture) },
                                 label = {
-                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 secondaryLabel = {
-                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(currentLabel, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                                 modifier = Modifier.fillMaxWidth()
@@ -1373,10 +1373,10 @@ private fun Home(
                             Button(
                                 onClick = { onPick(gesture) },
                                 label = {
-                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(name, fontWeight = FontWeight.SemiBold, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 secondaryLabel = {
-                                    Text(currentLabel, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                                    Text(currentLabel, maxLines = 1, modifier = Modifier.basicMarquee())
                                 },
                                 colors = if (isConfigured) cardConfiguredColors else cardUnconfiguredColors,
                                 modifier = Modifier.fillMaxWidth()
@@ -1406,14 +1406,14 @@ private fun Home(
                                     color = Color.White,
                                     style = MaterialTheme.typography.bodyMedium,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
+                                    modifier = Modifier.basicMarquee()
                                 )
                                 Text(
                                     text = context.getString(R.string.settings_subtitle),
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
                                     color = Color(0xFF9EA7B8),
-                                    style = MaterialTheme.typography.labelSmall
+                                    style = MaterialTheme.typography.labelSmall,
+                                    modifier = Modifier.basicMarquee()
                                 )
                             }
                             Spacer(modifier = Modifier.width(8.dp))
@@ -1859,7 +1859,7 @@ private fun AppListPicker(
                             app.label,
                             fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     colors = radioColors,
@@ -1934,7 +1934,7 @@ private fun UpdateDetailsScreen(
                             if (isDownloading) downloadProgress else context.getString(R.string.update_install_watch),
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            modifier = Modifier.basicMarquee()
                         )
                     },
                     secondaryLabel = {
@@ -1954,7 +1954,7 @@ private fun UpdateDetailsScreen(
                                 )
                             }
                         } else {
-                            Text(context.getString(R.string.update_install_watch_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            Text(context.getString(R.string.update_install_watch_sub), maxLines = 1, modifier = Modifier.basicMarquee())
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -2057,8 +2057,7 @@ private fun AdbHelpScreen(
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().basicMarquee()
                         )
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -2083,8 +2082,7 @@ private fun AdbHelpScreen(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth().basicMarquee()
                         )
                     },
                     colors = ButtonDefaults.buttonColors(

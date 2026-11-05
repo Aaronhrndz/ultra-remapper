@@ -34,12 +34,12 @@
     <string name="diag_media_sub">Activar acceso a notificaciones</string>
     <string name="diag_secure_settings">Falta Secure Settings</string>
     <string name="diag_secure_settings_sub">Concede el permiso mediante ADB</string>
-    <string name="diag_dialog_adb_title">Comando ADB necesario</string>
+    <string name="diag_dialog_adb_title">Conceder permiso</string>
     <string name="diag_dialog_close">Entendido</string>
-    <string name="diag_dialog_overlay_body">Para mostrar interfaces superpuestas y linterna, ejecuta en tu terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
-    <string name="diag_dialog_secure_body">Para conmutar LTE, depuración, ejecuta en tu terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
+    <string name="diag_dialog_overlay_body">Puedes concederlo directamente desde el reloj con ADB local en Ajustes, o ejecutando en terminal:\n\nadb shell appops set com.aaronhrndz.ultraremapper SYSTEM_ALERT_WINDOW allow</string>
+    <string name="diag_dialog_secure_body">Puedes concederlo directamente desde el reloj con ADB local en Ajustes, o ejecutando en terminal:\n\nadb shell pm grant com.aaronhrndz.ultraremapper android.permission.WRITE_SECURE_SETTINGS</string>
     <string name="diag_dialog_route_body">Para asignar el botón de acción a Ultra Remapper, ve a:\n\nAjustes del reloj › Botones y gestos › Botón de acción › Elige Ultra Remapper\n\nO por ADB:\nadb shell settings put global setting_action_button_press com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.ActionButtonService</string>
-    <string name="diag_dialog_media_body">Para permitir el control multimedia en Wear OS y garantizar compatibilidad nativa con entrenos de Samsung Health (pausar o finalizar entreno manteniendo pulsado el botón inferior), ejecuta en tu terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
+    <string name="diag_dialog_media_body">Puedes concederlo directamente desde el reloj con ADB local en Ajustes, o ejecutando en terminal:\n\nadb shell cmd notification allow_listener com.aaronhrndz.ultraremapper/com.aaronhrndz.ultraremapper.MediaControlService</string>
     <string name="update_banner_title">Actualización v%s disponible</string>
     <string name="update_banner_title_beta">Actualización Beta v%s disponible</string>
     <string name="update_banner_sub">Toca para ver cambios e instalar</string>
@@ -150,7 +150,7 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="settings_samsung_pay_enabled">Activo</string>
     <string name="settings_samsung_pay_disabled">Congelado</string>
     <string name="grant_button_label">Conceder</string>
-    <string name="diag_dialog_go_to_settings">Abrir Ajustes / Permisos</string>
+    <string name="diag_dialog_go_to_settings">Conceder desde el reloj</string>
     <string name="diag_samsung_pay_conflict_title">Conflicto con Samsung Pay</string>
     <string name="diag_samsung_pay_conflict_sub">Congélalo para evitar fallos</string>
     <string name="diag_dialog_samsung_pay_conflict_body">Para asegurar que tu acción funcione siempre, puedes congelar Samsung Pay en los ajustes de Ultra Remapper.</string>

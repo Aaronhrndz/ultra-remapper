@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -238,9 +239,8 @@ fun AdbWizardScreen(
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
+                                maxLines = 1,
+                                modifier = Modifier.fillMaxWidth().basicMarquee()
                             )
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -256,8 +256,8 @@ fun AdbWizardScreen(
                 }
 
                 // Direct connect option if already paired earlier
-                item(key = "s1_direct_connect_btn") {
-                    if (LocalAdbClient.isPaired(context)) {
+                if (LocalAdbClient.isPaired(context)) {
+                    item(key = "s1_direct_connect_btn") {
                         Button(
                             enabled = !isConnecting,
                             onClick = {
@@ -266,18 +266,16 @@ fun AdbWizardScreen(
                             },
                             label = {
                                 Text(
-                                    text = "Conectar directo (ya vinculado)",
-                                    color = Color(0xFF64B5F6),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 11.sp,
+                                    text = "Conectar sin código (ya vinculado)",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold,
                                     textAlign = TextAlign.Center,
                                     maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth().basicMarquee()
                                 )
                             },
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF1E2838),
+                                containerColor = SlateCard,
                                 contentColor = Color.White
                             ),
                             transformation = SurfaceTransformation(transformationSpec),
@@ -305,8 +303,7 @@ fun AdbWizardScreen(
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().basicMarquee()
                             )
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -323,7 +320,106 @@ fun AdbWizardScreen(
                     )
                 }
             } else {
-                // STEP 2: Native Number TextField + Connect
+                // STEP 2: Input box and Debug info where instructions were in Step 1
+                item(key = "s2_card") {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(Color(0xFF181B22))
+                            .padding(10.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        // Native Number TextField
+                        BasicTextField(
+                            value = pinText,
+                            onValueChange = { newValue ->
+                                val filtered = newValue.filter { it.isDigit() }.take(6)
+                                pinText = filtered
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.NumberPassword,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    keyboardController?.hide()
+                                    if (pinText.length == 6) {
+                                        connectAction(pinText)
+                                    }
+                                }
+                            ),
+                            textStyle = TextStyle(
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            ),
+                            cursorBrush = SolidColor(UltraOrange),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(focusRequester),
+                            decorationBox = { innerTextField ->
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(46.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(Color(0xFF222733))
+                                        .border(
+                                            width = 1.5.dp,
+                                            color = if (pinText.isNotEmpty()) UltraOrange else Color(0xFF383D47),
+                                            shape = RoundedCornerShape(12.dp)
+                                        )
+                                        .padding(horizontal = 8.dp)
+                                ) {
+                                    if (pinText.isEmpty()) {
+                                        Text(
+                                            text = "PIN de 6 dígitos",
+                                            color = Color(0xFF7A8392),
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.SemiBold,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+
+                        // Port & Debug information UNDER the PIN box
+                        val portInfo = when {
+                            detectedPairingPort != null -> "Puerto vinculado: $detectedPairingPort"
+                            detectedConnectPort != null -> "Puerto ADB: $detectedConnectPort"
+                            else -> "Esperando puerto de emparejamiento..."
+                        }
+                        Text(
+                            text = portInfo,
+                            color = if (detectedPairingPort != null || detectedConnectPort != null) GreenOk else Color(0xFF9EA7B8),
+                            style = MaterialTheme.typography.labelSmall,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            modifier = Modifier.fillMaxWidth().basicMarquee()
+                        )
+
+                        // Status message right below debug text
+                        statusMessage?.let { msg ->
+                            Text(
+                                text = msg,
+                                color = if (msg.contains("Fallo")) RedAlert else GreenOk,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.SemiBold,
+                                textAlign = TextAlign.Center,
+                                maxLines = 1,
+                                modifier = Modifier.fillMaxWidth().basicMarquee()
+                            )
+                        }
+                    }
+                }
+
+                // S2 Open Wireless Debugging Button (positioned symmetrically as in Step 1)
                 item(key = "s2_open_btn") {
                     Button(
                         onClick = {
@@ -337,8 +433,7 @@ fun AdbWizardScreen(
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth().basicMarquee()
                             )
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -348,105 +443,43 @@ fun AdbWizardScreen(
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 6.dp)
+                            .padding(top = 6.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }
 
-                item(key = "s2_desc") {
-                    val portInfo = when {
-                        detectedPairingPort != null -> "Puerto detectado: $detectedPairingPort"
-                        detectedConnectPort != null -> "Puerto ADB: $detectedConnectPort"
-                        else -> "Introduce el código de 6 dígitos"
-                    }
-                    Text(
-                        text = portInfo,
-                        color = if (detectedPairingPort != null || detectedConnectPort != null) GreenOk else Color(0xFF9EA7B8),
-                        style = MaterialTheme.typography.labelSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 6.dp)
-                    )
-                }
-
-                // Native Number TextField
-                item(key = "s2_input_box") {
-                    BasicTextField(
-                        value = pinText,
-                        onValueChange = { newValue ->
-                            val filtered = newValue.filter { it.isDigit() }.take(6)
-                            pinText = filtered
-                        },
-                        singleLine = true,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.NumberPassword,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                if (pinText.length == 6) {
-                                    connectAction(pinText)
-                                }
-                            }
-                        ),
-                        textStyle = TextStyle(
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        ),
-                        cursorBrush = SolidColor(UltraOrange),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .focusRequester(focusRequester),
-                        decorationBox = { innerTextField ->
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(Color(0xFF181B22))
-                                    .border(
-                                        width = 1.5.dp,
-                                        color = if (pinText.isNotEmpty()) UltraOrange else Color(0xFF383D47),
-                                        shape = RoundedCornerShape(16.dp)
-                                    )
-                                    .padding(horizontal = 12.dp)
-                            ) {
-                                if (pinText.isEmpty()) {
-                                    Text(
-                                        text = "Toca para escribir PIN",
-                                        color = Color(0xFF7A8392),
-                                        fontSize = 13.sp,
-                                        fontWeight = FontWeight.SemiBold,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                                innerTextField()
-                            }
-                        }
-                    )
-                }
-
-                // Immediate status right below the input box
-                statusMessage?.let { msg ->
-                    item(key = "s2_status") {
-                        Text(
-                            text = msg,
-                            color = if (msg.contains("Fallo")) RedAlert else GreenOk,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
+                // S2 Direct connect option (identical layout, style, and text as in Step 1)
+                if (LocalAdbClient.isPaired(context)) {
+                    item(key = "s2_direct_connect_btn") {
+                        Button(
+                            enabled = !isConnecting,
+                            onClick = {
+                                connectAction("")
+                            },
+                            label = {
+                                Text(
+                                    text = "Conectar sin código (ya vinculado)",
+                                    color = Color.White,
+                                    fontWeight = FontWeight.SemiBold,
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1,
+                                    modifier = Modifier.fillMaxWidth().basicMarquee()
+                                )
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = SlateCard,
+                                contentColor = Color.White
+                            ),
+                            transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 4.dp)
+                                .padding(top = 4.dp)
+                                .transformedHeight(this, transformationSpec)
                         )
                     }
                 }
 
+                // Connect / Pair button
                 item(key = "s2_connect_btn") {
                     Button(
                         enabled = !isConnecting && pinText.length == 6,
@@ -459,7 +492,8 @@ fun AdbWizardScreen(
                                 color = if (pinText.length == 6 && !isConnecting) Color.White else Color(0xFF7A8392),
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                maxLines = 1,
+                                modifier = Modifier.fillMaxWidth().basicMarquee()
                             )
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -471,38 +505,7 @@ fun AdbWizardScreen(
                         transformation = SurfaceTransformation(transformationSpec),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 8.dp)
-                            .transformedHeight(this, transformationSpec)
-                    )
-                }
-
-                // Direct connect option if already paired earlier
-                item(key = "s2_direct_connect_btn") {
-                    Button(
-                        enabled = !isConnecting,
-                        onClick = {
-                            connectAction("")
-                        },
-                        label = {
-                            Text(
-                                text = "Conectar sin código (ya vinculado)",
-                                color = Color.White,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 11.sp,
-                                textAlign = TextAlign.Center,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = SlateCard,
-                            contentColor = Color.White
-                        ),
-                        transformation = SurfaceTransformation(transformationSpec),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 4.dp)
+                            .padding(top = 6.dp)
                             .transformedHeight(this, transformationSpec)
                     )
                 }
