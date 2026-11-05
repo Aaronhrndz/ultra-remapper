@@ -26,9 +26,17 @@ class AdbMdnsDiscovery(private val context: Context) {
 
         // 1. Discover ADB Connect service: _adb-tls-connect._tcp
         connectListener = createListener { info ->
-            discoveredConnectPort = info.port
-            LocalAdbClient.setLastPort(context, info.port)
-            onPortFound(false, info.port)
+            // Filter to local device / loopback or first valid local interface
+            val isLocal = info.host?.isLoopbackAddress == true || 
+                          info.host?.hostAddress == "127.0.0.1" || 
+                          info.host?.hostAddress == "::1" ||
+                          info.serviceName?.contains(context.packageName) == true ||
+                          discoveredConnectPort == null
+            if (isLocal) {
+                discoveredConnectPort = info.port
+                LocalAdbClient.setLastPort(context, info.port)
+                onPortFound(false, info.port)
+            }
         }
         try {
             manager.discoverServices("_adb-tls-connect._tcp", NsdManager.PROTOCOL_DNS_SD, connectListener)
@@ -36,8 +44,14 @@ class AdbMdnsDiscovery(private val context: Context) {
 
         // 2. Discover ADB Pairing service: _adb-tls-pairing._tcp
         pairingListener = createListener { info ->
-            discoveredPairingPort = info.port
-            onPortFound(true, info.port)
+            val isLocal = info.host?.isLoopbackAddress == true || 
+                          info.host?.hostAddress == "127.0.0.1" || 
+                          info.host?.hostAddress == "::1" ||
+                          discoveredPairingPort == null
+            if (isLocal) {
+                discoveredPairingPort = info.port
+                onPortFound(true, info.port)
+            }
         }
         try {
             manager.discoverServices("_adb-tls-pairing._tcp", NsdManager.PROTOCOL_DNS_SD, pairingListener)

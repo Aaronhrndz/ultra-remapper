@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -101,22 +102,34 @@ fun SettingsScreen(
 
     val shouldExpandPermsInitially = targetHighlight != null && targetHighlight != "SAMSUNG_PAY"
     var isPermsExpanded by remember { mutableStateOf(shouldExpandPermsInitially) }
+    var isAdbExpanded by remember { mutableStateOf(false) }
     var isHapticEnabled by remember { mutableStateOf(Mapping.isHapticFeedbackEnabled(context)) }
     var isSamsungPayEnabled by remember { mutableStateOf(AdbLocalManager.isSamsungPayEnabled(context)) }
     var permVersion by remember { mutableStateOf(0) }
     var statusToast by remember { mutableStateOf<String?>(null) }
+    var samsungPayError by remember { mutableStateOf<String?>(null) }
     var isToastError by remember { mutableStateOf(false) }
     var activeLoadingItem by remember { mutableStateOf<String?>(null) }
     var isAutoConnecting by remember { mutableStateOf(false) }
 
+    // Track handled target to avoid re-scrolling on back navigation
+    var handledTarget by rememberSaveable { mutableStateOf<String?>(null) }
+
     // Flash highlight animation for target item
     val flashAnim = remember { Animatable(0f) }
     LaunchedEffect(targetHighlight) {
-        if (targetHighlight != null) {
+        if (targetHighlight != null && handledTarget != targetHighlight) {
+            handledTarget = targetHighlight
             kotlinx.coroutines.delay(250)
-            val targetIndex = if (targetHighlight == "SAMSUNG_PAY") 4 else 1
-            // Center target item on round watch screen
-            columnState.animateScrollToItem(targetIndex, -100)
+            if (targetHighlight == "SAMSUNG_PAY") {
+                // Samsung Pay card index is below perms card
+                val targetIndex = 3
+                columnState.animateScrollToItem(targetIndex, 0)
+            } else {
+                // First item (Overlay, index 1) requires offset 0 so it stays fully visible on round watch
+                val targetIndex = 1
+                columnState.animateScrollToItem(targetIndex, 0)
+            }
             // 3 slow, very noticeable highlight pulses
             repeat(3) {
                 flashAnim.animateTo(1f, tween(450))
@@ -316,110 +329,124 @@ fun SettingsScreen(
                 }
             }
 
-            // 2. OTHER SETTINGS & LOCAL ADB SECTION
-            item(key = "other_settings_section_header") {
-                ListHeader(
+            // 2. COLLAPSIBLE ADB SECTION
+            item(key = "adb_collapsible_card") {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp)
-                        .transformedHeight(this, transformationSpec),
-                    transformation = SurfaceTransformation(transformationSpec)
+                        .clip(RoundedCornerShape(18.dp))
+                        .background(Color(0xFF181B22))
+                        .padding(horizontal = 10.dp, vertical = 8.dp)
                 ) {
-                    Text(
-                        text = context.getString(R.string.settings_adb_section),
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            // ADB Status & Wizard Trigger
-            item(key = "adb_wizard_card") {
-                Button(
-                    onClick = onOpenWizard,
-                    label = {
-                        Text(
-                            text = context.getString(R.string.settings_adb_wizard_button),
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    secondaryLabel = {
-                        val statusText = when {
-                            isAutoConnecting -> "ADB: Conectando..."
-                            isAdbConnected -> context.getString(R.string.settings_adb_status_connected)
-                            isAdbPaired -> "ADB: Vinculado (Desconectado)"
-                            else -> context.getString(R.string.settings_adb_status_disconnected)
-                        }
-                        Text(
-                            text = statusText,
-                            color = when {
-                                isAutoConnecting -> Color(0xFFFFB74D)
-                                isAdbConnected -> GreenOk
-                                isAdbPaired -> Color(0xFF64B5F6)
-                                else -> UltraOrange
-                            },
-                            style = MaterialTheme.typography.bodySmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = SlateCard,
-                        contentColor = Color.White
-                    ),
-                    transformation = SurfaceTransformation(transformationSpec),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .transformedHeight(this, transformationSpec)
-                )
-            }
-
-            // Forget / Unpair ADB Button
-            if (isAdbPaired) {
-                item(key = "adb_unpair_card") {
-                    Button(
-                        onClick = {
-                            LocalAdbClient.unpair(context)
-                            connectedClientState = null
-                            permVersion++
-                            onRefreshPermissions()
-                            HapticFeedbackHelper.playButtonHaptic(context)
-                            statusToast = context.getString(R.string.settings_adb_unpair_confirm)
-                            isToastError = false
-                        },
-                        label = {
-                            Text(
-                                text = context.getString(R.string.settings_adb_unpair_button),
-                                fontWeight = FontWeight.Bold,
-                                color = RedAlert,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        secondaryLabel = {
-                            Text(
-                                text = context.getString(R.string.settings_adb_unpair_desc),
-                                color = Color(0xFF9EA7B8),
-                                style = MaterialTheme.typography.labelSmall,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = SlateCard,
-                            contentColor = RedAlert
-                        ),
-                        transformation = SurfaceTransformation(transformationSpec),
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .transformedHeight(this, transformationSpec)
-                    )
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                isAdbExpanded = !isAdbExpanded
+                                HapticFeedbackHelper.playUiTap(context)
+                            }
+                            .padding(horizontal = 6.dp, vertical = 8.dp)
+                    ) {
+                        Column {
+                            Text(
+                                text = context.getString(R.string.settings_adb_section),
+                                color = Color.White,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            val statusText = when {
+                                isAutoConnecting -> "ADB: Conectando..."
+                                isAdbConnected -> context.getString(R.string.settings_adb_status_connected)
+                                isAdbPaired -> "ADB: Vinculado"
+                                else -> context.getString(R.string.settings_adb_status_disconnected)
+                            }
+                            Text(
+                                text = statusText,
+                                color = when {
+                                    isAutoConnecting -> Color(0xFFFFB74D)
+                                    isAdbConnected -> GreenOk
+                                    isAdbPaired -> Color(0xFF64B5F6)
+                                    else -> Color(0xFF9EA7B8)
+                                },
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                        CollapseChevron(isExpanded = isAdbExpanded)
+                    }
+
+                    if (isAdbExpanded) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // ADB Wizard Button
+                        Button(
+                            onClick = onOpenWizard,
+                            label = {
+                                Text(
+                                    text = context.getString(R.string.settings_adb_wizard_button),
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            secondaryLabel = {
+                                Text(
+                                    text = context.getString(R.string.settings_adb_wizard_desc),
+                                    color = Color(0xFF9EA7B8),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF282E38),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        // Forget / Unpair ADB Button
+                        if (isAdbPaired) {
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Button(
+                                onClick = {
+                                    LocalAdbClient.unpair(context)
+                                    connectedClientState = null
+                                    permVersion++
+                                    onRefreshPermissions()
+                                    HapticFeedbackHelper.playButtonHaptic(context)
+                                    statusToast = context.getString(R.string.settings_adb_unpair_confirm)
+                                    isToastError = false
+                                },
+                                label = {
+                                    Text(
+                                        text = context.getString(R.string.settings_adb_unpair_button),
+                                        fontWeight = FontWeight.Bold,
+                                        color = RedAlert,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                },
+                                secondaryLabel = {
+                                    Text(
+                                        text = context.getString(R.string.settings_adb_unpair_desc),
+                                        color = Color(0xFF9EA7B8),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFF282E38),
+                                    contentColor = RedAlert
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                 }
             }
 
@@ -442,7 +469,7 @@ fun SettingsScreen(
                         }
                         val targetState = !isSamsungPayEnabled
                         activeLoadingItem = "SAMSUNG_PAY"
-                        statusToast = null
+                        samsungPayError = null
                         thread {
                             val success = AdbLocalManager.toggleSamsungPay(currentClient, targetState)
                             // Brief pause to allow PackageManager state to update
@@ -452,10 +479,9 @@ fun SettingsScreen(
                                 if (success) {
                                     isSamsungPayEnabled = AdbLocalManager.isSamsungPayEnabled(context)
                                     HapticFeedbackHelper.playButtonHaptic(context)
-                                    statusToast = null
+                                    samsungPayError = null
                                 } else {
-                                    statusToast = "Error al cambiar Samsung Pay"
-                                    isToastError = true
+                                    samsungPayError = "Error al cambiar Samsung Pay"
                                 }
                             }
                         }
@@ -520,6 +546,20 @@ fun SettingsScreen(
                             } else Modifier
                         )
                 )
+            }
+
+            samsungPayError?.let { err ->
+                item(key = "samsung_pay_error") {
+                    Text(
+                        text = err,
+                        color = RedAlert,
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    )
+                }
             }
 
             // Haptic Feedback Switch (under Samsung Pay)

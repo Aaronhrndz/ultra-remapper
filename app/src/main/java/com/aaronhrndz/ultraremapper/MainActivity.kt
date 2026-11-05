@@ -94,6 +94,8 @@ private val UltraOrange = Color(0xFFFF5500)
 private val SlateCard = Color(0xFF1F232A)
 private val SlateHighlight = Color(0xFF2B313B)
 private val WarnAmber = Color(0xFFFF9800)
+private val RedAlert = Color(0xFFF44336)
+private val RedBannerBg = Color(0xFFB71C1C)
 
 
 
@@ -619,6 +621,11 @@ private fun Home(
         contentColor = Color.White,
         secondaryContentColor = Color.White.copy(alpha = 0.9f)
     )
+    val redDiagColors = ButtonDefaults.buttonColors(
+        containerColor = RedBannerBg,
+        contentColor = Color.White,
+        secondaryContentColor = Color.White.copy(alpha = 0.85f)
+    )
     val highlightColors = ButtonDefaults.buttonColors(containerColor = SlateHighlight)
     val cardConfiguredColors = ButtonDefaults.buttonColors(
         containerColor = Color(0xFF282E38),
@@ -802,7 +809,7 @@ private fun Home(
                             .transformedHeight(this, transformationSpec),
                         transformation = SurfaceTransformation(transformationSpec)
                     ) {
-                        Text(context.getString(R.string.diag_header_status), color = UltraOrange, fontWeight = FontWeight.Bold)
+                        Text(context.getString(R.string.diag_header_status), color = RedAlert, fontWeight = FontWeight.Bold)
                     }
                 }
                 if (!setup.isAssistant && needsAssistant) {
@@ -821,7 +828,7 @@ private fun Home(
                             secondaryLabel = {
                                 Text(context.getString(R.string.diag_assistant_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
                             },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -845,7 +852,7 @@ private fun Home(
                             secondaryLabel = {
                                 Text(context.getString(R.string.diag_toctoc_sub), maxLines = 1, overflow = TextOverflow.Ellipsis)
                             },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -888,7 +895,7 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_route_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -931,7 +938,7 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_overlay_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -945,7 +952,7 @@ private fun Home(
                             onClick = onOpenA11ySettings,
                             label = { Text(context.getString(R.string.diag_a11y_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
                             secondaryLabel = { Text(context.getString(R.string.diag_a11y_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -988,7 +995,7 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_media_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -1031,7 +1038,7 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_secure_settings_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -1074,7 +1081,7 @@ private fun Home(
                                 }
                             },
                             secondaryLabel = { Text(context.getString(R.string.diag_samsung_pay_conflict_sub), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                            colors = orangeColors,
+                            colors = redDiagColors,
                             transformation = SurfaceTransformation(transformationSpec),
                             modifier = Modifier
                                 .fillMaxWidth()

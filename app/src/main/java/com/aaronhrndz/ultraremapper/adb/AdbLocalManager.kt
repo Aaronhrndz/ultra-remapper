@@ -72,9 +72,9 @@ object AdbLocalManager {
         if (targetClient?.isConnected != true) return false
         return try {
             val cmd = if (targetEnabled) {
-                "pm enable $SAMSUNG_PAY_PACKAGE; pm unhide $SAMSUNG_PAY_PACKAGE"
+                "pm enable $SAMSUNG_PAY_PACKAGE; pm unhide $SAMSUNG_PAY_PACKAGE; cmd package install-existing $SAMSUNG_PAY_PACKAGE"
             } else {
-                "pm disable-user --user 0 $SAMSUNG_PAY_PACKAGE; pm disable $SAMSUNG_PAY_PACKAGE"
+                "pm disable-user --user 0 $SAMSUNG_PAY_PACKAGE || pm disable-user $SAMSUNG_PAY_PACKAGE || pm disable $SAMSUNG_PAY_PACKAGE || pm hide $SAMSUNG_PAY_PACKAGE"
             }
             val res = targetClient.exec(cmd)
             android.util.Log.d("AdbLocalManager", "toggleSamsungPay($targetEnabled) -> '$res'")
@@ -82,9 +82,17 @@ object AdbLocalManager {
             val checkDisabled = targetClient.exec("pm list packages -d $SAMSUNG_PAY_PACKAGE")
             val isPkgDisabled = checkDisabled.contains(SAMSUNG_PAY_PACKAGE)
             if (!targetEnabled) {
-                isPkgDisabled || res.contains("disabled", ignoreCase = true) || res.contains("new state", ignoreCase = true) || !res.contains("error", ignoreCase = true)
+                isPkgDisabled || 
+                res.contains("disabled", ignoreCase = true) || 
+                res.contains("hidden", ignoreCase = true) ||
+                res.contains("new state", ignoreCase = true) ||
+                res.contains("true", ignoreCase = true)
             } else {
-                !isPkgDisabled || res.contains("enabled", ignoreCase = true) || res.contains("new state", ignoreCase = true)
+                !isPkgDisabled || 
+                res.contains("enabled", ignoreCase = true) || 
+                res.contains("unhidden", ignoreCase = true) ||
+                res.contains("new state", ignoreCase = true) ||
+                res.contains("installed", ignoreCase = true)
             }
         } catch (e: Exception) {
             android.util.Log.e("AdbLocalManager", "toggleSamsungPay failed", e)

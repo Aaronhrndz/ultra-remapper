@@ -141,7 +141,7 @@ Ajustes del reloj › Aplicaciones › Elegir aplicaciones predeterminadas › A
     <string name="settings_title">Ajustes</string>
     <string name="settings_subtitle">Permisos, ADB y Sistema</string>
     <string name="settings_permissions_title">Permisos</string>
-    <string name="settings_adb_section">Otros Ajustes</string>
+    <string name="settings_adb_section">Ajustes ADB</string>
     <string name="settings_adb_status_connected">ADB: Conectado (Localhost)</string>
     <string name="settings_adb_status_disconnected">ADB: No emparejado</string>
     <string name="settings_adb_wizard_button">Asistente de Vinculación ADB</string>

@@ -431,6 +431,22 @@ fun AdbWizardScreen(
                     )
                 }
 
+                // Immediate status right below the input box
+                statusMessage?.let { msg ->
+                    item(key = "s2_status") {
+                        Text(
+                            text = msg,
+                            color = if (msg.contains("Fallo")) RedAlert else GreenOk,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp)
+                        )
+                    }
+                }
+
                 item(key = "s2_connect_btn") {
                     Button(
                         enabled = !isConnecting && pinText.length == 6,
@@ -489,20 +505,6 @@ fun AdbWizardScreen(
                             .padding(top = 4.dp)
                             .transformedHeight(this, transformationSpec)
                     )
-                }
-
-                statusMessage?.let { msg ->
-                    item(key = "s2_status") {
-                        Text(
-                            text = msg,
-                            color = if (msg.contains("Fallo")) RedAlert else GreenOk,
-                            style = MaterialTheme.typography.bodySmall,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 6.dp)
-                        )
-                    }
                 }
             }
         }
