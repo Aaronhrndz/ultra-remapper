@@ -67,7 +67,17 @@ Download the latest prebuilt APK from the [**Releases**](https://github.com/Aaro
 
 ---
 
-### ⚡ Quick Setup via Wireless ADB
+### ⌚ Standalone Setup directly on the Watch (No PC or Phone required)
+
+Starting in **v2.2.0**, Ultra Remapper features an **integrated Local ADB Wizard**:
+1. Connect the watch to Wi-Fi.
+2. In watch **Settings › Developer options › Wireless debugging**, enable it and tap **Pair new device**.
+3. Open Ultra Remapper, go to **Settings › ADB Settings › Pair / Connect ADB**, and enter the 6-digit code shown on screen.
+4. Go to **Settings › ADB Settings › Permissions** to grant all elevated permissions (Overlay, Secure Settings, Action Route, Notification Listener, Battery Whitelist) and freeze Samsung Pay with 1 tap directly on your wrist!
+
+---
+
+### ⚡ Alternative: Quick Setup via PC / Terminal Wireless ADB
 
 1. Enable **Settings → Developer options → ADB debugging** and **Wireless debugging** on your watch, then pair and connect:
    ```bash
