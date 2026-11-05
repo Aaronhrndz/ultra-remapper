@@ -35,11 +35,14 @@
 ## Capabilities Overview
 
 - **Physical Button Remapping**: Independent single, double, and long press customization for the **Quick / Center Button** (Galaxy Watch Ultra, Watch 8 Classic), **Bottom (Back) Button**, and **Top (Home) Button** (Hold) across Wear OS Samsung watches.
-- **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic hardware Max/Boost), Stopwatch, Water Lock, and Digital Assistant.
-- **Smart Utilities**: One-click Wireless ADB toggle, GPS parking saver & walking navigation, water eject speaker sweep, Glove Mode, LTE toggle, and tactical red flashlight.
+- **In-Watch Local ADB Wizard**: Pair and connect wireless ADB directly on the watch using native TLS 1.3 / SPAKE2 and mDNS discovery. Grant elevated permissions and manage system tweaks completely on-device without a PC or phone.
+- **Samsung Pay / Wallet Freeze**: One-tap toggle to freeze or disable Samsung Pay (pm disable-user --user 0 com.samsung.android.samsungpay.gear), eliminating system intercept conflicts for 100% reliable bottom-button long press gestures.
+- **Dedicated Permissions Management**: Clean, focused permissions screen with auto-centering to grant Overlay, Secure Settings, Action Route, Notification Listener, and Battery Whitelist privileges via local ADB.
+- **Samsung Health & System Actions**: Instant shortcuts to pinned workouts, official Flashlight (with automatic hardware Max/Boost and retry loop), Stopwatch, Water Lock, and Digital Assistant.
+- **Smart Utilities**: One-click Wireless ADB toggle, GPS parking saver & walking navigation, water eject speaker sweep, LTE toggle, and tactical red flashlight.
 - **Phone Media Controls**: Wrist-based media playback and volume control bridging local and phone sessions (Spotify, YouTube, KDE Connect).
 - **Autonomous In-Watch OTA**: Background release checks with in-watch installer and live progress bar — no PC or phone app required for updates.
-- **Smart Diagnostics**: Zero unnecessary banners; warning dialogs only appear when a selected action actually requires elevated permissions.
+- **Smart Diagnostics & Marquee Text**: Warning banners only appear when an active shortcut needs attention; text automatically marquees across circular watch displays to avoid truncation.
 
 > [!TIP]
 > For the complete breakdown of every action and tool, explore the [**Full Feature List**](docs/FEATURES.md).
