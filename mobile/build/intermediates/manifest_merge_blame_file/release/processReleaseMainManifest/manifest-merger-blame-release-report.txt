@@ -2,7 +2,7 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.aaronhrndz.ultraremapper.companion"
 4    android:versionCode="221"
-5    android:versionName="2.2.1-beta1" >
+5    android:versionName="2.2.1" >
 6
 7    <uses-sdk
 7-->INJECTED
