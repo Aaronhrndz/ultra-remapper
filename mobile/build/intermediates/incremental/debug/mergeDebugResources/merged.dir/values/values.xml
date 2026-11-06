@@ -2591,15 +2591,19 @@
     <string description="Accessibility label describing the state when the bottom sheet is collapsed [CHAR LIMIT=NONE]" name="bottomsheet_state_collapsed">Collapsed</string>
     <string description="Accessibility label describing the state when the bottom sheet is expanded [CHAR LIMIT=NONE]" name="bottomsheet_state_expanded">Expanded</string>
     <string description="Accessibility label describing the state when the bottom sheet is half expanded to its full height [CHAR LIMIT=NONE]" name="bottomsheet_state_half_expanded">Half expanded</string>
-    <string name="btn_already_enabled">I already turned it on</string>
-    <string name="btn_back">Back</string>
+    <string name="btn_already_enabled">Wireless Debugging is ON ›</string>
+    <string name="btn_back">‹ Back</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_connected">Connected</string>
+    <string name="btn_direct_connect">Already paired? Go to Permissions ›</string>
     <string name="btn_grant">Grant</string>
-    <string name="btn_grant_all">Grant All</string>
-    <string name="btn_next">Next</string>
-    <string name="btn_pair_watch">Pair Watch</string>
+    <string name="btn_grant_all">Grant All Permissions</string>
+    <string name="btn_next">Next ›</string>
+    <string name="btn_pair_watch">Pair &amp; Connect</string>
     <string name="btn_revoke">Revoke</string>
     <string name="btn_revoke_all">Revoke All</string>
-    <string name="btn_scan_status">Scan Status</string>
+    <string name="btn_scan_status">Refresh Status</string>
+    <string name="btn_unpair_adb">Forget ADB Pairing</string>
     <string name="call_notification_answer_action">Answer</string>
     <string name="call_notification_answer_video_action">Video</string>
     <string name="call_notification_decline_action">Decline</string>
@@ -2642,16 +2646,17 @@
     <string name="exposed_dropdown_menu_content_description">Show dropdown menu</string>
     <string name="fab_transformation_scrim_behavior" translatable="false">com.google.android.material.transformation.FabTransformationScrimBehavior</string>
     <string name="fab_transformation_sheet_behavior" translatable="false">com.google.android.material.transformation.FabTransformationSheetBehavior</string>
+    <string name="hdr_permissions">Watch Permissions</string>
+    <string name="hdr_permissions_sub">Toggle individual privileges in real time</string>
+    <string name="hdr_samsung_pay">Samsung Pay / Wallet</string>
     <string name="hide_bottom_view_on_scroll_behavior" translatable="false">com.google.android.material.behavior.HideBottomViewOnScrollBehavior</string>
     <string description="Content description for an icon that appears in the title area of a dialog" name="icon_content_description">Dialog Icon</string>
     <string name="in_progress">In progress</string>
     <string name="indeterminate">Partially checked</string>
-    <string name="individual_permissions_subtitle">Verify status and grant or revoke one by one</string>
-    <string name="individual_permissions_title">Individual Permissions &amp; Diagnostics</string>
     <string name="item_view_role_description">Tab</string>
-    <string name="label_main_port">Main Port</string>
+    <string name="label_main_port">Connection Port</string>
     <string name="label_pair_port">Pairing Port</string>
-    <string name="label_pairing_code">Pairing Code (6 digits)</string>
+    <string name="label_pairing_code">6-Digit Pairing PIN</string>
     <string name="label_watch_ip">Watch IP</string>
     <string name="m3_exceed_max_badge_text_suffix" translatable="false"><ns2:g example="Some te" id="part of a long text">%1$s</ns2:g><ns2:g example="…" id="suffix">%2$s</ns2:g></string>
     <string description="Content description for a loading indicator [CHAR LIMIT=NONE]" name="m3_loading_indicator_content_description">
@@ -2766,6 +2771,9 @@
     <string description="Title for the dialog with a time picker. [CHAR_LIMIT=32]" name="material_timepicker_select_time">Select time</string>
     <string name="material_timepicker_text_input_mode_description">Switch to text input mode for the time input.</string>
     <string name="material_timepicker_text_input_mode_tooltip">Switch to text input mode</string>
+    <string name="mdns_detected_connect">✓ Watch ADB port detected: %1$s:%2$s</string>
+    <string name="mdns_detected_pair">✓ Watch pairing port detected: %1$s:%2$s</string>
+    <string name="mdns_detecting">Scanning local Wi-Fi for watch mDNS services…</string>
     <string description="Content description for new notification (no number count) [CHAR_LIMIT=NONE]" name="mtrl_badge_numberless_content_description">New notification</string>
     <string description="An announcement for the collapsed menu state of the trailing button in split button [CHAR LIMIT=NONE]" name="mtrl_button_collapsed_content_description">Collapsed</string>
     <string description="An announcement for the expanded menu state of the trailing button in split button [CHAR LIMIT=NONE]" name="mtrl_button_expanded_content_description">Expanded</string>
@@ -2859,6 +2867,10 @@
     <string name="path_password_strike_through" translatable="false">M3.27,4.27 L19.74,20.74</string>
     <string name="range_end">"Range end"</string>
     <string name="range_start">"Range start"</string>
+    <string name="samsung_pay_active_badge">Active</string>
+    <string name="samsung_pay_desc">Turn OFF (freeze) so the bottom button long-press gesture works 100% reliably without Samsung Pay intercepting it.</string>
+    <string name="samsung_pay_frozen_badge">Frozen (Recommended)</string>
+    <string name="samsung_pay_title">Samsung Pay Active</string>
     <string name="search_menu_title">Search</string>
     <string name="searchbar_scrolling_view_behavior" translatable="false">
     com.google.android.material.search.SearchBar$ScrollingViewBehavior
@@ -2868,7 +2880,7 @@
     <string name="selected">Selected</string>
     <string description="Title of the side sheet&apos;s accessibility pane that is spoken by TalkBack when the side sheet appears on screen. [CHAR_LIMIT=NONE]" name="side_sheet_accessibility_pane_title">Side Sheet</string>
     <string name="side_sheet_behavior" translatable="false">com.google.android.material.sidesheet.SideSheetBehavior</string>
-    <string name="skip_to_step_4">Already paired this watch previously? Tap to skip to Step 4.</string>
+    <string name="skip_to_step_3">Already paired previously? Skip to Connect &amp; Permissions ›</string>
     <string name="state_empty">Empty</string>
     <string name="state_off">Off</string>
     <string name="state_on">On</string>
@@ -2876,17 +2888,14 @@
     <string name="status_granted">Granted</string>
     <string name="status_missing">Missing</string>
     <string name="status_watch">Watch Status</string>
-    <string name="step_1_desc">Make sure both your Galaxy Watch and this phone are connected to the same Wi-Fi network.</string>
-    <string name="step_1_tip">💡 Tip: If you are away from home, you can turn on Mobile Hotspot / Tethering on this phone and connect the watch to it.</string>
-    <string name="step_1_title">Step 1: Wi-Fi Connection</string>
-    <string name="step_2_desc">On your Galaxy Watch, go to Settings > Developer options > Wireless debugging and turn it ON.</string>
-    <string name="step_2_dev_tip">Don\'t see Developer options?\nGo to Settings > About watch > Software info > and tap \'Software version\' 7 times consecutively.</string>
-    <string name="step_2_title">Step 2: Wireless Debugging on Watch</string>
-    <string name="step_3_desc">On the Wireless Debugging screen on your watch, tap \'Pair device with pairing code\'. Enter the IP, pairing port, and 6-digit code shown.</string>
-    <string name="step_3_title">Step 3: Pair Watch</string>
-    <string name="step_4_desc">Exit the pairing screen. Now enter the main port shown directly under \'IP address &amp; port\' on your watch.</string>
-    <string name="step_4_title">Step 4: Connect &amp; Grant</string>
-    <string name="subtitle_companion">Step-by-step setup wizard</string>
+    <string name="step_1_desc">1. Connect both your Galaxy Watch and this phone to the same Wi-Fi network.\n2. On your watch, open Settings › Developer options › Wireless debugging and turn it ON.</string>
+    <string name="step_1_tip">💡 Tip: Don\'t see Developer options? Go to Settings › About watch › Software info and tap \'Software version\' 7 times. If away from home, use this phone\'s Wi-Fi Hotspot.</string>
+    <string name="step_1_title">Step 1: Wi-Fi &amp; Wireless Debugging</string>
+    <string name="step_2_desc">On your watch\'s Wireless Debugging screen, tap \'Pair new device\'. IP and Ports are auto-detected via mDNS when on the same Wi-Fi.</string>
+    <string name="step_2_title">Step 2: Pair with 6-Digit PIN</string>
+    <string name="step_3_desc">Manage Ultra Remapper elevated permissions and system conflicts directly from your phone.</string>
+    <string name="step_3_title">Step 3: Permissions &amp; Samsung Pay</string>
+    <string name="subtitle_companion">Wireless ADB Assistant &amp; Watch Manager</string>
     <string name="switch_role">Switch</string>
     <string name="tab">Tab</string>
     <string name="template_percent"><ns2:g id="percentage">%1$d</ns2:g> percent.</string>

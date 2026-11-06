@@ -1,9 +1,20 @@
 -- Merging decision tree log ---
+provider#androidx.core.content.FileProvider
+INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:27:9-35:20
+	android:grantUriPermissions
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:31:13-47
+	android:authorities
+		INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:29:13-64
+	android:exported
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:30:13-37
+	android:name
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:28:13-62
 manifest
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12
-INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12
+INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12
 MERGED from [com.google.android.material:material:1.14.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\02f0d41148f52ecf5466cf0d9de064c1\transformed\material-1.14.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.appcompat:appcompat-resources:1.8.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\d6d6bf6e82cef8a1065995672f580bd1\transformed\appcompat-resources-1.8.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.1] C:\Users\aaron\.gradle\caches\9.6.0\transforms\69f94210f5ec962be9cb664c006b0bdf\transformed\constraintlayout-2.2.1\AndroidManifest.xml:2:1-9:12
@@ -101,17 +112,13 @@ uses-permission#android.permission.ACCESS_WIFI_STATE
 ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:6:5-76
 	android:name
 		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:6:22-73
-uses-permission#android.permission.CAMERA
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:7:5-65
+uses-permission#android.permission.REQUEST_INSTALL_PACKAGES
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:7:5-83
 	android:name
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:7:22-62
-uses-permission#android.permission.FLASHLIGHT
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:8:5-69
-	android:name
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:8:22-66
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:7:22-80
 application
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:10:5-28:19
-INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:10:5-28:19
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:9:5-37:19
+INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:9:5-37:19
 MERGED from [com.google.android.material:material:1.14.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\02f0d41148f52ecf5466cf0d9de064c1\transformed\material-1.14.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.14.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\02f0d41148f52ecf5466cf0d9de064c1\transformed\material-1.14.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.2.1] C:\Users\aaron\.gradle\caches\9.6.0\transforms\69f94210f5ec962be9cb664c006b0bdf\transformed\constraintlayout-2.2.1\AndroidManifest.xml:7:5-20
@@ -143,35 +150,41 @@ MERGED from [org.conscrypt:conscrypt-android:2.5.3] C:\Users\aaron\.gradle\cache
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.19.1] C:\Users\aaron\.gradle\caches\9.6.0\transforms\3ca17625930bc54cf46ae19e0b1aa839\transformed\core-1.19.1\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:15:9-35
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:14:9-35
 	android:label
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:13:9-41
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:12:9-41
 	android:roundIcon
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:14:9-48
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:13:9-48
 	android:icon
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:12:9-43
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:11:9-43
 	android:allowBackup
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:11:9-35
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:10:9-35
 	android:theme
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:16:9-66
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:15:9-66
 activity#com.aaronhrndz.ultraremapper.companion.MainActivity
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:18:9-26:20
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:17:9-25:20
 	android:exported
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:20:13-36
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:19:13-36
 	android:theme
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:21:13-70
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:20:13-70
 	android:name
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:19:13-41
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:18:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:22:13-25:29
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:21:13-24:29
 action#android.intent.action.MAIN
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:23:17-69
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:22:17-69
 	android:name
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:23:25-66
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:22:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:24:17-77
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:23:17-77
 	android:name
-		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:24:27-74
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:23:27-74
+meta-data#android.support.FILE_PROVIDER_PATHS
+ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:32:13-34:54
+	android:resource
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:34:17-51
+	android:name
+		ADDED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:33:17-67
 uses-sdk
 INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml
@@ -393,11 +406,11 @@ ADDED from [androidx.lifecycle:lifecycle-process:2.10.0] C:\Users\aaron\.gradle\
 	android:name
 		ADDED from [androidx.lifecycle:lifecycle-process:2.10.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\20ee20c56635c2a9e6b333f204323609\transformed\lifecycle-process-2.10.0\AndroidManifest.xml:30:17-78
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12 reason: io.github.muntashirakon.adb has a targetSdkVersion < 4
+IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12 reason: io.github.muntashirakon.adb has a targetSdkVersion < 4
 uses-permission#android.permission.READ_PHONE_STATE
-IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12 reason: io.github.muntashirakon.adb has a targetSdkVersion < 4
+IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12 reason: io.github.muntashirakon.adb has a targetSdkVersion < 4
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-30:12 reason: io.github.muntashirakon.adb requested WRITE_EXTERNAL_STORAGE
+IMPLIED from C:\temp\ultra-remapper\mobile\src\main\AndroidManifest.xml:2:1-39:12 reason: io.github.muntashirakon.adb requested WRITE_EXTERNAL_STORAGE
 meta-data#androidx.profileinstaller.ProfileInstallerInitializer
 ADDED from [androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\aaron\.gradle\caches\9.6.0\transforms\e8cdedd53ed2d0008ddf608e9916c81c\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
 	android:value

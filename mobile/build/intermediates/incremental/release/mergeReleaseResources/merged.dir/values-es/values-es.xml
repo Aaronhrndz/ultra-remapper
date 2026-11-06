@@ -32,8 +32,8 @@
     <string msgid="9055268688411532828" name="abc_shareactionprovider_share_with_application">"Compartir con <ns2:g id="APPLICATION_NAME">%s</ns2:g>"</string>
     <string msgid="1656852541809559762" name="abc_toolbar_collapse_description">"Ocultar"</string>
     <string name="app_name">Ultra Remapper Companion</string>
-    <string name="beta_channel_desc">Recibir releases Beta en la app móvil.</string>
-    <string name="beta_channel_title">Canal Beta (Companion)</string>
+    <string name="beta_channel_desc">Recibir versiones Beta anticipadas tanto para la app móvil como para el reloj.</string>
+    <string name="beta_channel_title">Canal Beta</string>
     <string name="bottomsheet_action_collapse">Ocultar</string>
     <string name="bottomsheet_action_collapse_description">Ocultar la hoja inferior</string>
     <string name="bottomsheet_action_expand">Mostrar</string>
@@ -44,15 +44,21 @@
     <string name="bottomsheet_state_collapsed">Ocultada</string>
     <string name="bottomsheet_state_expanded">Mostrada</string>
     <string name="bottomsheet_state_half_expanded">Mostrada parcialmente</string>
-    <string name="btn_already_enabled">Ya la activé</string>
-    <string name="btn_back">Atrás</string>
+    <string name="btn_already_enabled">Ya activé Depuración Inalámbrica ›</string>
+    <string name="btn_back">‹ Atrás</string>
+    <string name="btn_connect">Conectar</string>
+    <string name="btn_connected">Conectado</string>
+    <string name="btn_direct_connect">¿Ya vinculado antes? Ir a Permisos y App ›</string>
     <string name="btn_grant">Conceder</string>
-    <string name="btn_grant_all">Conceder Todos</string>
-    <string name="btn_next">Siguiente</string>
-    <string name="btn_pair_watch">Emparejar Reloj</string>
+    <string name="btn_grant_all">Conceder Todos los Permisos</string>
+    <string name="btn_install_watch_github">Instalar / Actualizar v%1$s en el Reloj</string>
+    <string name="btn_install_watch_local">Instalar archivo APK local en el Reloj…</string>
+    <string name="btn_next">Siguiente ›</string>
+    <string name="btn_pair_watch">Vincular y Continuar</string>
     <string name="btn_revoke">Revocar</string>
-    <string name="btn_revoke_all">Revoke All</string>
-    <string name="btn_scan_status">Escanear Estado</string>
+    <string name="btn_revoke_all">Revocar Todos</string>
+    <string name="btn_scan_status">Refrescar Estado</string>
+    <string name="btn_unpair_adb">Borrar vinculación ADB</string>
     <string msgid="881409763997275156" name="call_notification_answer_action">"Responder"</string>
     <string msgid="8793775615905189152" name="call_notification_answer_video_action">"Vídeo"</string>
     <string msgid="3229508546291798546" name="call_notification_decline_action">"Rechazar"</string>
@@ -83,6 +89,9 @@
     <string name="common_open_on_phone">Abrir en teléfono</string>
     <string name="common_signin_button_text">Iniciar sesión</string>
     <string name="common_signin_button_text_long">Iniciar sesión con Google</string>
+    <string name="companion_update_beta_title">Beta de App Móvil disponible: v%1$s</string>
+    <string name="companion_update_btn">Actualizar App Móvil</string>
+    <string name="companion_update_title">Actualización de App Móvil: v%1$s</string>
     <string msgid="8038256446254964252" name="default_error_message">"Entrada no válida"</string>
     <string msgid="6312721426453364202" name="default_popup_window_title">"Ventana emergente"</string>
     <string name="dev_options_title">Opciones de Desarrollador</string>
@@ -90,16 +99,18 @@
     <string name="error_a11y_label">Error: no válida</string>
     <string name="error_icon_content_description">Error</string>
     <string name="exposed_dropdown_menu_content_description">Mostrar menú desplegable</string>
+    <string name="hdr_permissions">Permisos del Reloj</string>
+    <string name="hdr_permissions_sub">Concede o revoca cada permiso en tiempo real</string>
+    <string name="hdr_samsung_pay">Samsung Pay / Wallet</string>
+    <string name="hdr_watch_apk">App del Reloj (Ultra Remapper)</string>
     <string name="icon_content_description">Icono del cuadro de diálogo</string>
     <string msgid="6827826412747255547" name="in_progress">"En curso"</string>
     <string msgid="7933458017204019916" name="indeterminate">"Marcado parcialmente"</string>
-    <string name="individual_permissions_subtitle">Verificar estado y conceder o revocar uno a uno</string>
-    <string name="individual_permissions_title">Permisos Individuales y Diagnóstico</string>
     <string name="item_view_role_description">Pestaña</string>
-    <string name="label_main_port">Puerto General</string>
+    <string name="label_main_port">Puerto Conexión</string>
     <string name="label_pair_port">Puerto Vinculación</string>
-    <string name="label_pairing_code">Código de Vinculación (6 dígitos)</string>
-    <string name="label_watch_ip">IP Reloj</string>
+    <string name="label_pairing_code">PIN de 6 dígitos</string>
+    <string name="label_watch_ip">IP del Reloj</string>
     <string name="m3_loading_indicator_content_description">Cargando</string>
     <string name="m3_overflow_linear_layout_button_content_description">Menú adicional</string>
     <string name="m3_overflow_linear_layout_button_tooltip_text">Más opciones</string>
@@ -181,6 +192,9 @@
     <string name="material_timepicker_select_time">Seleccionar la hora</string>
     <string name="material_timepicker_text_input_mode_description">Cambia al modo de introducción de texto para escribir la hora.</string>
     <string name="material_timepicker_text_input_mode_tooltip">Cambiar al modo de escritura</string>
+    <string name="mdns_detected_connect">✓ Puerto ADB del reloj detectado: %1$s:%2$s</string>
+    <string name="mdns_detected_pair">✓ Puerto de vinculación detectado: %1$s:%2$s</string>
+    <string name="mdns_detecting">Buscando servicios mDNS del reloj en la red Wi-Fi…</string>
     <string name="mtrl_badge_numberless_content_description">Notificación nueva</string>
     <string name="mtrl_button_collapsed_content_description">Contraído</string>
     <string name="mtrl_button_expanded_content_description">Desplegado</string>
@@ -241,12 +255,16 @@
     <string name="password_toggle_content_description">Mostrar contraseña</string>
     <string msgid="5941395253238309765" name="range_end">"Fin del intervalo"</string>
     <string msgid="7097486360902471446" name="range_start">"Inicio del intervalo"</string>
+    <string name="samsung_pay_active_badge">Activo</string>
+    <string name="samsung_pay_desc">Desactívalo (congelar) para que la pulsación larga del botón inferior funcione siempre de forma fiable sin que Samsung Pay tome prioridad.</string>
+    <string name="samsung_pay_frozen_badge">Congelado (Recomendado)</string>
+    <string name="samsung_pay_title">Samsung Pay Activo</string>
     <string msgid="6264217191555673260" name="search_menu_title">"Buscar"</string>
     <string name="searchview_clear_text_content_description">Borrar texto</string>
     <string name="searchview_navigation_content_description">Atrás</string>
     <string msgid="6043586758067023" name="selected">"Seleccionado"</string>
     <string name="side_sheet_accessibility_pane_title">Hoja lateral</string>
-    <string name="skip_to_step_4">¿Ya emparejaste este reloj anteriormente? Pulsa para saltar al Paso 4.</string>
+    <string name="skip_to_step_3">¿Ya vinculaste este reloj antes? Saltar al Paso 3 ›</string>
     <string msgid="4139871816613051306" name="state_empty">"Vacío"</string>
     <string msgid="5834637030682409883" name="state_off">"Desactivado"</string>
     <string msgid="1490883874751719580" name="state_on">"Activado"</string>
@@ -254,23 +272,24 @@
     <string name="status_granted">Concedido</string>
     <string name="status_missing">Falta</string>
     <string name="status_watch">Estado del Reloj</string>
-    <string name="step_1_desc">Asegúrate de que tanto tu reloj Galaxy Watch como este teléfono están conectados a la misma red Wi-Fi.</string>
-    <string name="step_1_tip">💡 Consejo: Si estás fuera de casa, puedes encender la Zona Wi-Fi / Compartir conexión de este móvil y conectar el reloj a ella.</string>
-    <string name="step_1_title">Paso 1: Conexión Wi-Fi</string>
-    <string name="step_2_desc">En tu Galaxy Watch abre Ajustes > Opciones de desarrollador > Depuración inalámbrica y actívala.</string>
-    <string name="step_2_dev_tip">¿No ves Opciones de desarrollador?\nVe a Ajustes > Información del reloj > Software > y pulsa 7 veces seguidas sobre \'Versión de software\'.</string>
-    <string name="step_2_title">Paso 2: Depuración en el Reloj</string>
-    <string name="step_3_desc">En la pantalla de Depuración Inalámbrica de tu reloj, toca en \'Vincular dispositivo\'. Introduce aquí la IP, el puerto de vinculación y el código de 6 dígitos que aparezca.</string>
-    <string name="step_3_title">Paso 3: Emparejar Reloj</string>
-    <string name="step_4_desc">Sal de la pantalla de vincular. Introduce ahora el puerto general que aparece directamente bajo \'Dirección IP y puerto\' en el reloj.</string>
-    <string name="step_4_title">Paso 4: Conectar y Conceder</string>
-    <string name="subtitle_companion">Asistente de configuración paso a paso</string>
+    <string name="step_1_desc">1. Conecta tanto tu Galaxy Watch como este teléfono a la misma red Wi-Fi.\n2. En el reloj, abre Ajustes › Opciones de desarrollador › Depuración inalámbrica y actívala.</string>
+    <string name="step_1_tip">💡 Consejo: ¿No ves Opciones de desarrollador? Ve a Ajustes › Información del reloj › Software y toca 7 veces seguidas en \'Versión de software\'. Si estás fuera de casa, comparte la Zona Wi-Fi de este móvil.</string>
+    <string name="step_1_title">Paso 1: Wi-Fi y Depuración Inalámbrica</string>
+    <string name="step_2_desc">En la pantalla de Depuración Inalámbrica del reloj, toca en \'Vincular dispositivo nuevo\'. La IP y puertos se detectan solos por mDNS al estar en el mismo Wi-Fi.</string>
+    <string name="step_2_title">Paso 2: Vincular con PIN de 6 dígitos</string>
+    <string name="step_3_desc">Instala Ultra Remapper en el reloj, concede todos los permisos y congela Samsung Pay desde el teléfono.</string>
+    <string name="step_3_title">Paso 3: App, Permisos y Samsung Pay</string>
+    <string name="subtitle_companion">Asistente ADB Inalámbrico y Gestor del Reloj</string>
     <string msgid="2561197295334830845" name="switch_role">"Interruptor"</string>
     <string msgid="1672349317127674378" name="tab">"Pestaña"</string>
     <string msgid="5946805113151406391" name="template_percent">"<ns2:g id="PERCENTAGE">%1$d</ns2:g> por cien."</string>
     <string name="title_companion">Ultra Remapper</string>
     <string msgid="3765533235322692011" name="tooltip_description">"descripción emergente"</string>
     <string msgid="3124740595719787496" name="tooltip_label">"mostrar descripción emergente"</string>
+    <string name="watch_apk_sub">Instala o actualiza Ultra Remapper directamente en tu reloj por ADB</string>
     <string name="watch_connected">Emparejado por Bluetooth / DataLayer</string>
     <string name="watch_disconnected">Buscando reloj conectado…</string>
+    <string name="watch_ver_installed">Instalada en el reloj: %1$s</string>
+    <string name="watch_ver_latest">Última en GitHub: v%1$s</string>
+    <string name="watch_ver_not_installed">No instalada en el reloj</string>
 </resources>
