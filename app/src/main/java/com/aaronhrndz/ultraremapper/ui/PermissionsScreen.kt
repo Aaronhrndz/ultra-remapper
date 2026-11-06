@@ -132,6 +132,7 @@ fun PermissionsScreen(
                                 if (ok) {
                                     permVersion++
                                     onRefreshPermissions()
+                                    com.aaronhrndz.ultraremapper.CompanionSyncService.syncStateToDataLayer(context)
                                     HapticFeedbackHelper.playButtonHaptic(context)
                                     statusToast = null
                                 } else {

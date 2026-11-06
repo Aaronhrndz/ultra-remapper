@@ -400,13 +400,35 @@ class MainActivity : ComponentActivity() {
                                 isActionButtonRouted(context)
                                 syncTopButtonRoute(context)
                                 setup = readSetupState(context)
+                                CompanionSyncService.syncStateToDataLayer(context)
                                 UpdateChecker.check(context) { info ->
                                     updateInfo = info
                                 }
                             }
                         }
+                        val receiver = object : android.content.BroadcastReceiver() {
+                            override fun onReceive(ctx: Context?, intent: Intent?) {
+                                setup = readSetupState(context)
+                                mappingVersion++
+                            }
+                        }
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                            context.registerReceiver(
+                                receiver,
+                                android.content.IntentFilter(CompanionSyncService.ACTION_STATE_UPDATED),
+                                Context.RECEIVER_NOT_EXPORTED
+                            )
+                        } else {
+                            context.registerReceiver(
+                                receiver,
+                                android.content.IntentFilter(CompanionSyncService.ACTION_STATE_UPDATED)
+                            )
+                        }
                         lifecycleOwner.lifecycle.addObserver(observer)
-                        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+                        onDispose {
+                            lifecycleOwner.lifecycle.removeObserver(observer)
+                            try { context.unregisterReceiver(receiver) } catch (_: Exception) {}
+                        }
                     }
 
                     val nav = rememberSwipeDismissableNavController()

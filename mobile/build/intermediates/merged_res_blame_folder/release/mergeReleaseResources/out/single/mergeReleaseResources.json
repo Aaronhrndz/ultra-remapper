@@ -8,6 +8,10 @@
         "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\mipmap-hdpi\\ic_launcher.webp"
     },
     {
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-release-57:/drawable_ic_watch_top_button.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-58:/drawable/ic_watch_top_button.xml"
+    },
+    {
         "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-release-57:\\mipmap-xhdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\mipmap-xhdpi\\ic_launcher.webp"
     },
@@ -32,6 +36,10 @@
         "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\drawable\\ic_launcher_background.xml"
     },
     {
+        "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-release-57:\\xml_file_paths.xml.flat",
+        "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\xml\\file_paths.xml"
+    },
+    {
         "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-release-57:\\drawable_ic_watch_quick_button.xml.flat",
         "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\drawable\\ic_watch_quick_button.xml"
     },
@@ -40,8 +48,8 @@
         "source": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-main-58:\\drawable\\ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-release-57:/xml_file_paths.xml.flat",
-        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-58:/xml/file_paths.xml"
+        "merged": "com.aaronhrndz.ultraremapper.companion.mobile-release-57:/drawable_ic_wrist_gesture.xml.flat",
+        "source": "com.aaronhrndz.ultraremapper.companion.mobile-main-58:/drawable/ic_wrist_gesture.xml"
     },
     {
         "merged": "C:\\Users\\aaron\\.gradle\\daemon\\9.6.0\\com.aaronhrndz.ultraremapper.companion.mobile-release-57:\\mipmap-anydpi_ic_launcher.xml.flat",

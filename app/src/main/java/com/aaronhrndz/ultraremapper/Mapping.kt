@@ -85,22 +85,28 @@ object Mapping {
     fun isHapticFeedbackEnabled(context: Context): Boolean =
         prefs(context).getBoolean(KEY_HAPTIC_ENABLED, true)
 
-    fun setHapticFeedbackEnabled(context: Context, enabled: Boolean) =
+    fun setHapticFeedbackEnabled(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_HAPTIC_ENABLED, enabled).apply()
+        CompanionSyncService.syncStateToDataLayer(context)
+    }
 
     private fun prefs(context: Context) = context.getSharedPreferences("mapping", Context.MODE_PRIVATE)
 
     fun isEnabled(context: Context): Boolean =
         prefs(context).getBoolean(KEY_APP_ENABLED, true)
 
-    fun setEnabled(context: Context, enabled: Boolean) =
+    fun setEnabled(context: Context, enabled: Boolean) {
         prefs(context).edit().putBoolean(KEY_APP_ENABLED, enabled).apply()
+        CompanionSyncService.syncStateToDataLayer(context)
+    }
 
     fun get(context: Context, gesture: String): String =
         prefs(context).getString(gesture, defaults[gesture]) ?: "none"
 
-    fun set(context: Context, gesture: String, action: String) =
+    fun set(context: Context, gesture: String, action: String) {
         prefs(context).edit().putString(gesture, action).apply()
+        CompanionSyncService.syncStateToDataLayer(context)
+    }
 
     fun label(context: Context, action: String): String {
         if (action == "none") return context.getString(R.string.nothing)

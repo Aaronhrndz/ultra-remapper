@@ -4,6 +4,8 @@ drawable ic_launcher_background
 drawable ic_launcher_foreground
 drawable ic_watch_bottom_button
 drawable ic_watch_quick_button
+drawable ic_watch_top_button
+drawable ic_wrist_gesture
 mipmap ic_launcher
 mipmap ic_launcher_round
 string app_name

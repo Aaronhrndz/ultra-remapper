@@ -1,4 +1,4 @@
-﻿package com.aaronhrndz.ultraremapper
+package com.aaronhrndz.ultraremapper
 
 import com.aaronhrndz.ultraremapper.R
 
@@ -113,6 +113,7 @@ class UpdateReceiver : BroadcastReceiver() {
                 UpdateChecker.scheduleDailyCheck(appContext)
                 UpdateChecker.checkOpportunistic(appContext)
                 ensureActionButtonRouting(appContext)
+                CompanionSyncService.syncStateToDataLayer(appContext)
             }
         }
     }

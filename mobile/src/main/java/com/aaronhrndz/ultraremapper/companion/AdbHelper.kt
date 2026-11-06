@@ -6,6 +6,8 @@ import android.util.Log
 import io.github.muntashirakon.adb.AdbConnection
 import io.github.muntashirakon.adb.PairingConnectionCtx
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.bouncycastle.asn1.x500.X500Name
@@ -28,11 +30,12 @@ import java.util.Date
 import java.util.concurrent.TimeUnit
 
 /**
- * ADB Manager for Mobile Companion using the battle-tested Wear OS implementation:
+ * Thread-safe ADB Manager for Mobile Companion:
+ * - Mutex-serialized command & connection operations so concurrent UI refreshes never race
  * - SPAKE2 TLS 1.3 pairing via PairingConnectionCtx
  * - Persistent RSA-2048 & X.509 certificate
- * - Reused AdbConnection with non-blocking stream reads
- * - Direct APK installation onto the watch via pm install-create / write / commit
+ * - Automatic reconnect retry if socket dropped
+ * -Reliable APK installation via chunked stream to /data/local/tmp/ultra_update.apk + pm install -r
  */
 class AdbHelper private constructor(private val context: Context) {
 
@@ -40,6 +43,7 @@ class AdbHelper private constructor(private val context: Context) {
     private var mPrivateKey: PrivateKey? = null
     private var mCertificate: X509Certificate? = null
 
+    private val adbMutex = Mutex()
     private var activeConnection: AdbConnection? = null
     private var connectedHost: String? = null
     private var connectedPort: Int? = null
@@ -132,7 +136,7 @@ class AdbHelper private constructor(private val context: Context) {
     }
 
     fun unpair() {
-        closeConnection()
+        closeConnectionInternal()
         context.getSharedPreferences(PREFS_STATE, Context.MODE_PRIVATE).edit().clear().apply()
         context.getSharedPreferences(PREFS_KEYS, Context.MODE_PRIVATE).edit().clear().apply()
         mPrivateKey = null
@@ -140,7 +144,7 @@ class AdbHelper private constructor(private val context: Context) {
         initOrLoadKeys()
     }
 
-    fun closeConnection() {
+    private fun closeConnectionInternal() {
         try {
             activeConnection?.close()
         } catch (_: Exception) {}
@@ -149,44 +153,50 @@ class AdbHelper private constructor(private val context: Context) {
         connectedPort = null
     }
 
+    fun closeConnection() {
+        closeConnectionInternal()
+    }
+
     val isConnected: Boolean
         get() = activeConnection?.isConnectionEstablished == true
 
     suspend fun pairDevice(host: String, pairingPort: Int, pairingCode: String): Pair<Boolean, String> =
         withContext(Dispatchers.IO) {
-            val result = withTimeoutOrNull(12000L) {
-                try {
-                    if (mPrivateKey == null || mCertificate == null) initOrLoadKeys()
-                    val pinBytes = pairingCode.trim().toByteArray(Charsets.UTF_8)
-                    val pairingCtx = PairingConnectionCtx(
-                        host.trim(),
-                        pairingPort,
-                        pinBytes,
-                        mPrivateKey!!,
-                        mCertificate!!,
-                        "UltraRemapperCompanion"
-                    )
-                    pairingCtx.use {
-                        it.start()
+            adbMutex.withLock {
+                val result = withTimeoutOrNull(12000L) {
+                    try {
+                        if (mPrivateKey == null || mCertificate == null) initOrLoadKeys()
+                        val pinBytes = pairingCode.trim().toByteArray(Charsets.UTF_8)
+                        val pairingCtx = PairingConnectionCtx(
+                            host.trim(),
+                            pairingPort,
+                            pinBytes,
+                            mPrivateKey!!,
+                            mCertificate!!,
+                            "UltraRemapperCompanion"
+                        )
+                        pairingCtx.use {
+                            it.start()
+                        }
+                        setPaired(true, host.trim(), null)
+                        Pair(true, "¡Reloj vinculado con éxito!")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Pairing failed: ${e.message}", e)
+                        Pair(false, "Fallo al vincular. Código incorrecto, puerto erróneo o caducado.")
                     }
-                    setPaired(true, host.trim(), null)
-                    Pair(true, "¡Reloj vinculado con éxito!")
-                } catch (e: Exception) {
-                    Log.e(TAG, "Pairing failed: ${e.message}", e)
-                    Pair(false, "Fallo al vincular. Código incorrecto, puerto erróneo o caducado.")
                 }
+                result ?: Pair(false, "Tiempo agotado (12s). Verifica que el reloj esté en la pantalla de vinculación.")
             }
-            result ?: Pair(false, "Tiempo agotado (12s). Verifica que el reloj esté en la pantalla de vinculación y en la misma red Wi-Fi.")
         }
 
-    suspend fun ensureConnected(host: String, connectPort: Int): Boolean = withContext(Dispatchers.IO) {
+    private fun ensureConnectedUnlocked(host: String, connectPort: Int): Boolean {
         val cleanHost = host.trim()
         val current = activeConnection
         if (current != null && current.isConnectionEstablished && connectedHost == cleanHost && connectedPort == connectPort) {
-            return@withContext true
+            return true
         }
-        closeConnection()
-        return@withContext try {
+        closeConnectionInternal()
+        return try {
             if (mPrivateKey == null || mCertificate == null) initOrLoadKeys()
             val conn = AdbConnection.Builder(cleanHost, connectPort)
                 .setPrivateKey(mPrivateKey!!)
@@ -194,7 +204,7 @@ class AdbHelper private constructor(private val context: Context) {
                 .setDeviceName("UltraRemapperCompanion")
                 .build()
 
-            conn.connect(8000L, TimeUnit.MILLISECONDS, false)
+            conn.connect(6000L, TimeUnit.MILLISECONDS, false)
             if (conn.isConnectionEstablished) {
                 activeConnection = conn
                 connectedHost = cleanHost
@@ -207,68 +217,91 @@ class AdbHelper private constructor(private val context: Context) {
             }
         } catch (e: Exception) {
             Log.e(TAG, "Connect failed to $cleanHost:$connectPort -> ${e.message}")
-            closeConnection()
+            closeConnectionInternal()
             false
         }
     }
 
+    suspend fun ensureConnected(host: String, connectPort: Int): Boolean = withContext(Dispatchers.IO) {
+        adbMutex.withLock {
+            ensureConnectedUnlocked(host, connectPort)
+        }
+    }
+
+    private fun runStreamCommandUnlocked(conn: AdbConnection, command: String, timeoutMs: Long): String {
+        val stream = conn.open("shell:$command")
+        val output = StringBuilder()
+        val inStream = stream.openInputStream()
+        val buffer = ByteArray(2048)
+        val startTime = System.currentTimeMillis()
+
+        try {
+            while (!stream.isClosed) {
+                val available = inStream.available()
+                if (available > 0) {
+                    val readBytes = inStream.read(buffer, 0, minOf(available, buffer.size))
+                    if (readBytes > 0) {
+                        output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
+                    }
+                } else {
+                    if (System.currentTimeMillis() - startTime > timeoutMs) {
+                        break
+                    }
+                    Thread.sleep(30)
+                }
+            }
+            while (inStream.available() > 0) {
+                val readBytes = inStream.read(buffer, 0, minOf(inStream.available(), buffer.size))
+                if (readBytes > 0) {
+                    output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
+                }
+            }
+        } catch (_: Exception) {
+        } finally {
+            try {
+                stream.close()
+            } catch (_: Exception) {}
+        }
+
+        val res = output.toString().trim()
+        Log.d(TAG, "exec('$command') -> '$res'")
+        return res
+    }
+
     /**
-     * Executes a shell command using the non-blocking stream read loop proven on Wear OS.
+     * Executes a shell command with automatic 1-time reconnect retry if the underlying socket died.
      */
     suspend fun executeCommand(host: String, port: Int, command: String, timeoutMs: Long = 5000L): String =
         withContext(Dispatchers.IO) {
-            if (!ensureConnected(host, port)) {
-                return@withContext "ERROR: No se pudo conectar a $host:$port"
-            }
-            val conn = activeConnection ?: return@withContext "ERROR: Sin conexión activa"
-            return@withContext try {
-                val stream = conn.open("shell:$command")
-                val output = StringBuilder()
-                val inStream = stream.openInputStream()
-                val buffer = ByteArray(1024)
-                val startTime = System.currentTimeMillis()
-
-                try {
-                    while (!stream.isClosed) {
-                        val available = inStream.available()
-                        if (available > 0) {
-                            val readBytes = inStream.read(buffer, 0, minOf(available, buffer.size))
-                            if (readBytes > 0) {
-                                output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
-                            }
-                        } else {
-                            if (System.currentTimeMillis() - startTime > timeoutMs) {
-                                break
-                            }
-                            Thread.sleep(40)
-                        }
-                    }
-                    while (inStream.available() > 0) {
-                        val readBytes = inStream.read(buffer, 0, minOf(inStream.available(), buffer.size))
-                        if (readBytes > 0) {
-                            output.append(String(buffer, 0, readBytes, Charsets.UTF_8))
-                        }
-                    }
-                } catch (_: Exception) {
-                } finally {
-                    try {
-                        stream.close()
-                    } catch (_: Exception) {}
+            adbMutex.withLock {
+                if (!ensureConnectedUnlocked(host, port)) {
+                    return@withLock "ERROR: No se pudo conectar a $host:$port"
                 }
-
-                val res = output.toString().trim()
-                Log.d(TAG, "exec('$command') -> '$res'")
-                res
-            } catch (e: Exception) {
-                Log.e(TAG, "Command failed ($command): ${e.message}", e)
-                closeConnection()
-                "ERROR: ${e.message}"
+                val conn = activeConnection ?: return@withLock "ERROR: Sin conexión activa"
+                try {
+                    runStreamCommandUnlocked(conn, command, timeoutMs)
+                } catch (e: Exception) {
+                    Log.w(TAG, "Command threw (${e.message}), reconnecting and retrying once...")
+                    closeConnectionInternal()
+                    if (!ensureConnectedUnlocked(host, port)) {
+                        return@withLock "ERROR: Conexión perdida con $host:$port"
+                    }
+                    val retryConn = activeConnection ?: return@withLock "ERROR: Sin conexión tras reintento"
+                    try {
+                        runStreamCommandUnlocked(retryConn, command, timeoutMs)
+                    } catch (e2: Exception) {
+                        Log.e(TAG, "Retry failed ($command): ${e2.message}", e2)
+                        closeConnectionInternal()
+                        "ERROR: ${e2.message}"
+                    }
+                }
             }
         }
 
     /**
-     * Streams a local APK file from the phone directly onto the watch over ADB
-     * using `pm install-create`, `pm install-write`, and `pm install-commit`.
+     * Streams a local APK file to `/data/local/tmp/ultra_update.apk` on the watch and installs it
+     * via `pm install -r /data/local/tmp/ultra_update.apk`.
+     * This avoids `pm install-write -` stdin deadlocks over libadb streams.
      */
     suspend fun installApkOnWatch(
         host: String,
@@ -279,78 +312,66 @@ class AdbHelper private constructor(private val context: Context) {
         if (!apkFile.exists() || apkFile.length() <= 0L) {
             return@withContext Pair(false, "Archivo APK no encontrado o vacío.")
         }
-        if (!ensureConnected(host, port)) {
-            return@withContext Pair(false, "No se pudo conectar al reloj en $host:$port.")
-        }
-        val conn = activeConnection ?: return@withContext Pair(false, "Sin sesión ADB activa.")
+        adbMutex.withLock {
+            if (!ensureConnectedUnlocked(host, port)) {
+                return@withLock Pair(false, "No se pudo conectar al reloj en $host:$port.")
+            }
+            val conn = activeConnection ?: return@withLock Pair(false, "Sin sesión ADB activa.")
 
-        try {
-            val totalBytes = apkFile.length()
-            onProgress(0.05f, "Creando sesión de instalación en el reloj…")
-
-            // 1. Create install session
-            val createOut = executeCommand(host, port, "pm install-create -r -S $totalBytes", 8000L)
-            val sessionMatch = Regex("\\[(\\d+)]").find(createOut)
-            val sessionId = sessionMatch?.groupValues?.getOrNull(1)
-                ?: return@withContext Pair(false, "Error al crear sesión pm: $createOut")
-
-            // 2. Stream APK bytes into pm install-write
-            val writeCmd = "shell:pm install-write -S $totalBytes $sessionId base.apk -"
-            val stream = conn.open(writeCmd)
-            val outStream = stream.openOutputStream()
-            val inStream = stream.openInputStream()
-
+            val remoteTmp = "/data/local/tmp/ultra_update.apk"
             try {
-                FileInputStream(apkFile).use { fis ->
-                    val buf = ByteArray(16 * 1024)
-                    var sent = 0L
-                    var read: Int
-                    var lastReport = 0L
-                    while (fis.read(buf).also { read = it } != -1) {
-                        outStream.write(buf, 0, read)
-                        sent += read
-                        val now = System.currentTimeMillis()
-                        if (now - lastReport > 120L) {
-                            lastReport = now
-                            val frac = 0.05f + 0.80f * (sent.toFloat() / totalBytes.toFloat())
-                            val pct = ((sent * 100L) / totalBytes).toInt()
-                            onProgress(frac, "Enviando APK al reloj ($pct%)…")
+                val totalBytes = apkFile.length()
+                onProgress(0.05f, "Preparando transferencia al reloj…")
+                runStreamCommandUnlocked(conn, "rm -f $remoteTmp", 3000L)
+
+                // Stream APK bytes into /data/local/tmp/ultra_update.apk
+                val writeStream = conn.open("shell:cat > $remoteTmp")
+                val outStream = writeStream.openOutputStream()
+                try {
+                    FileInputStream(apkFile).use { fis ->
+                        val buf = ByteArray(16 * 1024)
+                        var sent = 0L
+                        var read: Int
+                        var lastReport = 0L
+                        while (fis.read(buf).also { read = it } != -1) {
+                            outStream.write(buf, 0, read)
+                            sent += read
+                            val now = System.currentTimeMillis()
+                            if (now - lastReport > 120L) {
+                                lastReport = now
+                                val frac = 0.05f + 0.70f * (sent.toFloat() / totalBytes.toFloat())
+                                val pct = ((sent * 100L) / totalBytes).toInt()
+                                onProgress(frac, "Enviando APK al reloj ($pct%)…")
+                            }
                         }
+                        outStream.flush()
                     }
-                    outStream.flush()
+                } finally {
+                    try { outStream.close() } catch (_: Exception) {}
+                    try { writeStream.close() } catch (_: Exception) {}
                 }
-            } finally {
-                try { outStream.close() } catch (_: Exception) {}
-            }
 
-            // Wait briefly for pm install-write response
-            val writeResp = StringBuilder()
-            val startWait = System.currentTimeMillis()
-            val rBuf = ByteArray(512)
-            while (!stream.isClosed && System.currentTimeMillis() - startWait < 10000L) {
-                val avail = inStream.available()
-                if (avail > 0) {
-                    val r = inStream.read(rBuf, 0, minOf(avail, rBuf.size))
-                    if (r > 0) writeResp.append(String(rBuf, 0, r, Charsets.UTF_8))
-                    if (writeResp.contains("Success")) break
+                // Wait briefly for filesystem flush and verify size
+                Thread.sleep(250)
+                onProgress(0.80f, "Instalando en el reloj…")
+
+                val installOut = runStreamCommandUnlocked(
+                    conn,
+                    "pm install -r -d $remoteTmp; rm -f $remoteTmp",
+                    35000L
+                )
+
+                return@withLock if (installOut.contains("Success", ignoreCase = true)) {
+                    onProgress(1.0f, "¡Instalación completada!")
+                    Pair(true, "Ultra Remapper actualizado correctamente en el reloj.")
                 } else {
-                    Thread.sleep(50)
+                    Pair(false, "Fallo al instalar: $installOut")
                 }
+            } catch (e: Exception) {
+                Log.e(TAG, "installApkOnWatch failed: ${e.message}", e)
+                closeConnectionInternal()
+                return@withLock Pair(false, "Error enviando APK al reloj: ${e.message}")
             }
-            try { stream.close() } catch (_: Exception) {}
-
-            // 3. Commit install session
-            onProgress(0.90f, "Instalando paquete en el reloj…")
-            val commitOut = executeCommand(host, port, "pm install-commit $sessionId", 25000L)
-            return@withContext if (commitOut.contains("Success", ignoreCase = true)) {
-                onProgress(1.0f, "¡Instalación completada!")
-                Pair(true, "Ultra Remapper instalado/actualizado correctamente en el reloj.")
-            } else {
-                Pair(false, "Fallo en commit de instalación: $commitOut")
-            }
-        } catch (e: Exception) {
-            Log.e(TAG, "installApkOnWatch failed: ${e.message}", e)
-            return@withContext Pair(false, "Error enviando APK al reloj: ${e.message}")
         }
     }
 
