@@ -26,7 +26,7 @@ class AppVoiceInteractionSession(context: Context) : VoiceInteractionSession(con
             val appEnabled = Mapping.isEnabled(context)
             val action = Mapping.get(context, "top_long")
 
-            if (appEnabled && action != "none") {
+            if (appEnabled && action != "none" && action != "assistant") {
                 if (action == "red_flashlight") {
                     val intent = Intent(context, RedFlashlightActivity::class.java).apply {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -49,8 +49,23 @@ class AppVoiceInteractionSession(context: Context) : VoiceInteractionSession(con
     }
 
     private fun forwardToDefaultAssistant() {
+        // Restore real VoiceInteractionService immediately if top_long is unmapped / assistant
+        SystemRouteHelper.syncSamsungRoutes(context)
+
+        val explicit = SystemRouteHelper.buildExternalAssistantLaunchIntent(context)
+        if (explicit != null) {
+            try {
+                startAssistantActivity(explicit)
+                return
+            } catch (_: Exception) {
+                try {
+                    context.startActivity(explicit)
+                    return
+                } catch (_: Exception) {}
+            }
+        }
+
         val targets = listOf(
-            Intent(Intent.ACTION_VOICE_COMMAND),
             Intent("com.google.android.wearable.action.GOOGLE_ASSIST"),
             Intent("com.samsung.android.bixby.agent.START")
         )

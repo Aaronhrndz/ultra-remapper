@@ -130,6 +130,7 @@ fun PermissionsScreen(
                             mainHandler.post {
                                 activeLoadingItem = null
                                 if (ok) {
+                                    com.aaronhrndz.ultraremapper.SystemRouteHelper.syncSamsungRoutes(context)
                                     permVersion++
                                     onRefreshPermissions()
                                     com.aaronhrndz.ultraremapper.CompanionSyncService.syncStateToDataLayer(context)

@@ -238,9 +238,9 @@ fun CompanionHomeScreen() {
 
     val currentVersion = remember {
         try {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.2.2"
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.2.3"
         } catch (_: Exception) {
-            "2.2.2"
+            "2.2.3"
         }
     }
 
@@ -426,12 +426,14 @@ fun CompanionHomeScreen() {
     val needsA11y = bottomConfigured || allConfiguredActions.contains("flashlight")
     val needsSecureSettings = allConfiguredActions.any { it in setOf("lte_toggle", "adb_mode") } ||
         (gestureMappings["toctoc"] ?: "none") != "none" ||
-        (gestureMappings["top_double"] ?: "none") != "none"
+        (gestureMappings["top_double"] ?: "none") != "none" ||
+        (gestureMappings["top_long"] ?: "none") != "none"
     val needsMediaBridge = a11yEnabled || allConfiguredActions.any { act ->
         act == "flashlight" || WatchActionCatalog.mediaActions.any { it.first == act }
     }
     val needsOverlay = allConfiguredActions.contains("red_flashlight") || allConfiguredActions.contains("flashlight")
-    val needsAssistant = isMasterEnabled && (gestureMappings["top_long"] ?: "none") != "none"
+    val topLongAct = gestureMappings["top_long"] ?: "none"
+    val needsAssistant = isMasterEnabled && topLongAct != "none" && topLongAct != "assistant"
     val needsTocToc = isMasterEnabled && (gestureMappings["toctoc"] ?: "none") != "none"
     val needsSamsungPayFreeze = isMasterEnabled &&
         (gestureMappings["bottom_long"] ?: "none") != "none" &&

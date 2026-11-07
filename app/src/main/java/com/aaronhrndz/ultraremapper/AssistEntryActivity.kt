@@ -30,8 +30,18 @@ class AssistEntryActivity : Activity() {
     }
 
     private fun forwardToDefaultAssistant() {
+        // First ensure routes are synced so if top_long is unmapped, we restore the real assistant service
+        SystemRouteHelper.syncSamsungRoutes(this)
+
+        val explicit = SystemRouteHelper.buildExternalAssistantLaunchIntent(this)
+        if (explicit != null) {
+            try {
+                startActivity(explicit)
+                return
+            } catch (_: Exception) {}
+        }
+
         val targets = listOf(
-            Intent(Intent.ACTION_VOICE_COMMAND),
             Intent("com.google.android.wearable.action.GOOGLE_ASSIST"),
             Intent("com.samsung.android.bixby.agent.START")
         )

@@ -119,53 +119,9 @@ private const val SAMSUNG_HEALTH_ACTION_SERVICE = "com.samsung.android.wear.shea
 
 private const val DEFAULT_RECENT_APPS_ALIAS = "com.samsung.android.apps.wearable.recent/com.samsung.android.apps.wearable.recent.RecentActivityAlias"
 
-private fun syncSamsungRoutes(context: Context) {
-    if (!hasSecureSettingsPermission(context)) return
-    try {
-        val isMasterOn = Mapping.isEnabled(context)
+private fun syncSamsungRoutes(context: Context) = SystemRouteHelper.syncSamsungRoutes(context)
 
-        // 1. Top button long press (Assistant route)
-        val topLongAction = Mapping.get(context, "top_long")
-        if (isMasterOn && topLongAction != "none") {
-            val currentAssistant = Settings.Secure.getString(context.contentResolver, "voice_interaction_service")
-                ?: Settings.Secure.getString(context.contentResolver, "assistant")
-            val isOurs = currentAssistant?.contains(context.packageName) == true
-            if (isOurs) {
-                Settings.Global.putString(context.contentResolver, "setting_home_key_long_press", "googlevoiceassistant/googlevoiceassistant")
-            }
-        }
-
-        // 2. Top button double press
-        val topDoubleAction = Mapping.get(context, "top_double")
-        val expectedTopDouble = if (isMasterOn && topDoubleAction != "none") {
-            "${context.packageName}/${TopDoubleTrampolineActivity::class.java.name}"
-        } else {
-            DEFAULT_RECENT_APPS_ALIAS
-        }
-        val currentTopDouble = Settings.Global.getString(context.contentResolver, "setting_home_key_double_press")
-        if (currentTopDouble != expectedTopDouble) {
-            Settings.Global.putString(context.contentResolver, "setting_home_key_double_press", expectedTopDouble)
-        }
-
-        // 3. Toc-toc (Wrist Knock gesture)
-        val toctocAction = Mapping.get(context, "toctoc")
-        val toctocTarget = "${context.packageName}/${TocTocTrampolineActivity::class.java.name}"
-        if (isMasterOn && toctocAction != "none") {
-            Settings.Global.putString(context.contentResolver, "setting_gesture_launch_on", "1")
-            Settings.Global.putString(context.contentResolver, "setting_gesture_launch_app", toctocTarget)
-            Settings.Global.putString(context.contentResolver, "setting_gesture_launch_selected_app", toctocTarget)
-        } else if (!isMasterOn || toctocAction == "none") {
-            val currentLaunchApp = Settings.Global.getString(context.contentResolver, "setting_gesture_launch_app")
-            if (currentLaunchApp?.contains(context.packageName) == true) {
-                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_on", "0")
-                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_app", "fixed/turn_on_flashlight")
-                Settings.Global.putString(context.contentResolver, "setting_gesture_launch_selected_app", "")
-            }
-        }
-    } catch (_: Throwable) {}
-}
-
-private fun syncTopButtonRoute(context: Context) = syncSamsungRoutes(context)
+private fun syncTopButtonRoute(context: Context) = SystemRouteHelper.syncTopButtonRoute(context)
 
 private fun isActionButtonRouted(context: Context, autoFix: Boolean = true): Boolean {
     if (!hasHardwareActionButton(context)) return true
@@ -743,7 +699,8 @@ private fun Home(
     val needsSecureSettings = remember(allConfiguredActions, gestureRows, topRows) {
         allConfiguredActions.any { it in setOf("lte_toggle", "adb_mode") } ||
                 gestureRows.any { it.third.first != "none" } ||
-                Mapping.get(context, "top_double") != "none"
+                Mapping.get(context, "top_double") != "none" ||
+                Mapping.get(context, "top_long") != "none"
     }
     val needsMediaBridge = remember(allConfiguredActions, setup.a11yEnabled) {
         setup.a11yEnabled || allConfiguredActions.any { act -> act == "flashlight" || Mapping.mediaActions.any { it.first == act } }
@@ -753,7 +710,8 @@ private fun Home(
         allConfiguredActions.contains("red_flashlight") || allConfiguredActions.contains("flashlight")
     }
     val needsAssistant = remember(allConfiguredActions, isMasterEnabled) {
-        isMasterEnabled && Mapping.get(context, "top_long") != "none"
+        val topLong = Mapping.get(context, "top_long")
+        isMasterEnabled && topLong != "none" && topLong != "assistant"
     }
 
     val needsTocToc = remember(allConfiguredActions, isMasterEnabled) {

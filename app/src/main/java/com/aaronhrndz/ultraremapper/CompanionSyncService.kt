@@ -119,9 +119,9 @@ class CompanionSyncService : WearableListenerService() {
         fun buildWatchStateJson(context: Context): JSONObject {
             val root = JSONObject()
             val versionName = try {
-                context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.2.2"
+                context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "2.2.3"
             } catch (_: Exception) {
-                "2.2.2"
+                "2.2.3"
             }
             root.put("versionName", versionName)
             root.put("masterEnabled", Mapping.isEnabled(context))

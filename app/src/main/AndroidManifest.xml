@@ -30,6 +30,17 @@
         <package android:name="com.samsung.android.watch.flashlight" />
         <package android:name="com.google.android.apps.wearable.settings" />
         <package android:name="com.samsung.android.wearable.music" />
+        <package android:name="com.google.android.wearable.assistant" />
+        <package android:name="com.samsung.android.bixby.agent" />
+        <intent>
+            <action android:name="android.service.voice.VoiceInteractionService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VOICE_COMMAND" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.ASSIST" />
+        </intent>
     </queries>
 
     <application

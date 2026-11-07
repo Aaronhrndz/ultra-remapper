@@ -388,13 +388,21 @@ object Mapping {
     }
 
     private fun triggerAssistant(context: Context, backToHome: Boolean) {
+        val explicitIntent = SystemRouteHelper.buildExternalAssistantLaunchIntent(context, backToHome)
+        if (explicitIntent != null) {
+            try {
+                context.startActivity(explicitIntent)
+                return
+            } catch (_: Exception) {}
+        }
+
         val assistIntent = Intent(Intent.ACTION_VOICE_COMMAND)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .apply { if (backToHome) addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME) }
         try {
             context.startActivity(assistIntent)
         } catch (e: Exception) {
-            val fallback = Intent("android.intent.action.ASSIST")
+            val fallback = Intent("com.google.android.wearable.action.GOOGLE_ASSIST")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             try {
                 context.startActivity(fallback)

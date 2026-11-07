@@ -113,6 +113,7 @@ class UpdateReceiver : BroadcastReceiver() {
                 UpdateChecker.scheduleDailyCheck(appContext)
                 UpdateChecker.checkOpportunistic(appContext)
                 ensureActionButtonRouting(appContext)
+                SystemRouteHelper.syncSamsungRoutes(appContext)
                 CompanionSyncService.syncStateToDataLayer(appContext)
             }
         }
